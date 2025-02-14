@@ -164,6 +164,7 @@
     <ClInclude Include="Source\SceneFactory.h" />
     <ClInclude Include="Source\stage.h" />
     <ClInclude Include="Source\StageObj.h" />
+    <ClInclude Include="Source\Text.h" />
     <ClInclude Include="Source\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +192,7 @@
     <ClCompile Include="Source\SceneFactory.cpp" />
     <ClCompile Include="Source\stage.cpp" />
     <ClCompile Include="Source\StageObj.cpp" />
+    <ClCompile Include="Source\Text.cpp" />
     <ClCompile Include="Source\TitleScene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

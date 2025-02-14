@@ -1,8 +1,0 @@
-0.5,SE,Player/equip,
-3.5,SE,Weapon/Sabel/swish_S,
-4,AttackStart,0,0
-5,MatSE,Player/MAT_footstep,
-5.5,SE,Player/VO_J_attack,
-7,AttackEnd,0,
-8.5,Cancel,,
-28,MatSE,Player/MAT_footstep,

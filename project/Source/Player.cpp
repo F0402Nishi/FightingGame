@@ -8,8 +8,8 @@
 
 Player::Player()
 {
-	hModel = MV1LoadModel("data/Character/Player/PC.mv1");
-	assert(hModel >= 0);	
+	hModel = MV1LoadModel("data/Character/BaseDisplay.mv1");
+	assert(hModel >= 0);
 	hWeapon = MV1LoadModel("data/Character/Weapon/Sabel/Sabel.mv1");
 	assert(hWeapon >= 0);
 
