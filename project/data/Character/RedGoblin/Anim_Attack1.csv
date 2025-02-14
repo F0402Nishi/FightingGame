@@ -1,0 +1,10 @@
+0.5,SE,RedGoblin/VO_run
+10.5,MatSE,RedGoblin/MAT_footstep
+21.0,SE,RedGoblin/VO_attack
+23.0,SE,Weapon/Sword/swish
+24.0,AttackStart,0
+24.5,MatSE,RedGoblin/MAT_footstep
+26.5,AttackEnd,0
+33.0,SE,Weapon/Sword/swish
+33.5,AttackStart,1
+36.5,AttackEnd,1

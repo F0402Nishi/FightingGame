@@ -1,0 +1,6 @@
+0,SE,Golem/VO_idle
+23,SE,Golem/attack_swish_S
+24.5,AttackStart,1
+28,SE,Golem/VO_attack
+31.5,AttackEnd,0
+63,SE,Golem/MAT_run_grass_S
