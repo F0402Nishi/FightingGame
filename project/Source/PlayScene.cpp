@@ -1,24 +1,14 @@
 #include "PlayScene.h"
 #include <DxLib.h>
-#include "stage.h"
 #include "Player.h"
-#include "Camera.h"
-#include "Field.h"
-#include "Goblin.h"
-#include "Text.h"
 
 int n = 0;
 
 PlayScene::PlayScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(0, 300.0f, -500.0f), VGet(0, 100.0f, 0));
-	/*
-	new Stage();
+	SetCameraPositionAndTarget_UpVecY(VGet(0, 200.0f, -200.0f), VGet(0, 100.0f, 0));
+
 	new Player();
-	new Camera();
-	new Field();
-	*/
-	new Text();
 }
 
 PlayScene::~PlayScene()
@@ -34,6 +24,10 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
+	DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0));
+	DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0));
+	DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255));
+
 	DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));
 	DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
 }
