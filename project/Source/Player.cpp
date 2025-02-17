@@ -3,7 +3,7 @@
 
 Player::Player()
 {
-	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
+	hModel = MV1LoadModel("data/Character/Player/Base.mv1");
 	assert(hModel >= 0);
 }
 
