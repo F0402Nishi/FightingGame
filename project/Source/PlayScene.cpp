@@ -6,7 +6,7 @@ int n = 0;
 
 PlayScene::PlayScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(0, 200.0f, -300.0f), VGet(0, 100.0f, 0));
+	SetCameraPositionAndTarget_UpVecY(VGet(200.0f, 200.0f, -100.0f), VGet(0, 100.0f, 0));
 
 	new Player();
 }
