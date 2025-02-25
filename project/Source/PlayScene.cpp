@@ -1,14 +1,16 @@
 #include "PlayScene.h"
 #include <DxLib.h>
 #include "Player.h"
+#include "Stage.h"
 
 int n = 0;
 
 PlayScene::PlayScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(0, 200.0f, 100.0f), VGet(0, 100.0f, 0));
+	SetCameraPositionAndTarget_UpVecY(VGet(0, 300.0f, -800.0f), VGet(0, 100.0f, 0));
 
 	new Player();
+	new Stage();
 }
 
 PlayScene::~PlayScene()
@@ -24,7 +26,7 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
-	SetBackgroundColor(0, 0, 255);
+	// SetBackgroundColor(0, 0, 255); ※背景の色変更に使用
 	DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0));
 	DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0));
 	DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255));
