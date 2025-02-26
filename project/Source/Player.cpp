@@ -31,11 +31,11 @@ void Player::Update()
 	}
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -1.0f;
-		anim->Play("data/Character/Player/Walk_F.mv1", true);
+		anim->Play("data/Character/Player/Walk_B.mv1", true);
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
 		inputDir.x = 1.0f;
-		anim->Play("data/Character/Player/Walk_B.mv1", true);
+		anim->Play("data/Character/Player/Walk_F.mv1", true);
 	}
 
 	if (VSize(inputDir) > 0) {
