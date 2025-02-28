@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <assert.h>
 #include "../ImGui/imgui.h"
+#include "Stage.h"
 
 #define PLAYER_SPEED 10.0f;
 
@@ -45,6 +46,15 @@ void Player::Update()
 		VECTOR velocity = inputDir * PLAYER_SPEED;
 		transform.position += velocity;
 	}
+
+	// ’n–Ê‚É—§‚½‚¹‚é
+	Stage* stage = FindGameObject<Stage>();
+	VECTOR hitPos; // “–‚½‚Á‚½‚çêŠ‚ð•Ô‚µ‚Ä‚à‚ç‚¤
+	/*
+	if (stage->SearchObject(transform.position + VGet(0, 1000, 0), transform.position + VGet(0, -1000, 0), &hitPos)) {
+		transform.position = hitPos;
+	}
+	*/
 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("inputDir.x", &inputDir.x);

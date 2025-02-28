@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include "Player.h"
 #include "Stage.h"
+#include "Field.h"
 
 int n = 0;
 
@@ -11,6 +12,7 @@ PlayScene::PlayScene()
 
 	new Player();
 	new Stage();
+	new Field();
 }
 
 PlayScene::~PlayScene()

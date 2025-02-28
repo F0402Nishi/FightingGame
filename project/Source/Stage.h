@@ -7,4 +7,5 @@ public:
 	Stage();
 	~Stage();
 	void Draw() override;
+	bool SearchObject(VECTOR pos1, VECTOR pos2, VECTOR* hit = nullptr);
 };

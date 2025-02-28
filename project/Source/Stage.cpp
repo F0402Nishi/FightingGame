@@ -1,10 +1,9 @@
 #include "Stage.h"
 #include <assert.h>
+#include "Field.h"
 
 Stage::Stage()
 {
-	hModel = MV1LoadModel("data/Map/BackGround/TrainingStage_Background.mv1");
-	assert(hModel >= 0);
 }
 
 Stage::~Stage()
@@ -13,5 +12,24 @@ Stage::~Stage()
 
 void Stage::Draw()
 {
-	Object3D::Draw();
+}
+
+bool Stage::SearchObject(VECTOR pos1, VECTOR pos2, VECTOR* hit)
+{
+	bool ret = false;
+	VECTOR nearest;
+	VECTOR tmp;
+	float nearestDist = VSize(pos1 - pos2);
+	Field* f = FindGameObject<Field>();
+
+	if (f->SearchGround(pos1, pos2, &tmp)) {
+		float nowDist = VSize(tmp - pos1);
+		if (nowDist < nearestDist){
+			nearestDist = nowDist;
+			nearest = tmp;
+			ret = true;
+		}
+	}
+
+	return false;
 }
