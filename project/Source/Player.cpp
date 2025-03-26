@@ -26,17 +26,18 @@ void Player::Update()
 {
 	VECTOR inputDir = VGet(0, 0, 0);
 	anim->Update();
+	anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
 		inputDir.y = 2.0f;
 	}
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -1.0f;
-		anim->Play("data/Character/Player/Walk_F.mv1", true);
+		anim->Play("data/Character/Player/Walk_F.mv1", false);
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
 		inputDir.x = 1.0f;
-		anim->Play("data/Character/Player/Walk_B.mv1", true);
+		anim->Play("data/Character/Player/Walk_B.mv1", false);
 	}
 
 	if (VSize(inputDir) > 0) {
@@ -50,15 +51,13 @@ void Player::Update()
 	// ’n–Ê‚É—§‚½‚¹‚é
 	Stage* stage = FindGameObject<Stage>();
 	VECTOR hitPos; // “–‚½‚Á‚½‚çêŠ‚ð•Ô‚µ‚Ä‚à‚ç‚¤
-	/*
 	if (stage->SearchObject(transform.position + VGet(0, 1000, 0), transform.position + VGet(0, -1000, 0), &hitPos)) {
 		transform.position = hitPos;
 	}
-	*/
 
 	ImGui::Begin("PLAYER");
-	ImGui::InputFloat("inputDir.x", &inputDir.x);
-	ImGui::InputFloat("inputDir.y", &inputDir.y);
+	ImGui::InputFloat("position.x", &transform.position.x);
+	ImGui::InputFloat("position.y", &transform.position.y);
 	ImGui::End();
 }
 

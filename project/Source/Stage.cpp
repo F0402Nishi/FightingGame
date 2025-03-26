@@ -31,5 +31,5 @@ bool Stage::SearchObject(VECTOR pos1, VECTOR pos2, VECTOR* hit)
 		}
 	}
 
-	return false;
+	return ret;
 }

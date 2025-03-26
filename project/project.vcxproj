@@ -161,6 +161,7 @@
     <ClInclude Include="Source\PlayScene.h" />
     <ClInclude Include="Source\SceneFactory.h" />
     <ClInclude Include="Source\Stage.h" />
+    <ClInclude Include="Source\StageObj.h" />
     <ClInclude Include="Source\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
