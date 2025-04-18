@@ -5,7 +5,7 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638774457307486111
+      ticks: 638805580353486696
     m_Hash: 1328188532
   m_LockFileStatus:
     m_FilePath: C:/Users/student/Documents/Fighting_C-/My project/Packages/packages-lock.json
@@ -13,7 +13,7 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638774457307575033
+      ticks: 638805580353567658
     m_Hash: 4242648789
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}

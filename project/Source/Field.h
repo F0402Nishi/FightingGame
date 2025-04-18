@@ -8,4 +8,7 @@ public:
 	~Field();
 	void Update() override;
 	bool SearchGround(VECTOR pos1, VECTOR pos2, VECTOR* hit = nullptr);
+
+private:
+	int hitModel;
 };
