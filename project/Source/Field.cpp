@@ -4,14 +4,12 @@
 
 Field::Field()
 {
-    //hModel = MV1LoadModel("data/Stage/TrainingStage_Background.mv1");
-    //assert(hModel >= 0);
+    hModel = MV1LoadModel("data/Stage/TrainingStage_Background.mv1");
+    assert(hModel >= 0);
     hitModel = MV1LoadModel("data/Stage/Ground_col.mv1");
     assert(hitModel >= 0);
 
     MV1SetupCollInfo(hitModel, 0, 12, 12, 12);
-
-    transform.matrix = MGetTranslate(transform.position);
 }
 
 Field::~Field()
@@ -25,8 +23,12 @@ void Field::Update()
 
 bool Field::SearchGround(VECTOR pos1, VECTOR pos2, VECTOR* hit)
 {
-    //MV1SetMatrix(hitModel, MGetIdent());
-    //MV1DrawModel(hitModel);
+    transform.matrix = MGetTranslate(transform.position);
+    MV1SetMatrix(hitModel, MGetIdent());
+
+    // デバッグ表示：当たり判定モデルを描画
+    MV1DrawModel(hitModel);
+
     MV1_COLL_RESULT_POLY ret = MV1CollCheck_Line(hitModel, -1, pos1, pos2);
     DrawLine3D(pos1, pos2, GetColor(255, 0, 0));
     

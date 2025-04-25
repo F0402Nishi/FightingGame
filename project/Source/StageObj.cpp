@@ -1,12 +1,14 @@
 #include "StageObj.h"
 #include <assert.h>
 
-StageObj::StageObj(int kind, VECTOR pos, VECTOR rot, VECTOR sca)
+// Å¶égópó\íËÇ»Çµ
+
+StageObj::StageObj(VECTOR pos, VECTOR rot, VECTOR sca)
 {
 	char buf[256];
-	sprintf_s<256>(buf, "data/Map/Stage/Stage_Obj%03d.mv1", kind);
+	sprintf_s<256>(buf, "data/Stage/TrainingStage_Background.mv1");
 	hModel = MV1LoadModel(buf);
-	sprintf_s<256>(buf, "data/Map/Stage/Stage_Obj%03d_c.mv1", kind);
+	sprintf_s<256>(buf, "data/Stage/Ground_col.mv1");
 	hitModel = MV1LoadModel(buf);
 	assert(hitModel > 0);
 
@@ -22,7 +24,7 @@ StageObj::~StageObj()
 
 bool StageObj::SearchObject(VECTOR pos1, VECTOR pos2, VECTOR* hit)
 {
-	MV1SetMatrix(hModel, transform.matrix);
+	MV1SetMatrix(hModel, MGetIdent());
 	MV1RefreshCollInfo(hitModel);
 	MV1_COLL_RESULT_POLY ret = MV1CollCheck_Line(hitModel, -1, pos1, pos2);
 	if (ret.HitFlag) {

@@ -31,5 +31,10 @@ bool Stage::SearchObject(VECTOR pos1, VECTOR pos2, VECTOR* hit)
 		}
 	}
 
+	if (ret && hit != nullptr) {
+		*hit = nearest;
+	}
+
+
 	return ret;
 }
