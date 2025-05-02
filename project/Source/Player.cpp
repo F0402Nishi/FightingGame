@@ -11,7 +11,7 @@ Player::Player()
 	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
 	assert(hModel >= 0);
 
-	transform.position = VGet(-5.0f, 300.0f, 0);
+	transform.position = VGet(-5.0f, 100.0f, 0);
 	transform.rotation = VGet(0, DegToRad(-90.0f), 0);
 	transform.scale = VGet(2, 2, 2);
 
@@ -19,10 +19,17 @@ Player::Player()
 
 	state = S_STOP;
 
+#if false	
+	// アニメーションの制御実験
 	int mA = MV1SearchFrame(hModel, "Hips");
-	int mB = MV1SearchFrame(hModel, "Spine");
+	int mB = MV1SearchFrame(hModel, "UpperChest");
+	int mc = MV1SearchFrame(hModel, "Neck");
+	int md = MV1SearchFrame(hModel, "Head");
 	MV1SetFrameUserLocalMatrix(hModel, mA, MGetIdent());
 	MV1SetFrameUserLocalMatrix(hModel, mB, MGetIdent());
+	MV1SetFrameUserLocalMatrix(hModel, mc, MGetIdent());
+	MV1SetFrameUserLocalMatrix(hModel, md, MGetIdent());
+#endif
 }
 
 Player::~Player()
