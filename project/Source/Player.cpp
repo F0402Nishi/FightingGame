@@ -30,6 +30,7 @@ Player::Player()
 	MV1SetFrameUserLocalMatrix(hModel, mc, MGetIdent());
 	MV1SetFrameUserLocalMatrix(hModel, md, MGetIdent());
 #endif
+
 }
 
 Player::~Player()
@@ -136,7 +137,7 @@ void Player::UpdateStop()
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
 		state = S_ATTACK1;
 	}
-	if (CheckHitKey(KEY_INPUT_O)) {
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_I)) {
 		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
 		state = S_ATTACK1;
 	}
@@ -157,6 +158,10 @@ void Player::UpdateAttack1()
 			anim->Play("data/Character/Player/Atk_P_2.mv1", false);
 			state = S_ATTACK2;
 		}
+		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) {
+			anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+			state = S_ATTACK2;
+		}
 	}
 }
 
@@ -169,6 +174,10 @@ void Player::UpdateAttack2()
 	if (anim->CurrentAnimTime() > 6.0f) {
 		if (CheckHitKey(KEY_INPUT_P)) {
 			anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+			state = S_ATTACK3;
+		}
+		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) {
+			anim->Play("data/Character/Player/Atk_K_3.mv1", false);
 			state = S_ATTACK3;
 		}
 	}

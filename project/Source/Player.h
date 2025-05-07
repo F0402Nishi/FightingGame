@@ -17,6 +17,7 @@ private:
 	bool isJumping = false;
 	VECTOR velocity;
 	float velocityY = 0.0f;
+	float time = 0.0f;
 
 	enum State {
 		S_STOP,
