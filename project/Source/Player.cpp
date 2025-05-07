@@ -131,18 +131,54 @@ void Player::UpdateStop()
 		velocity = inputDir * PLAYER_SPEED;
 		transform.position += velocity;
 	}
+
+	if (CheckHitKey(KEY_INPUT_I)) {
+		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
+		state = S_ATTACK1;
+	}
+	if (CheckHitKey(KEY_INPUT_O)) {
+		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+		state = S_ATTACK1;
+	}
+	if (CheckHitKey(KEY_INPUT_H)) {
+		anim->Play("data/Character/Player/Guard_Idle.mv1", false);
+		state = S_ATTACK1;
+	}
 }
 
 void Player::UpdateAttack1()
 {
+	if (anim->IsFinish()) {
+		state = S_STOP;
+	}
+
+	if (anim->CurrentAnimTime() > 6.0f) {
+		if (CheckHitKey(KEY_INPUT_U)) {
+			anim->Play("data/Character/Player/Atk_P_2.mv1", false);
+			state = S_ATTACK2;
+		}
+	}
 }
 
 void Player::UpdateAttack2()
 {
+	if (anim->IsFinish()) {
+		state = S_STOP;
+	}
+
+	if (anim->CurrentAnimTime() > 6.0f) {
+		if (CheckHitKey(KEY_INPUT_P)) {
+			anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+			state = S_ATTACK3;
+		}
+	}
 }
 
 void Player::UpdateAttack3()
 {
+	if (anim->IsFinish()) {
+		state = S_STOP;
+	}
 }
 
 void Player::UpdateJump()
