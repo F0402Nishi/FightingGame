@@ -19,6 +19,9 @@ Player::Player()
 
 	state = S_STOP;
 
+	S_collder = new SphereCollder(VGet(10, 300, 0), 30);
+	E_collder = new EllipseCollder(VGet(-10, 250, 0), VGet(-10, 150, 0), 30);
+
 #if false	
 	// アニメーションの制御実験
 	int mA = MV1SearchFrame(hModel, "Hips");

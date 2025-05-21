@@ -6,7 +6,8 @@ Object3D::Object3D()
 	transform.position = VGet(0, 0, 0);
 	transform.rotation = VGet(0, 0, 0);
 	transform.scale = VGet(1, 1, 1);
-	collder = nullptr;
+	S_collder = nullptr;
+	E_collder = nullptr;
 }
 
 Object3D::~Object3D()
@@ -32,7 +33,10 @@ void Object3D::Draw()
 	MV1SetMatrix(hModel,transform.matrix);
 	MV1DrawModel(hModel);
 
-	if (collder != nullptr) {
-		DrawSphere3D(collder->center + transform.position, collder->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
+	if (S_collder != nullptr) {
+		DrawSphere3D(S_collder->center + transform.position, S_collder->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
+	}
+	if (E_collder != nullptr) {
+		DrawCapsule3D(E_collder->top + transform.position, E_collder->down + transform.position, E_collder->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), TRUE);
 	}
 }

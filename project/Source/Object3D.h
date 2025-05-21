@@ -21,6 +21,19 @@ public:
 	}
 };
 
+class EllipseCollder
+{
+public:
+	VECTOR top;
+	VECTOR down;
+	float radius;
+	EllipseCollder(VECTOR t, VECTOR d, float r) {
+		top = t;
+		down = d;
+		radius = r;
+	}
+};
+
 class Object3D : public GameObject
 {
 public:
@@ -33,5 +46,6 @@ public:
 protected:
 	int hModel;
 	Transform transform;
-	SphereCollder* collder;
+	SphereCollder* S_collder;
+	EllipseCollder* E_collder;
 };
