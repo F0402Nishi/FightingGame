@@ -45,7 +45,9 @@ public:
 
 protected:
 	int hModel;
+	int hitModel;
 	Transform transform;
-	SphereCollder* S_collder;
+	SphereCollder* S_Head_collder;
+	EllipseCollder* E_Body_collder;
 	EllipseCollder* E_collder;
 };
