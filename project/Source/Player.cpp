@@ -67,6 +67,7 @@ void Player::Update()
 	// ’n–Ê‚É—§‚½‚¹‚é
 	Stage* stage = FindGameObject<Stage>();
 	VECTOR hit;
+	VECTOR hit1;
 	if (stage->SearchObject(transform.position + VGet(0, 1000, 0), transform.position + VGet(0, -10, 0), &hit)) {
 		transform.position = hit;
 		if (state == S_JUMP) {
@@ -78,6 +79,10 @@ void Player::Update()
 		static const float Gravity = 1.0f;
 		velocityY -= Gravity;
 		// transform.position.y += velocityY;
+	}
+
+	if (stage->SearchObject(transform.position + VGet(1000, 0, 0), transform.position + VGet(-10, 0, 0), &hit1)) {
+		transform.position = hit1 + VGet(-300, 0, 0);
 	}
 
 #if false
