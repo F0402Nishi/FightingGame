@@ -16,4 +16,5 @@ public:
 
 private:
 	int readVal;
+	int TitleImage;
 };

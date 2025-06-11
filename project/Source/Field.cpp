@@ -32,11 +32,11 @@ bool Field::SearchGround(VECTOR pos1, VECTOR pos2, VECTOR* hit)
     MV1_COLL_RESULT_POLY ret = MV1CollCheck_Line(hitModel, -1, pos1, pos2);
     DrawLine3D(pos1, pos2, GetColor(255, 0, 0));
     
+#if  false
     ImGui::Begin("Field");
     ImGui::InputInt("HitFlag", &ret.HitFlag);
-    ImGui::InputFloat("position.x", &transform.position.x);
-    ImGui::InputFloat("position.y", &transform.position.y);
     ImGui::End();
+#endif //  false
     
     if (ret.HitFlag) {
         if (hit != nullptr) {

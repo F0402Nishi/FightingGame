@@ -6,7 +6,7 @@
 class Player : public Object3D
 {
 public:
-	Player();
+	Player(bool _isPlayer);
 	~Player();
 	void Update() override;
 	void Draw() override;
@@ -18,6 +18,7 @@ private:
 	VECTOR velocity;
 	float velocityY = 0.0f;
 	float time = 0.0f;
+	bool isPlayer;
 
 	enum State {
 		S_STOP,

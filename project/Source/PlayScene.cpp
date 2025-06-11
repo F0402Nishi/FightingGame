@@ -5,12 +5,15 @@
 #include "Field.h"
 
 int n = 0;
+float posx = 000.0f;
+float posy = 200.0f;
 
 PlayScene::PlayScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(0, 500.0f, -1000.0f), VGet(0, 100.0f, 0));
+	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, -800.0f), VGet(posx, posy, 0));
 
-	new Player();
+	new Player(true);
+	new Player(false);
 	new Stage();
 	new Field();
 }

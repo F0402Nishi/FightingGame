@@ -6,18 +6,26 @@
 #define PLAYER_SPEED 1.0f;
 #define PLAYER_JUMP 25.0f;
 
-Player::Player()
+Player::Player(bool _isPlayer)
 {
 	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
 	assert(hModel >= 0);
 
-	transform.position = VGet(-5.0f, 100.0f, 0);
-	transform.rotation = VGet(0, DegToRad(-90.0f), 0);
-	transform.scale = VGet(2, 2, 2);
-
 	anim = new Animator(hModel);
 
 	state = S_STOP;
+	isPlayer = _isPlayer;
+
+	if (isPlayer) {
+		transform.position = VGet(-100.0f, 0.0f, 0);
+		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
+	}
+	else
+	{
+		transform.position = VGet(100.0f, 0.0f, 0);
+		transform.rotation = VGet(0, DegToRad(90.0f), 0);
+	}
+	transform.scale = VGet(2, 2, 2);
 
 	// S_Head_collder = new SphereCollder(VGet(10, 300, 0), 30);
 	// E_Body_collder = new EllipseCollder(VGet(-10, 250, 0), VGet(-10, 150, 0), 30);
@@ -69,7 +77,7 @@ void Player::Update()
 	VECTOR hit;
 	VECTOR hit1;
 	if (stage->SearchObject(transform.position + VGet(0, 1000, 0), transform.position + VGet(0, -10, 0), &hit)) {
-		transform.position = hit;
+		transform.position = hit + VGet(0, 7, 0);
 		if (state == S_JUMP) {
 			state = S_STOP;
 		}
@@ -81,8 +89,9 @@ void Player::Update()
 		// transform.position.y += velocityY;
 	}
 
-	if (stage->SearchObject(transform.position + VGet(1000, 0, 0), transform.position + VGet(-10, 0, 0), &hit1)) {
-		transform.position = hit1 + VGet(-300, 0, 0);
+	// 壁との当たり判定
+	if (stage->SearchObject(transform.position + VGet(300, 0, 0), transform.position + VGet(-100, 0, 0), &hit1)) {
+		transform.position = hit1 + VGet(-300, 0, 0); // hit1の位置に+x.300を加える
 	}
 
 #if false
@@ -95,7 +104,7 @@ void Player::Update()
 			velocityY = 0;
 		}
 	}
-#endif
+
 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
@@ -104,6 +113,7 @@ void Player::Update()
 	ImGui::Text("push.y: %.2f", hit.y);
 	ImGui::Text("state: %d", (int)state);
 	ImGui::End();
+#endif
 }
 
 void Player::Draw()
@@ -115,13 +125,19 @@ void Player::UpdateStop()
 {
 	VECTOR inputDir = VGet(0, 0, 0);
 
+	if (VSize(inputDir) == 0) { // 読み込み順でエラーが出るためデバッグ用に配置
+		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+	}
+
+	if (!isPlayer) return;
+
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -1.0f;
-		anim->Play("data/Character/Player/Walk_B.mv1", true);
+		// anim->Play("data/Character/Player/Walk_B.mv1", true);
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
 		inputDir.x = 1.0f;
-		anim->Play("data/Character/Player/Walk_F.mv1", true);
+		// anim->Play("data/Character/Player/Walk_F.mv1", true);
 	}
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
 		velocityY = PLAYER_JUMP;
@@ -129,9 +145,11 @@ void Player::UpdateStop()
 		state = S_JUMP;
 	}
 
+#if false //のちに戻す
 	if (VSize(inputDir) == 0) {
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
+#endif
 
 	// 左右移動
 	if (VSize(inputDir) > 0) {
