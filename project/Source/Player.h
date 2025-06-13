@@ -10,6 +10,7 @@ public:
 	~Player();
 	void Update() override;
 	void Draw() override;
+	void SetOpponent(Player* other);
 
 private:
 	Animator* anim;
@@ -19,6 +20,8 @@ private:
 	float velocityY = 0.0f;
 	float time = 0.0f;
 	bool isPlayer;
+	int damage;
+	int Hp = 1000;
 
 	enum State {
 		S_STOP,
@@ -34,4 +37,7 @@ private:
 	void UpdateAttack2();
 	void UpdateAttack3();
 	void UpdateJump();
+	void UpdateDamage(int dmg);
+
+	Player* opponent;
 };

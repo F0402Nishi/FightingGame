@@ -5,6 +5,7 @@
 
 #define PLAYER_SPEED 1.0f;
 #define PLAYER_JUMP 25.0f;
+#define PLAYER_HP 1000;
 
 Player::Player(bool _isPlayer)
 {
@@ -25,6 +26,7 @@ Player::Player(bool _isPlayer)
 		transform.position = VGet(100.0f, 0.0f, 0);
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
+	
 	transform.scale = VGet(2, 2, 2);
 
 	// S_Head_collder = new SphereCollder(VGet(10, 300, 0), 30);
@@ -104,7 +106,7 @@ void Player::Update()
 			velocityY = 0;
 		}
 	}
-
+#endif
 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
@@ -112,13 +114,18 @@ void Player::Update()
 	ImGui::Text("push.x: %.2f", hit.x);
 	ImGui::Text("push.y: %.2f", hit.y);
 	ImGui::Text("state: %d", (int)state);
+	ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
-#endif
 }
 
 void Player::Draw()
 {
 	Object3D::Draw();
+}
+
+void Player::SetOpponent(Player* other)
+{
+	opponent = other;
 }
 
 void Player::UpdateStop()
@@ -160,15 +167,39 @@ void Player::UpdateStop()
 		transform.position += velocity;
 	}
 
-	if (CheckHitKey(KEY_INPUT_I)) {
+	if (CheckHitKey(KEY_INPUT_I)) { // パンチ1
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
+		if (opponent != nullptr) { damage = 10; opponent->UpdateDamage(damage); }
 		state = S_ATTACK1;
 	}
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_I)) {
+	if (CheckHitKey(KEY_INPUT_U)) { // パンチ2
+		anim->Play("data/Character/Player/Atk_P_2.mv1", false);
+		if (opponent != nullptr) { damage = 50; opponent->UpdateDamage(damage); }
+		state = S_ATTACK1;
+	}
+	if (CheckHitKey(KEY_INPUT_P)) { // パンチ3
+		anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+		if (opponent != nullptr) { damage = 100; opponent->UpdateDamage(damage); }
+		state = S_ATTACK2;
+	}
+
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_I)) { // キック1
 		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+		if (opponent != nullptr) { damage = 10; opponent->UpdateDamage(damage); }
 		state = S_ATTACK1;
 	}
-	if (CheckHitKey(KEY_INPUT_H)) {
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) { // キック2
+		anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+		if (opponent != nullptr) { damage = 50; opponent->UpdateDamage(damage); }
+		state = S_ATTACK1;
+	}
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) { // キック3
+		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+		if (opponent != nullptr) { damage = 100; opponent->UpdateDamage(damage); }
+		state = S_ATTACK1;
+	}
+
+	if (CheckHitKey(KEY_INPUT_H)) { // ガード
 		anim->Play("data/Character/Player/Guard_Idle.mv1", false);
 		state = S_ATTACK1;
 	}
@@ -183,10 +214,12 @@ void Player::UpdateAttack1()
 	if (anim->CurrentAnimTime() > 6.0f) {
 		if (CheckHitKey(KEY_INPUT_U)) {
 			anim->Play("data/Character/Player/Atk_P_2.mv1", false);
+			if (opponent != nullptr) { damage = 150; opponent->UpdateDamage(damage); }
 			state = S_ATTACK2;
 		}
 		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) {
 			anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+			if (opponent != nullptr) { damage = 150; opponent->UpdateDamage(damage); }
 			state = S_ATTACK2;
 		}
 	}
@@ -201,10 +234,12 @@ void Player::UpdateAttack2()
 	if (anim->CurrentAnimTime() > 6.0f) {
 		if (CheckHitKey(KEY_INPUT_P)) {
 			anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+			if (opponent != nullptr) { damage = 300; opponent->UpdateDamage(damage); }
 			state = S_ATTACK3;
 		}
 		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) {
 			anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+			if (opponent != nullptr) { damage = 300; opponent->UpdateDamage(damage); }
 			state = S_ATTACK3;
 		}
 	}
@@ -221,4 +256,10 @@ void Player::UpdateJump()
 {
 //	transform.position += velocity;
 	transform.position.y += velocityY;
+}
+
+void Player::UpdateDamage(int dmg)
+{
+	Hp -= dmg;
+	if (Hp == 0) { anim->Play("data/Character/Player/Guard_Hit.mv1", true); }
 }

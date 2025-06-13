@@ -4,9 +4,13 @@
 #include <assert.h>
 
 using namespace std;
+float _posx;
+float _posy;
 
 TitleScene::TitleScene()
 {
+	SetCameraPositionAndTarget_UpVecY(VGet(_posx, _posy, -1000.0f), VGet(_posx, _posy, 0));
+
 	TitleImage = LoadGraph("data/2D/TiteleLogo.png");
 	assert(TitleImage >= 0);
 
@@ -50,9 +54,9 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	DrawRotaGraph3D(0, 0, 0, 1, 0, TitleImage, TRUE);
+	DrawRotaGraph3D(0, 0, 0, 3, 0, TitleImage, TRUE);
 	DrawString(0, 0, "TITLE SCENE", GetColor(255,255,255));
-	DrawString(100, 400, "Push [P]Key To Play", GetColor(255, 255, 255));
+	DrawString(500, 400, "Push [P]Key To Play", GetColor(255, 255, 255));
 
 	// DrawFormatString(100, 100, GetColor(255, 255, 255), "%d", readVal);
 }
