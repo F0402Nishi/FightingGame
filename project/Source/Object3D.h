@@ -21,13 +21,13 @@ public:
 	}
 };
 
-class EllipseCollder
+class EllipseCollider
 {
 public:
 	VECTOR top;
 	VECTOR down;
 	float radius;
-	EllipseCollder(VECTOR t, VECTOR d, float r) {
+	EllipseCollider(VECTOR t, VECTOR d, float r) {
 		top = t;
 		down = d;
 		radius = r;
@@ -48,6 +48,6 @@ protected:
 	int hitModel;
 	Transform transform;
 	SphereCollder* S_Head_collder;
-	EllipseCollder* E_Body_collder;
-	EllipseCollder* E_collder;
+	EllipseCollider* E_Body_collder;
+	EllipseCollider* E_collder;
 };

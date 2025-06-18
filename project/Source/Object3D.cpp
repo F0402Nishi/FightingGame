@@ -44,6 +44,7 @@ void Object3D::Draw()
 		DrawCapsule3D(E_Body_collder->top + transform.position, E_Body_collder->down + transform.position, E_Body_collder->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), TRUE);
 	}
 	if (E_collder != nullptr) {
-		DrawCapsule3D(E_collder->top + transform.position, E_collder->down + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 0, 0), TRUE);
+		// EllipseCollider(VGet(0, 100, 0), VGet(0, 0, 0), TRUE);
+		DrawCapsule3D(E_collder->top + transform.position, E_collder->down + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 0, 0), FALSE);
 	}
 }

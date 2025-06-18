@@ -3,6 +3,21 @@
 #include "Animator.h"
 #include "Field.h"
 
+#if false
+class EllipseCollider
+{
+public:
+	VECTOR top;
+	VECTOR down;
+	float radius;
+	EllipseCollider(VECTOR t, VECTOR d, float r) {
+		top = t;
+		down = d;
+		radius = r;
+	}
+};
+#endif
+
 class Player : public Object3D
 {
 public:
@@ -11,6 +26,7 @@ public:
 	void Update() override;
 	void Draw() override;
 	void SetOpponent(Player* other);
+	void SetDamage(int dmg);
 
 private:
 	Animator* anim;
@@ -37,7 +53,7 @@ private:
 	void UpdateAttack2();
 	void UpdateAttack3();
 	void UpdateJump();
-	void UpdateDamage(int dmg);
 
 	Player* opponent;
+	// EllipseCollider* E_collder;
 };
