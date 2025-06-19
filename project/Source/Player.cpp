@@ -30,7 +30,7 @@ Player::Player(bool _isPlayer)
 
 	// S_Head_collder = new SphereCollder(VGet(10, 300, 0), 30);
 	// E_Body_collder = new EllipseCollder(VGet(-10, 250, 0), VGet(-10, 150, 0), 30);
-	E_collder = new EllipseCollider(VGet(0, 220, 0), VGet(0, 100, 0), 120);
+	// E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
 	// E_collder = nullptr;
 
@@ -91,8 +91,11 @@ void Player::Update()
 	}
 
 	// 壁との当たり判定
-	if (stage->SearchObject(transform.position + VGet(300, 0, 0), transform.position + VGet(-100, 0, 0), &hit1)) {
-		transform.position = hit1 + VGet(-300, 0, 0); // hit1の位置に+x.300を加える
+	if (stage->SearchObject(transform.position + VGet(300, 0, 0), transform.position + VGet(-200, 0, 0), &hit1)) {
+		transform.position = hit1 + VGet(-300, 0, 0); // hit1の位置に+ x.300を加える
+		if (transform.position.x <= hit1.x) {
+			transform.position = hit1 + VGet(200, 0, 0);
+		}
 	}
 
 #if false // 地面に立たせる(初期構想)

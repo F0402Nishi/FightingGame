@@ -2,21 +2,7 @@
 #include "Object3D.h"
 #include "Animator.h"
 #include "Field.h"
-
-#if false
-class EllipseCollider
-{
-public:
-	VECTOR top;
-	VECTOR down;
-	float radius;
-	EllipseCollider(VECTOR t, VECTOR d, float r) {
-		top = t;
-		down = d;
-		radius = r;
-	}
-};
-#endif
+#include "PlayerObj.h"
 
 class Player : public Object3D
 {
@@ -30,14 +16,14 @@ public:
 
 private:
 	Animator* anim;
-	Field* field;
+	// Field* field;
 	bool isJumping = false;
 	VECTOR velocity;
 	float velocityY = 0.0f;
-	float time = 0.0f;
-	bool isPlayer;
-	int damage;
 	int Hp = 1000;
+	int damage;
+	// float time = 0.0f;
+	bool isPlayer;
 
 	enum State {
 		S_STOP,
@@ -54,6 +40,9 @@ private:
 	void UpdateAttack3();
 	void UpdateJump();
 
+protected:
 	Player* opponent;
-	// EllipseCollider* E_collder;
+	VECTOR GetPosition() { return transform.position; }
+	// EllipseCollider* GetCollider() { return E_collder; }
+	void AddPosition(VECTOR offset) { transform.position += offset; }
 };

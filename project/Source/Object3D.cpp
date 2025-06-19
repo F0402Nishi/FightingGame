@@ -8,8 +8,6 @@ Object3D::Object3D()
 	transform.rotation = VGet(0, 0, 0);
 	transform.scale = VGet(1, 1, 1);
 	S_Head_collder = nullptr;
-	E_Body_collder = nullptr;
-	E_collder = nullptr;
 }
 
 Object3D::~Object3D()
@@ -37,14 +35,12 @@ void Object3D::Draw()
 	MV1DrawModel(hModel);
 	MV1DrawModel(hitModel);
 
+#if false
 	if (S_Head_collder != nullptr) {
 		DrawSphere3D(S_Head_collder->center + transform.position, S_Head_collder->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
 	if (E_Body_collder != nullptr) {
 		DrawCapsule3D(E_Body_collder->top + transform.position, E_Body_collder->down + transform.position, E_Body_collder->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), TRUE);
 	}
-	if (E_collder != nullptr) {
-		// EllipseCollider(VGet(0, 100, 0), VGet(0, 0, 0), TRUE);
-		DrawCapsule3D(E_collder->top + transform.position, E_collder->down + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 0, 0), FALSE);
-	}
+#endif
 }
