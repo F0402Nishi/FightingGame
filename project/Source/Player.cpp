@@ -1,4 +1,4 @@
-#include "Player.h"
+ï»¿#include "Player.h"
 #include <assert.h>
 #include "../ImGui/imgui.h"
 #include "Stage.h"
@@ -34,7 +34,7 @@ Player::Player(bool _isPlayer)
 
 	// E_collder = nullptr;
 
-#if false // ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì§ŒäÀŒ±
+#if false // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åˆ¶å¾¡å®Ÿé¨“
 	int mA = MV1SearchFrame(hModel, "Hips");
 	int mB = MV1SearchFrame(hModel, "UpperChest");
 	int mc = MV1SearchFrame(hModel, "Neck");
@@ -73,7 +73,7 @@ void Player::Update()
 		break;
 	}
 
-	// ’n–Ê‚É—§‚½‚¹‚é
+	// åœ°é¢ã«ç«‹ãŸã›ã‚‹
 	Stage* stage = FindGameObject<Stage>();
 	VECTOR hit;
 	VECTOR hit1;
@@ -90,16 +90,16 @@ void Player::Update()
 		// transform.position.y += velocityY;
 	}
 
-	// •Ç‚Æ‚Ì“–‚½‚è”»’è
+	// å£ã¨ã®å½“ãŸã‚Šåˆ¤å®š
 	if (stage->SearchObject(transform.position + VGet(300, 0, 0), transform.position + VGet(-200, 0, 0), &hit1)) {
-		transform.position = hit1 + VGet(-300, 0, 0); // hit1‚ÌˆÊ’u‚É+ x.300‚ğ‰Á‚¦‚é
+		transform.position = hit1 + VGet(-300, 0, 0); // hit1ã®ä½ç½®ã«+ x.300ã‚’åŠ ãˆã‚‹
 		if (transform.position.x <= hit1.x) {
 			transform.position = hit1 + VGet(200, 0, 0);
 		}
 	}
 
-#if false // ’n–Ê‚É—§‚½‚¹‚é(‰Šú\‘z)
-	VECTOR hitPos; // “–‚½‚Á‚½‚çêŠ‚ğ•Ô‚µ‚Ä‚à‚ç‚¤
+#if false // åœ°é¢ã«ç«‹ãŸã›ã‚‹(åˆæœŸæ§‹æƒ³)
+	VECTOR hitPos; // å½“ãŸã£ãŸã‚‰å ´æ‰€ã‚’è¿”ã—ã¦ã‚‚ã‚‰ã†
 	if (stage->SearchObject(transform.position + VGet(0, 1000, 0), transform.position + VGet(0, -1000, 0), &hitPos)) {
 		transform.position = hitPos;
 		if (transform.position.y <= hitPos.y) {
@@ -109,6 +109,8 @@ void Player::Update()
 		}
 	}
 #endif
+
+	ResolvePlayerCollision();
 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
@@ -136,11 +138,39 @@ void Player::SetDamage(int dmg)
 	if (Hp == 0) { anim->Play("data/Character/Player/Guard_Hit.mv1", true); }
 }
 
+void Player::ResolvePlayerCollision()
+{
+	Player* p = FindGameObject<Player>();
+	if (p == nullptr) { 
+		int a = 5; 
+	}
+
+	// ã‚«ãƒ—ã‚»ãƒ«ã®ä¸­å¿ƒç·šï¼ˆä»Šå›ã¯ leftã€œright ã® midpointï¼‰
+	VECTOR center = (E_collder->left + E_collder->right) * 0.5f + transform.position;
+	VECTOR center2 = (p->E_collder->left + p->E_collder->right) * 0.5f + p->GetTransform().position;
+
+	// è·é›¢ãƒ™ã‚¯ãƒˆãƒ«ã¨é•·ã•
+	VECTOR diff = center - center2;
+	float dist = VSize(diff);
+	float minDist = E_collder->radius;
+
+	// é‡ãªã£ã¦ã„ã‚‹ï¼ˆå½“ãŸã‚Šåˆ¤å®šï¼‰
+	if (dist < minDist && dist > 0.0001f)
+	{
+		float overlap = minDist - dist;
+		VECTOR dir = VNorm(diff); // æŠ¼ã—è¿”ã—æ–¹å‘ï¼ˆå˜ä½ãƒ™ã‚¯ãƒˆãƒ«ï¼‰
+
+		// åŒæ–¹ã‚’å‡ç­‰ã«æŠ¼ã—è¿”ã™
+		// self->AddPosition(dir * (overlap * -0.5f));
+		// opponent->AddPosition(dir * (overlap * 0.5f));
+	}
+}
+
 void Player::UpdateStop()
 {
 	VECTOR inputDir = VGet(0, 0, 0);
 
-	if (VSize(inputDir) == 0) { // “Ç‚İ‚İ‡‚ÅƒGƒ‰[‚ªo‚é‚½‚ßŒ±—p‚É”z’u
+	if (VSize(inputDir) == 0) { // èª­ã¿è¾¼ã¿é †ã§ã‚¨ãƒ©ãƒ¼ãŒå‡ºã‚‹ãŸã‚è©¦é¨“ç”¨ã«é…ç½®
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
 
@@ -160,13 +190,13 @@ void Player::UpdateStop()
 		state = S_JUMP;
 	}
 
-#if false //‚Ì‚¿‚É–ß‚·
+#if false //ã®ã¡ã«æˆ»ã™
 	if (VSize(inputDir) == 0) {
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
 #endif
 
-	// ¶‰EˆÚ“®
+	// å·¦å³ç§»å‹•
 	if (VSize(inputDir) > 0) {
 		if (VSize(inputDir) >= 1.0f) {
 			inputDir = VNorm(inputDir);
@@ -175,39 +205,39 @@ void Player::UpdateStop()
 		transform.position += velocity;
 	}
 
-	if (CheckHitKey(KEY_INPUT_I)) { // ƒpƒ“ƒ`1
+	if (CheckHitKey(KEY_INPUT_I)) { // ãƒ‘ãƒ³ãƒ1
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
 		if (opponent != nullptr) { damage = 10; opponent->SetDamage(damage); }
 		state = S_ATTACK1;
 	}
-	if (CheckHitKey(KEY_INPUT_U)) { // ƒpƒ“ƒ`2
+	if (CheckHitKey(KEY_INPUT_U)) { // ãƒ‘ãƒ³ãƒ2
 		anim->Play("data/Character/Player/Atk_P_2.mv1", false);
 		if (opponent != nullptr) { damage = 50; opponent->SetDamage(damage); }
 		state = S_ATTACK1;
 	}
-	if (CheckHitKey(KEY_INPUT_P)) { // ƒpƒ“ƒ`3
+	if (CheckHitKey(KEY_INPUT_P)) { // ãƒ‘ãƒ³ãƒ3
 		anim->Play("data/Character/Player/Atk_P_3.mv1", false);
 		if (opponent != nullptr) { damage = 100; opponent->SetDamage(damage); }
 		state = S_ATTACK2;
 	}
 
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_I)) { // ƒLƒbƒN1
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_I)) { // ã‚­ãƒƒã‚¯1
 		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
 		if (opponent != nullptr) { damage = 10; opponent->SetDamage(damage); }
 		state = S_ATTACK1;
 	}
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) { // ƒLƒbƒN2
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) { // ã‚­ãƒƒã‚¯2
 		anim->Play("data/Character/Player/Atk_K_2.mv1", false);
 		if (opponent != nullptr) { damage = 50; opponent->SetDamage(damage); }
 		state = S_ATTACK1;
 	}
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) { // ƒLƒbƒN3
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) { // ã‚­ãƒƒã‚¯3
 		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
 		if (opponent != nullptr) { damage = 100; opponent->SetDamage(damage); }
 		state = S_ATTACK1;
 	}
 
-	if (CheckHitKey(KEY_INPUT_H)) { // ƒK[ƒh
+	if (CheckHitKey(KEY_INPUT_H)) { // ã‚¬ãƒ¼ãƒ‰
 		anim->Play("data/Character/Player/Guard_Idle.mv1", false);
 		state = S_ATTACK1;
 	}

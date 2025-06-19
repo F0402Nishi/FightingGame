@@ -21,6 +21,21 @@ public:
 	}
 };
 
+class EllipseCollider
+{
+public:
+	// VECTOR top;
+	// VECTOR down;
+	VECTOR left;
+	VECTOR right;
+	float radius;
+	EllipseCollider(VECTOR l, VECTOR r, float ra) {
+		left = l;
+		right = r;
+		radius = ra;
+	}
+};
+
 class Object3D : public GameObject
 {
 public:
@@ -29,10 +44,12 @@ public:
 	virtual void Update() override;
 	virtual void Draw() override;
 	Transform GetTransform() { return transform; }
-
+	EllipseCollider GetCollder() { return E_collder; }
+	
 protected:
 	int hModel;
 	int hitModel;
 	Transform transform;
 	SphereCollder* S_Head_collder;
+	EllipseCollider E_collder;
 };

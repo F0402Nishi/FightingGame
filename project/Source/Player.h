@@ -1,8 +1,8 @@
 #pragma once
 #include "Object3D.h"
+#include "PlayerObj.h"
 #include "Animator.h"
 #include "Field.h"
-#include "PlayerObj.h"
 
 class Player : public Object3D
 {
@@ -13,6 +13,7 @@ public:
 	void Draw() override;
 	void SetOpponent(Player* other);
 	void SetDamage(int dmg);
+	void ResolvePlayerCollision();
 
 private:
 	Animator* anim;
@@ -24,6 +25,7 @@ private:
 	int damage;
 	// float time = 0.0f;
 	bool isPlayer;
+	Player* opponent;
 
 	enum State {
 		S_STOP,
@@ -39,10 +41,4 @@ private:
 	void UpdateAttack2();
 	void UpdateAttack3();
 	void UpdateJump();
-
-protected:
-	Player* opponent;
-	VECTOR GetPosition() { return transform.position; }
-	// EllipseCollider* GetCollider() { return E_collder; }
-	void AddPosition(VECTOR offset) { transform.position += offset; }
 };
