@@ -44,12 +44,12 @@ public:
 	virtual void Update() override;
 	virtual void Draw() override;
 	Transform GetTransform() { return transform; }
-	EllipseCollider GetCollder() { return E_collder; }
+	EllipseCollider* GetCollder() { return E_collder; }
 	
 protected:
 	int hModel;
 	int hitModel;
 	Transform transform;
 	SphereCollder* S_Head_collder;
-	EllipseCollider E_collder;
+	EllipseCollider* E_collder;
 };

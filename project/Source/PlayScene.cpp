@@ -10,7 +10,7 @@ float posy = 200.0f;
 
 PlayScene::PlayScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, -1000.0f), VGet(posx, posy, 0));
+	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, -2000.0f), VGet(posx, posy, 0));
 
 	Player* p1 = new Player(true);
 	Player* p2 = new Player(false);

@@ -1,6 +1,5 @@
 #pragma once
 #include "Object3D.h"
-#include "PlayerObj.h"
 #include "Animator.h"
 #include "Field.h"
 

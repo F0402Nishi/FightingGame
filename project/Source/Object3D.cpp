@@ -7,7 +7,7 @@ Object3D::Object3D()
 	transform.position = VGet(0, 0, 0);
 	transform.rotation = VGet(0, 0, 0);
 	transform.scale = VGet(1, 1, 1);
-	// S_Head_collder = nullptr;
+	S_Head_collder = nullptr;
 	E_collder = nullptr;
 }
 
@@ -46,6 +46,6 @@ void Object3D::Draw()
 #endif
 	if (E_collder != nullptr) {
 		EllipseCollider(transform.position, transform.position, TRUE);
-		DrawCapsule3D(E_collder->left + transform.position, E_collder->right + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 255, 255), FALSE);
+		// DrawCapsule3D(E_collder->left + transform.position, E_collder->right + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 255, 255), FALSE);
 	}
 }
