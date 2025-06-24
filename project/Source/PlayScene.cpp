@@ -10,15 +10,15 @@ float posy = 200.0f;
 
 PlayScene::PlayScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, -2000.0f), VGet(posx, posy, 0));
+	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, -780.0f), VGet(posx, posy, 0));
 
-	Player* p1 = new Player(true);
+	player = new Player(true);
 	Player* p2 = new Player(false);
 	new Stage();
 	new Field();
 
-	p1->SetOpponent(p2);
-	p2->SetOpponent(p1);
+	player->SetOpponent(p2);
+	p2->SetOpponent(player);
 }
 
 PlayScene::~PlayScene()
@@ -27,6 +27,9 @@ PlayScene::~PlayScene()
 
 void PlayScene::Update()
 {
+	VECTOR playerPos = player->GetTransform().position;
+	SetCameraPositionAndTarget_UpVecY(VGet(playerPos.x, posy, -400.0f), VGet(playerPos.x, posy, 0));
+
 	if (CheckHitKey(KEY_INPUT_T)) {
 		SceneManager::ChangeScene("TITLE");
 	}
@@ -34,7 +37,8 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
-	SetBackgroundColor(0, 0, 255); //※背景の色変更に使用
+	// SetBackgroundColor(0, 0, 255); //※背景の色変更に使用
+	
 	DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0));
 	DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0));
 	DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255));

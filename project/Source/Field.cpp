@@ -4,7 +4,7 @@
 
 Field::Field()
 {
-    hModel = MV1LoadModel("data/Stage/TrainingStage_Background.mv1");
+    hModel = MV1LoadModel("data/Stage/TrainingStage.mv1");
     assert(hModel >= 0);
     hitModel = MV1LoadModel("data/Stage/Ground_col.mv1");
     assert(hitModel >= 0);
@@ -15,6 +15,7 @@ Field::Field()
 Field::~Field()
 {
     MV1DeleteModel(hModel);
+    MV1DeleteModel(hitModel);
 }
 
 void Field::Update()
@@ -24,7 +25,6 @@ void Field::Update()
 bool Field::SearchGround(VECTOR pos1, VECTOR pos2, VECTOR* hit)
 {
     transform.matrix = MGetTranslate(transform.position);
-    MV1SetMatrix(hitModel, MGetIdent());
 
     // デバッグ表示：当たり判定モデルを描画
     MV1DrawModel(hitModel);

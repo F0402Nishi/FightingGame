@@ -1,5 +1,6 @@
 #pragma once
 #include "../Library/SceneBase.h"
+#include "Player.h"
 
 class PlayScene : public SceneBase
 {
@@ -8,4 +9,7 @@ public:
 	~PlayScene();
 	void Update() override;
 	void Draw() override;
+
+private:
+	Player* player;
 };

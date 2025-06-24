@@ -10,5 +10,5 @@ public:
 	bool SearchGround(VECTOR pos1, VECTOR pos2, VECTOR* hit = nullptr);
 
 private:
-	int hitModel;
+	// int hitModel;
 };

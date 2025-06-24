@@ -3,7 +3,7 @@
 #include "../ImGui/imgui.h"
 #include "Stage.h"
 
-#define PLAYER_SPEED 1.0f;
+#define PLAYER_SPEED 2.0f;
 #define PLAYER_JUMP 25.0f;
 
 Player::Player(bool _isPlayer)
@@ -17,12 +17,12 @@ Player::Player(bool _isPlayer)
 	isPlayer = _isPlayer;
 
 	if (isPlayer) {
-		transform.position = VGet(-200.0f, 0.0f, -100.0f);
+		transform.position = VGet(-200.0f, 0.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
 	}
 	else
 	{
-		transform.position = VGet(200.0f, 0.0f, -100.0f);
+		transform.position = VGet(200.0f, 0.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
 	
@@ -92,9 +92,12 @@ void Player::Update()
 
 	// 壁との当たり判定
 	if (stage->SearchObject(transform.position + VGet(100, 0, 0), transform.position + VGet(-100, 0, 0), &hit1)) {
-		transform.position = hit1 + VGet(-100, 0, 0); // hit1の位置に+ x.300を加える
-		if (transform.position.x >= hit1.x) {
-			transform.position = hit1 + VGet(100, 0, 0);
+		if (transform.position.x >= hit1.x) { // 左の壁に当たった時...
+			transform.position = hit1 + VGet(100, 0, 0); // hit1の位置に+ x.100を加える
+		}
+		else // 右の壁に当たった時...
+		{
+			transform.position = hit1 + VGet(-100, 0, 0); // hit1の位置に- x.100を加える
 		}
 	}
 
@@ -175,11 +178,11 @@ void Player::UpdateStop()
 	if (!isPlayer) return;
 
 	if (CheckHitKey(KEY_INPUT_A)) {
-		inputDir.x = -1.0f;
+		inputDir.x = -10.0f;
 		// anim->Play("data/Character/Player/Walk_B.mv1", true);
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
-		inputDir.x = 1.0f;
+		inputDir.x = 10.0f;
 		// anim->Play("data/Character/Player/Walk_F.mv1", true);
 	}
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
@@ -218,6 +221,16 @@ void Player::UpdateStop()
 		if (opponent != nullptr) { damage = 100; opponent->SetDamage(damage); }
 		state = S_ATTACK2;
 	}
+	
+	if (CheckHitKey(KEY_INPUT_S)) {
+		if (CheckHitKey(KEY_INPUT_I)) {
+			anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+			if (opponent != nullptr) { damage = 10; opponent->SetDamage(damage); }
+			state = S_ATTACK1;
+		}
+	}
+
+#if  false
 
 	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_I)) { // キック1
 		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
@@ -234,6 +247,8 @@ void Player::UpdateStop()
 		if (opponent != nullptr) { damage = 100; opponent->SetDamage(damage); }
 		state = S_ATTACK1;
 	}
+
+#endif //  false
 
 	if (CheckHitKey(KEY_INPUT_H)) { // ガード
 		anim->Play("data/Character/Player/Guard_Idle.mv1", false);
