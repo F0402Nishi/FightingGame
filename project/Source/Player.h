@@ -2,6 +2,13 @@
 #include "Object3D.h"
 #include "Animator.h"
 #include "Field.h"
+#include <string>
+#include <vector>
+
+enum PlayerType {
+	PLAYER1,
+	PLAYER2
+};
 
 class Player : public Object3D
 {
@@ -13,6 +20,8 @@ public:
 	void SetOpponent(Player* other);
 	void SetDamage(int dmg);
 	void ResolvePlayerCollision();
+	void InitHitSpheres(PlayerType type);
+	std::vector<SphereCollder> hitSpheres;
 
 private:
 	Animator* anim;

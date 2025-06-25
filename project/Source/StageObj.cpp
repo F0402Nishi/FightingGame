@@ -38,7 +38,7 @@ bool StageObj::SearchObject(VECTOR pos1, VECTOR pos2, VECTOR* hit)
 
 VECTOR StageObj::CollderObject(VECTOR pos, SphereCollder col)
 {
-	MV1_COLL_RESULT_POLY_DIM dim = MV1CollCheck_Sphere(hitModel, -1, col.center + pos, col.radius);
+	MV1_COLL_RESULT_POLY_DIM dim = MV1CollCheck_Sphere(hitModel, -1, col.localOffset + pos, col.radius);
 	if (dim.HitNum == 0) return pos;
 	for (int i = 0; i < dim.HitNum; i++) {
 		VECTOR hitPos = dim.Dim[i].HitPosition;

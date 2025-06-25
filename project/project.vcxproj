@@ -155,6 +155,7 @@
     <ClInclude Include="Source\Animator.h" />
     <ClInclude Include="Source\BootScene.h" />
     <ClInclude Include="Source\Field.h" />
+    <ClInclude Include="Source\HitCheck.h" />
     <ClInclude Include="Source\Object3D.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Screen.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="Source\Animator.cpp" />
     <ClCompile Include="Source\BootScene.cpp" />
     <ClCompile Include="Source\Field.cpp" />
+    <ClCompile Include="Source\HitCheck.cpp" />
     <ClCompile Include="Source\Object3D.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayScene.cpp" />

@@ -9,7 +9,9 @@ public:
 	~PlayScene();
 	void Update() override;
 	void Draw() override;
+	void UpdateCamera();
 
 private:
-	Player* player;
+	Player* p1;
+	Player* p2;
 };

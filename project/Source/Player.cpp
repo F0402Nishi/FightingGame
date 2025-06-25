@@ -19,19 +19,21 @@ Player::Player(bool _isPlayer)
 	if (isPlayer) {
 		transform.position = VGet(-200.0f, 0.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
+		// S_headcollider = new SphereCollder(VGet(10, 300, 0), 35, "Head");
+		// S_bodycollider = new SphereCollder(VGet(-10, 210, 15), 60, "Body");
 	}
 	else
 	{
 		transform.position = VGet(200.0f, 0.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
+		// S_headcollider = new SphereCollder(VGet(-10, 300, 0), 35, "Head");
+		// S_bodycollider = new SphereCollder(VGet(10, 210, -15), 60, "Body");
 	}
 	
 	transform.scale = VGet(2, 2, 2);
 
-	// S_Head_collder = new SphereCollder(VGet(10, 300, 0), 30);
-	// E_Body_collder = new EllipseCollder(VGet(-10, 250, 0), VGet(-10, 150, 0), 30);
 	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
-
+	// E_Body_collder = new EllipseCollder(VGet(-10, 250, 0), VGet(-10, 150, 0), 30);
 	// E_collder = nullptr;
 
 #if false // アニメーションの制御実験
@@ -144,7 +146,7 @@ void Player::SetDamage(int dmg)
 void Player::ResolvePlayerCollision()
 {
 	Player* p = FindGameObject<Player>();
-	if (p == nullptr || p == this) { int a = 5; }
+	if (p == nullptr || p == this) { return; }
 
 	// カプセルの中心線（今回は left〜right の midpoint）
 	VECTOR center = (E_collder->left + E_collder->right) * 0.5f + transform.position;
@@ -164,6 +166,21 @@ void Player::ResolvePlayerCollision()
 		// 双方を均等に押し返す
 		transform.position -= dir * (overlap * 0.5f);
 		p->transform.position += dir * (overlap * 0.5f);
+	}
+}
+
+void Player::InitHitSpheres(PlayerType type)
+{
+	hitSpheres.clear();
+
+	if (isPlayer) {
+		hitSpheres.emplace_back(VGet(10, 300, 0), 35, "Head");
+		hitSpheres.emplace_back(VGet(-10, 210, 15), 60, "Body");
+
+	}
+	else {
+		hitSpheres.emplace_back(VGet(-10, 300, 0), 35, "Head");
+		hitSpheres.emplace_back(VGet(10, 210, -15), 60, "Body");
 	}
 }
 

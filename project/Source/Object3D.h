@@ -13,12 +13,16 @@ public:
 class SphereCollder
 {
 public:
-	VECTOR center;
+	VECTOR localOffset;
 	float radius;
-	SphereCollder(VECTOR c, float r) {
-		center = c;
+	std::string partName;
+	SphereCollder(VECTOR offset, float r, const std::string& name) {
+		localOffset = offset;
 		radius = r;
+		partName = name;
 	}
+
+	VECTOR GetWorldCenter(const VECTOR& playerPos) const { return playerPos + localOffset; }
 };
 
 class EllipseCollider
@@ -50,6 +54,7 @@ protected:
 	int hModel;
 	int hitModel;
 	Transform transform;
-	SphereCollder* S_Head_collder;
 	EllipseCollider* E_collder;
+	SphereCollder* S_headcollider;
+	SphereCollder* S_bodycollider;
 };
