@@ -5,11 +5,6 @@
 #include <string>
 #include <vector>
 
-enum PlayerType {
-	PLAYER1,
-	PLAYER2
-};
-
 class Player : public Object3D
 {
 public:
@@ -20,7 +15,7 @@ public:
 	void SetOpponent(Player* other);
 	void SetDamage(int dmg);
 	void ResolvePlayerCollision();
-	void InitHitSpheres(PlayerType type);
+	void InitHitSpheres();
 	std::vector<SphereCollder> hitSpheres;
 
 private:

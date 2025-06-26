@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Player.h"
+#include "Object3D.h"
 
 class HitCheck : public Object3D
 {

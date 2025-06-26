@@ -68,7 +68,9 @@
     <ClCompile Include="Source\StageObj.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\HitCheck.cpp" />
+    <ClCompile Include="Source\HitCheck.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />

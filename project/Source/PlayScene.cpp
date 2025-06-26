@@ -21,6 +21,8 @@ PlayScene::PlayScene()
 
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
+	p1->InitHitSpheres();
+	p2->InitHitSpheres();
 }
 
 PlayScene::~PlayScene()

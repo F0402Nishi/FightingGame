@@ -130,6 +130,12 @@ void Player::Update()
 void Player::Draw()
 {
 	Object3D::Draw();
+
+	VECTOR basePos = transform.position;
+	for (const SphereCollder& col : hitSpheres) {
+		VECTOR worldCenter = col.GetWorldCenter(basePos);
+		DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
+	}
 }
 
 void Player::SetOpponent(Player* other)
@@ -169,7 +175,7 @@ void Player::ResolvePlayerCollision()
 	}
 }
 
-void Player::InitHitSpheres(PlayerType type)
+void Player::InitHitSpheres()
 {
 	hitSpheres.clear();
 

@@ -47,7 +47,7 @@ public:
 	virtual ~Object3D();
 	virtual void Update() override;
 	virtual void Draw() override;
-	Transform GetTransform() { return transform; }
+	Transform GetTransform() const { return transform; }
 	EllipseCollider* GetCollder() { return E_collder; }
 	
 protected:
@@ -56,5 +56,5 @@ protected:
 	Transform transform;
 	EllipseCollider* E_collder;
 	SphereCollder* S_headcollider;
-	SphereCollder* S_bodycollider;
+	// SphereCollder* S_bodycollider;
 };
