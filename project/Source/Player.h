@@ -29,6 +29,38 @@ private:
 	// float time = 0.0f;
 	bool isPlayer;
 	Player* opponent;
+	VECTOR basePos;
+	VECTOR worldCenter;
+
+	// PlayerÇÃçúêßå‰
+	int headBone;
+	int bodyBone;
+	int left_UpperArmBone;
+	int left_LowerArmBone;
+	int left_HandBone;
+	int right_UpperArmBone;
+	int right_LowerArmBone;
+	int right_HandBone;
+	int left_UpperLegBone;
+	int left_LowerLegBone;
+	int left_FootBone;
+	int right_UpperLegBone;
+	int right_LowerLegBone;
+	int right_FootBone;
+	VECTOR heardWorldPos;
+	VECTOR bodyWorldPos;
+	VECTOR left_UpperArmWorldPos;
+	VECTOR left_LowerArmWorldPos;
+	VECTOR left_HandWorldPos;
+	VECTOR right_UpperArmWorldPos;
+	VECTOR right_LowerArmWorldPos;
+	VECTOR right_HandWorldPos;
+	VECTOR left_UpperLegWorldPos;
+	VECTOR left_LowerLegWorldPos;
+	VECTOR left_FootWorldPos;
+	VECTOR right_UpperLegWorldPos;
+	VECTOR right_LowerLegWorldPos;
+	VECTOR right_FootWorldPos;
 
 	enum State {
 		S_STOP,

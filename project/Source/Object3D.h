@@ -55,6 +55,6 @@ protected:
 	int hitModel;
 	Transform transform;
 	EllipseCollider* E_collder;
-	SphereCollder* S_headcollider;
+	// SphereCollder* S_headcollider;
 	// SphereCollder* S_bodycollider;
 };

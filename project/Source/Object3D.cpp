@@ -8,7 +8,7 @@ Object3D::Object3D()
 	transform.rotation = VGet(0, 0, 0);
 	transform.scale = VGet(1, 1, 1);
 	E_collder = nullptr;
-	S_headcollider = nullptr;
+	// S_headcollider = nullptr;
 	// S_bodycollider = nullptr;
 }
 
@@ -37,11 +37,10 @@ void Object3D::Draw()
 	MV1DrawModel(hModel);
 	MV1DrawModel(hitModel);
 
-
+#if 0
 	if (S_headcollider != nullptr) {
 		DrawSphere3D(S_headcollider->localOffset + transform.position, S_headcollider->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
-#if 0
 	if (S_bodycollider != nullptr) {
 		DrawSphere3D(S_bodycollider->localOffset + transform.position, S_bodycollider->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
