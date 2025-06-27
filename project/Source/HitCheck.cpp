@@ -1,6 +1,8 @@
 #include "HitCheck.h"
 #include <cmath>
 #include <DxLib.h>
+#include "Player.h"
+#include "Object3D.h"
 
 std::string HitCheck::CheckHitToPart(const Player& target, const VECTOR& attackPos, float attackRadius)
 {

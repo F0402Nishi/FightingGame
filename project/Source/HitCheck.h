@@ -2,6 +2,7 @@
 #include <string>
 #include "Player.h"
 #include "Object3D.h"
+#include <DxLib.h>
 
 class HitCheck : public Object3D
 {

@@ -4,7 +4,6 @@
 #include "Field.h"
 #include <string>
 #include <vector>
-#include "HitCheck.h"
 
 class Player : public Object3D
 {
@@ -32,6 +31,11 @@ private:
 	Player* opponent;
 	VECTOR basePos;
 	VECTOR worldCenter;
+	VECTOR attackPos;
+	float attackRadius;
+	std::string hitPart;
+	VECTOR tp = transform.position;
+	bool isAttack = false;
 
 	// PlayerÇÃçúêßå‰
 	int headBone;
