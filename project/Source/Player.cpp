@@ -111,16 +111,21 @@ void Player::Update()
 	hitSpheres[1].localOffset = bodyWorldPos - basePos;
 	hitSpheres[2].localOffset = left_UpperArmWorldPos - basePos;
 	hitSpheres[3].localOffset = left_LowerArmWorldPos - basePos;
-	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(10.0f, 3.0f, -13.0f);;
+	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(8.0f, 3.5f, -10.0f);
 	hitSpheres[5].localOffset = right_UpperArmWorldPos - basePos;
 	hitSpheres[6].localOffset = right_LowerArmWorldPos - basePos;
-	hitSpheres[7].localOffset = right_HandWorldPos - basePos;
+	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(5.0f, 7.0f, 0.0f);
 	hitSpheres[8].localOffset = left_UpperLegWorldPos - basePos;
 	hitSpheres[9].localOffset = left_LowerLegWorldPos - basePos;
 	hitSpheres[10].localOffset = left_FootWorldPos - basePos;
 	hitSpheres[11].localOffset = right_UpperLegWorldPos - basePos;
 	hitSpheres[12].localOffset = right_LowerLegWorldPos - basePos;
 	hitSpheres[13].localOffset = right_FootWorldPos - basePos;
+
+	if (!isPlayer) {
+		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
+		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
+	}
 
 	// 地面に立たせる
 	Stage* stage = FindGameObject<Stage>();
@@ -231,10 +236,10 @@ void Player::InitHitSpheres()
 	hitSpheres.emplace_back(VGet(0, 0, 0), 60, "Body");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_UpperArm");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_LowerArm");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 20, "Left_Hand");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 30, "Left_Hand");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Right_UpperArm");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Right_LowerArm");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 20, "Right_Hand");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 30, "Right_Hand");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_UpperLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_LowerLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_Foot");
@@ -267,7 +272,7 @@ void Player::UpdateStop()
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
 
-	if (!isPlayer) return;
+	// if (!isPlayer) return;
 
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -10.0f;
@@ -300,8 +305,14 @@ void Player::UpdateStop()
 
 	if (CheckHitKey(KEY_INPUT_I)) { // パンチ1
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
-		if (opponent != nullptr) { damage = 10; opponent->SetDamage(damage); }
 		state = S_ATTACK1;
+		if (opponent != nullptr) {
+			VECTOR attackPos = hitSpheres[4].GetWorldCenter(GetTransform().position);
+			float attackRadius = hitSpheres[4].radius;
+
+			std::string hitPart = HitCheck::CheckHitToPart(*opponent,attackPos,attackRadius);
+			damage = 10; opponent->SetDamage(damage);
+		}
 	}
 	if (CheckHitKey(KEY_INPUT_U)) { // パンチ2
 		anim->Play("data/Character/Player/Atk_P_2.mv1", false);

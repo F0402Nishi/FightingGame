@@ -4,6 +4,7 @@
 #include "Field.h"
 #include <string>
 #include <vector>
+#include "HitCheck.h"
 
 class Player : public Object3D
 {
