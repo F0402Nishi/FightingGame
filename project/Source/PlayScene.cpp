@@ -44,12 +44,12 @@ void PlayScene::Draw()
 {
 	// SetBackgroundColor(0, 0, 255); //¦”wŒi‚ÌF•ÏX‚ÉŽg—p
 	
-	DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0));
-	DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0));
-	DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255));
+	// DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0));
+	// DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0));
+	// DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255));
 
-	DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));
-	DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
+	// DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));
+	// DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
 }
 
 void PlayScene::UpdateCamera()
@@ -69,9 +69,12 @@ void PlayScene::UpdateCamera()
 	if (zoomZ > -400.0f) zoomZ = -400.0f;     // ‹ß‚Ã‚«‚·‚¬‚È‚¢
 	if (zoomZ < -1200.0f) zoomZ = -1200.0f;   // ˆø‚«‚·‚¬‚È‚¢
 
+#if 0
+
 	ImGui::Begin("Camera");
 	ImGui::InputFloat("zoomZ", &zoomZ);
 	ImGui::End();
+#endif // 0
 
 	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, zoomZ), VGet(posx, posy, 0));
 }

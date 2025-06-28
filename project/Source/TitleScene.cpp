@@ -43,7 +43,7 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-	if (CheckHitKey(KEY_INPUT_P)) {
+	if (CheckHitKey(KEY_INPUT_RETURN)) {
 		SceneManager::ChangeScene("PLAY");
 	}
 	if (CheckHitKey(KEY_INPUT_ESCAPE)) {
@@ -54,9 +54,11 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
+	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
+
 	DrawRotaGraph3D(0, 0, 0, 3, 0, TitleImage, TRUE);
-	DrawString(0, 0, "TITLE SCENE", GetColor(255,255,255));
-	DrawString(500, 400, "Push [P]Key To Play", GetColor(255, 255, 255));
+	DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64));
+	DrawString(520, 600, "Push [Enter]Key To Play", GetColor(64, 64, 64));
 
 	// DrawFormatString(100, 100, GetColor(255, 255, 255), "%d", readVal);
 }

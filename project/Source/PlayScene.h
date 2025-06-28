@@ -14,4 +14,5 @@ public:
 private:
 	Player* p1;
 	Player* p2;
+	int Hpbar;
 };

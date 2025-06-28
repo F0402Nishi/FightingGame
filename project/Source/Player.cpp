@@ -46,15 +46,16 @@ Player::Player(bool _isPlayer)
 	isPlayer = _isPlayer;
 
 	if (isPlayer) {
-		transform.position = VGet(-200.0f, 15.0f, 150.0f);
+		transform.position = VGet(-200.0f, 14.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
 		// S_headcollider = new SphereCollder(VGet(10, 300, 0), 35, "Head");
 		// S_bodycollider = new SphereCollder(VGet(-10, 210, 15), 60, "Body");
 	}
 	else
 	{
-		transform.position = VGet(200.0f, 15.0f, 150.0f);
+		transform.position = VGet(200.0f, 14.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
+		// transform.rotation = VGet(0, 0, 0);
 		// S_headcollider = new SphereCollder(VGet(-10, 300, 0), 35, "Head");
 		// S_bodycollider = new SphereCollder(VGet(10, 210, -15), 60, "Body");
 	}
@@ -173,9 +174,9 @@ void Player::Update()
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
-	ImGui::Text("push.x: %.2f", hit.x);
-	ImGui::Text("push.y: %.2f", hit.y);
-	ImGui::Text("state: %d", (int)state);
+	// ImGui::Text("push.x: %.2f", hit.x);
+	// ImGui::Text("push.y: %.2f", hit.y);
+	// ImGui::Text("state: %d", (int)state);
 	ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
 }
@@ -241,12 +242,12 @@ void Player::InitHitSpheres()
 	hitSpheres.emplace_back(VGet(0, 0, 0), 30, "Right_UpperArm");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 30, "Right_LowerArm");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 30, "Right_Hand");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 50, "Left_UpperLeg");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 42, "Left_LowerLeg");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Left_Foot");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 50, "Right_UpperLeg");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 42, "Right_LowerLeg");
-	hitSpheres.emplace_back(VGet(0, 0, 0), 50, "Right_Foot");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Left_UpperLeg");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Left_LowerLeg");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 42, "Left_Foot");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_UpperLeg");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_LowerLeg");
+	hitSpheres.emplace_back(VGet(0, 0, 0), 42, "Right_Foot");
 
 #if 0
 	if (isPlayer) {
@@ -283,13 +284,15 @@ void Player::UpdateStop()
 		inputDir.x = 10.0f;
 		// anim->Play("data/Character/Player/Walk_F.mv1", true);
 	}
+
+#if false //のちに戻す
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
 		velocityY = PLAYER_JUMP;
 		transform.position.y += velocityY;
 		state = S_JUMP;
 	}
 
-#if false //のちに戻す
+
 	if (VSize(inputDir) == 0) {
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
@@ -328,13 +331,14 @@ void Player::UpdateStop()
 	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) { // キック2
 		anim->Play("data/Character/Player/Atk_K_2.mv1", false);
 		state = S_ATTACK1;
+		if (opponent != nullptr) {
+			attackPos = hitSpheres[10].GetWorldCenter(transform.position);
+			attackRadius = hitSpheres[10].radius;
+			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
+			if (!hitPart.empty()) { damage = 50; opponent->SetDamage(damage); }
+		}
 	}
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) { // キック3
-		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
-		state = S_ATTACK1;
-	}
-
-	if (CheckHitKey(KEY_INPUT_U)) { // パンチ2
+	else if (CheckHitKey(KEY_INPUT_U)) { // パンチ2
 		anim->Play("data/Character/Player/Atk_P_2.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
@@ -344,7 +348,18 @@ void Player::UpdateStop()
 			if (!hitPart.empty()) { damage = 50; opponent->SetDamage(damage); }
 		}
 	}
-	if (CheckHitKey(KEY_INPUT_P)) { // パンチ3
+
+	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) { // キック3
+		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+		state = S_ATTACK1;
+		if (opponent != nullptr) {
+			attackPos = hitSpheres[13].GetWorldCenter(transform.position);
+			attackRadius = hitSpheres[13].radius;
+			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
+			if (!hitPart.empty()) { damage = 70; opponent->SetDamage(damage); }
+		}
+	}
+	else if (CheckHitKey(KEY_INPUT_P)) { // パンチ3
 		anim->Play("data/Character/Player/Atk_P_3.mv1", false);
 		state = S_ATTACK2;
 		if (opponent != nullptr) {
@@ -379,10 +394,16 @@ void Player::UpdateAttack1()
 				if (!hitPart.empty()) { damage = 120; opponent->SetDamage(damage); }
 			}
 		}
+
 		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) {
 			anim->Play("data/Character/Player/Atk_K_2.mv1", false);
-			// if (opponent != nullptr) { damage = 150; opponent->SetDamage(damage); }
 			state = S_ATTACK2;
+			if (opponent != nullptr) {
+				attackPos = hitSpheres[10].GetWorldCenter(transform.position);
+				attackRadius = hitSpheres[10].radius;
+				hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
+				if (!hitPart.empty()) { damage =120; opponent->SetDamage(damage); }
+			}
 		}
 	}
 }
@@ -407,8 +428,13 @@ void Player::UpdateAttack2()
 		}
 		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) {
 			anim->Play("data/Character/Player/Atk_K_3.mv1", false);
-			// if (opponent != nullptr) { damage = 300; opponent->SetDamage(damage); }
 			state = S_ATTACK3;
+			if (opponent != nullptr) {
+				attackPos = hitSpheres[13].GetWorldCenter(transform.position);
+				attackRadius = hitSpheres[13].radius;
+				hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
+				if (!hitPart.empty()) { damage = 200; opponent->SetDamage(damage); }
+			}
 		}
 	}
 }

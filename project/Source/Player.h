@@ -17,6 +17,7 @@ public:
 	void ResolvePlayerCollision();
 	void InitHitSpheres();
 	std::vector<SphereCollder> hitSpheres;
+	std::string GetHit() { return hitPart; }
 
 private:
 	Animator* anim;

@@ -8,6 +8,7 @@ std::string HitCheck::CheckHitToPart(const Player& target, const VECTOR& attackP
 {
     const std::vector<SphereCollder>& spheres = target.hitSpheres;
     VECTOR targetPos = target.GetTransform().position;
+    printf("target.position = (%f, %f, %f)\n", targetPos.x, targetPos.y, targetPos.z);
 
     for (const SphereCollder& col : spheres) 
     {
@@ -17,10 +18,6 @@ std::string HitCheck::CheckHitToPart(const Player& target, const VECTOR& attackP
         float distSp = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
         float sumRadius = attackRadius + col.radius;
         float sumRadiusSp = sumRadius * sumRadius;
-
-        VECTOR top = VAdd(worldCenter, VGet(0, 0, 0));
-        VECTOR down = VAdd(worldCenter, VGet(0, -0.1f, 0));
-        DrawSphere3D(top, 20.0f, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 
         if (distSp <= sumRadiusSp) { return col.partName; }
     }

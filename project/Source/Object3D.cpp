@@ -48,6 +48,6 @@ void Object3D::Draw()
 
 	if (E_collder != nullptr) {
 		EllipseCollider(transform.position, transform.position, TRUE);
-		// DrawCapsule3D(E_collder->left + transform.position, E_collder->right + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 255, 255), FALSE);
+		DrawCapsule3D(E_collder->left + transform.position, E_collder->right + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 255, 255), FALSE);
 	}
 }
