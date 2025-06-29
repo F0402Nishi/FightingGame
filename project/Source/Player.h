@@ -22,7 +22,7 @@ public:
 private:
 	Animator* anim;
 	// Field* field;
-	bool isJumping = false;
+	bool isJumping;
 	VECTOR velocity;
 	float velocityY = 0.0f;
 	int Hp = 1000;
@@ -36,7 +36,8 @@ private:
 	float attackRadius;
 	std::string hitPart;
 	VECTOR tp = transform.position;
-	bool isAttack = false;
+	int colIndex;
+	bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ğŒ¸‚ç‚¹‚é
 
 	// Player‚Ìœ§Œä
 	int headBone;
@@ -82,4 +83,5 @@ private:
 	void UpdateAttack2();
 	void UpdateAttack3();
 	void UpdateJump();
+	void CollisionDetection();
 };

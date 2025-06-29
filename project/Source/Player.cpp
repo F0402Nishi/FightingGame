@@ -44,6 +44,9 @@ Player::Player(bool _isPlayer)
 
 	state = S_STOP;
 	isPlayer = _isPlayer;
+	colIndex = -1;
+	isJumping = false;
+	canReduceHp = false;
 
 	if (isPlayer) {
 		transform.position = VGet(-200.0f, 14.0f, 150.0f);
@@ -311,20 +314,16 @@ void Player::UpdateStop()
 		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
-			attackPos = hitSpheres[13].GetWorldCenter(transform.position);
-			attackRadius = hitSpheres[13].radius;
-			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-			if (!hitPart.empty()) { damage = 10; opponent->SetDamage(damage); }
+			colIndex = 13;
+			damage = 10;
 		}
 	}
 	else if (CheckHitKey(KEY_INPUT_I)) { // パンチ1
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
-			attackPos = hitSpheres[4].GetWorldCenter(transform.position);
-			attackRadius = hitSpheres[4].radius;
-			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-			if (!hitPart.empty()) { damage = 10; opponent->SetDamage(damage); }
+			colIndex = 4;
+			damage = 10;
 		}
 	}
 
@@ -332,20 +331,16 @@ void Player::UpdateStop()
 		anim->Play("data/Character/Player/Atk_K_2.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
-			attackPos = hitSpheres[10].GetWorldCenter(transform.position);
-			attackRadius = hitSpheres[10].radius;
-			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-			if (!hitPart.empty()) { damage = 50; opponent->SetDamage(damage); }
+			colIndex = 10;
+			damage = 50;
 		}
 	}
 	else if (CheckHitKey(KEY_INPUT_U)) { // パンチ2
 		anim->Play("data/Character/Player/Atk_P_2.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
-			attackPos = hitSpheres[7].GetWorldCenter(transform.position);
-			attackRadius = hitSpheres[7].radius;
-			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-			if (!hitPart.empty()) { damage = 50; opponent->SetDamage(damage); }
+			colIndex = 7;
+			damage = 50;
 		}
 	}
 
@@ -353,20 +348,16 @@ void Player::UpdateStop()
 		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
-			attackPos = hitSpheres[13].GetWorldCenter(transform.position);
-			attackRadius = hitSpheres[13].radius;
-			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-			if (!hitPart.empty()) { damage = 70; opponent->SetDamage(damage); }
+			colIndex = 13;
+			damage = 70;
 		}
 	}
 	else if (CheckHitKey(KEY_INPUT_P)) { // パンチ3
 		anim->Play("data/Character/Player/Atk_P_3.mv1", false);
 		state = S_ATTACK2;
 		if (opponent != nullptr) {
-			attackPos = hitSpheres[4].GetWorldCenter(transform.position);
-			attackRadius = hitSpheres[4].radius;
-			hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-			if (!hitPart.empty()) { damage = 70; opponent->SetDamage(damage); }
+			colIndex = 4;
+			damage = 70;
 		}
 
 	}
@@ -381,6 +372,7 @@ void Player::UpdateAttack1()
 {
 	if (anim->IsFinish()) {
 		state = S_STOP;
+		return;
 	}
 
 	if (anim->CurrentAnimTime() > 6.0f) {
@@ -388,10 +380,8 @@ void Player::UpdateAttack1()
 			anim->Play("data/Character/Player/Atk_P_2.mv1", false);
 			state = S_ATTACK2;
 			if (opponent != nullptr) {
-				attackPos = hitSpheres[7].GetWorldCenter(transform.position);
-				attackRadius = hitSpheres[7].radius;
-				hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-				if (!hitPart.empty()) { damage = 120; opponent->SetDamage(damage); }
+				colIndex = 7;
+				damage = 120;
 			}
 		}
 
@@ -399,10 +389,8 @@ void Player::UpdateAttack1()
 			anim->Play("data/Character/Player/Atk_K_2.mv1", false);
 			state = S_ATTACK2;
 			if (opponent != nullptr) {
-				attackPos = hitSpheres[10].GetWorldCenter(transform.position);
-				attackRadius = hitSpheres[10].radius;
-				hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-				if (!hitPart.empty()) { damage =120; opponent->SetDamage(damage); }
+				colIndex = 10;
+				damage = 120;
 			}
 		}
 	}
@@ -419,10 +407,8 @@ void Player::UpdateAttack2()
 			anim->Play("data/Character/Player/Atk_P_3.mv1", false);
 			state = S_ATTACK3;
 			if (opponent != nullptr) {
-				attackPos = hitSpheres[4].GetWorldCenter(transform.position);
-				attackRadius = hitSpheres[4].radius;
-				hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-				if (!hitPart.empty()) { damage = 200; opponent->SetDamage(damage); }
+				colIndex = 4;
+				damage = 200;
 			}
 
 		}
@@ -430,10 +416,8 @@ void Player::UpdateAttack2()
 			anim->Play("data/Character/Player/Atk_K_3.mv1", false);
 			state = S_ATTACK3;
 			if (opponent != nullptr) {
-				attackPos = hitSpheres[13].GetWorldCenter(transform.position);
-				attackRadius = hitSpheres[13].radius;
-				hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-				if (!hitPart.empty()) { damage = 200; opponent->SetDamage(damage); }
+				colIndex = 13;
+				damage = 200;
 			}
 		}
 	}
@@ -450,4 +434,14 @@ void Player::UpdateJump()
 {
 //	transform.position += velocity;
 	transform.position.y += velocityY;
+}
+
+void Player::CollisionDetection()
+{
+	if (opponent != nullptr) {
+		attackPos = hitSpheres[colIndex].GetWorldCenter(transform.position);
+		attackRadius = hitSpheres[colIndex].radius;
+		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
+		if (!hitPart.empty()) { opponent->SetDamage(damage); canReduceHp = false; }
+	}
 }
