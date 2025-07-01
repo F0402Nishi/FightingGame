@@ -8,7 +8,7 @@ std::string HitCheck::CheckHitToPart(const Player& target, const VECTOR& attackP
 {
     const std::vector<SphereCollder>& spheres = target.hitSpheres;
     VECTOR targetPos = target.GetTransform().position;
-    printf("target.position = (%f, %f, %f)\n", targetPos.x, targetPos.y, targetPos.z);
+    // printf("target.position = (%f, %f, %f)\n", targetPos.x, targetPos.y, targetPos.z);
 
     for (const SphereCollder& col : spheres) 
     {

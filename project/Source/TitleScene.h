@@ -17,4 +17,7 @@ public:
 private:
 	int readVal;
 	int TitleImage;
+	int OperationImage;
+	bool operation;
+	bool TitleKeyInput;
 };

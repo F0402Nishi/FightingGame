@@ -13,7 +13,13 @@ TitleScene::TitleScene()
 
 	TitleImage = LoadGraph("data/2D/TiteleLogo.png");
 	assert(TitleImage >= 0);
+	OperationImage = LoadGraph("data/2D/Ki-Bo-Do_4.png");
+	assert(OperationImage >= 0);
 
+	operation = false;
+	TitleKeyInput = false;
+
+// ステージ試作
 #if false
 	ofstream f("data/test.txt"); //ファイルを開く
 	// const char* str = "1Aa_";
@@ -49,6 +55,13 @@ void TitleScene::Update()
 	if (CheckHitKey(KEY_INPUT_ESCAPE)) {
 		SceneManager::Exit();
 	}
+	if (CheckHitKey(KEY_INPUT_TAB) && TitleKeyInput == false) {
+		operation = !operation;
+		TitleKeyInput = true;
+	}
+	if (!CheckHitKey(KEY_INPUT_TAB)) {
+		TitleKeyInput = false;
+	}
 }
 
 
@@ -57,8 +70,10 @@ void TitleScene::Draw()
 	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
 
 	DrawRotaGraph3D(0, 0, 0, 3, 0, TitleImage, TRUE);
-	DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64));
 	DrawString(520, 600, "Push [Enter]Key To Play", GetColor(64, 64, 64));
 
+	if (operation == true) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); }
+
+	// DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64)); //※Sceneの確認に使用
 	// DrawFormatString(100, 100, GetColor(255, 255, 255), "%d", readVal);
 }

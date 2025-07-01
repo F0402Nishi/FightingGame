@@ -5,15 +5,13 @@
 #include "Field.h"
 #include "../ImGui/imgui.h"
 
-int n = 0;
+static int n = 0;
 static float posx = 000.0f;
 static float posy = 200.0f;
 static float posz = -400.0f;
 
 PlayScene::PlayScene()
 {
-	// SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, -400.0f), VGet(posx, posy, 0));
-
 	p1 = new Player(true);
 	p2 = new Player(false);
 	new Stage();
@@ -23,6 +21,8 @@ PlayScene::PlayScene()
 	p2->SetOpponent(p1);
 	p1->InitHitSpheres();
 	p2->InitHitSpheres();
+
+	PlayerKeyInput = false;
 }
 
 PlayScene::~PlayScene()
@@ -32,23 +32,27 @@ PlayScene::~PlayScene()
 void PlayScene::Update()
 {
 	UpdateCamera();
-	// VECTOR playerPos = p1->GetTransform().position;
-	// SetCameraPositionAndTarget_UpVecY(VGet(playerPos.x, posy, -400.0f), VGet(playerPos.x, posy, 0));
 
 	if (CheckHitKey(KEY_INPUT_T)) {
 		SceneManager::ChangeScene("TITLE");
+	}
+	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
+		PlayerKeyInput = true;
+	}
+	if (!CheckHitKey(KEY_INPUT_TAB)) {
+		PlayerKeyInput = false;
 	}
 }
 
 void PlayScene::Draw()
 {
-	// SetBackgroundColor(0, 0, 255); //※背景の色変更に使用
+	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
 	
-	// DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0));
-	// DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0));
-	// DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255));
+	// DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0)); //※ステージのx座標を確認に使用
+	// DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0)); //※ステージのy座標を確認に使用
+	// DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255)); //※ステージのy座標を確認に使用
 
-	// DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));
+	// DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
 	// DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
 }
 
@@ -69,12 +73,11 @@ void PlayScene::UpdateCamera()
 	if (zoomZ > -400.0f) zoomZ = -400.0f;     // 近づきすぎない
 	if (zoomZ < -1200.0f) zoomZ = -1200.0f;   // 引きすぎない
 
-#if 0
+	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, zoomZ), VGet(posx, posy, 0));
 
+#if 0
 	ImGui::Begin("Camera");
 	ImGui::InputFloat("zoomZ", &zoomZ);
 	ImGui::End();
 #endif // 0
-
-	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, zoomZ), VGet(posx, posy, 0));
 }

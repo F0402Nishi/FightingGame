@@ -21,7 +21,7 @@ public:
 
 private:
 	Animator* anim;
-	// Field* field;
+	Field* field;
 	bool isJumping;
 	VECTOR velocity;
 	float velocityY = 0.0f;
@@ -38,6 +38,8 @@ private:
 	VECTOR tp = transform.position;
 	int colIndex;
 	bool canReduceHp; // trueÇÃÇ∆Ç´ÇæÇØHPÇå∏ÇÁÇπÇÈ
+	int DrawValue;
+	int TargetValue;
 
 	// PlayerÇÃçúêßå‰
 	int headBone;
@@ -84,4 +86,5 @@ private:
 	void UpdateAttack3();
 	void UpdateJump();
 	void CollisionDetection();
+	void BoneCollision();
 };

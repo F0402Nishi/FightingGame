@@ -4,13 +4,39 @@
 #include "Stage.h"
 #include "HitCheck.h"
 
-#define PLAYER_SPEED 2.0f;
-#define PLAYER_JUMP 25.0f;
+#define PLAYER_SPEED 2.0f
+#define PLAYER_JUMP 25.0f
+#define PLAYER_HP 1000
+#define DRAW_SIZE  1.0f
 
 Player::Player(bool _isPlayer)
 {
 	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
 	assert(hModel >= 0);
+
+	anim = new Animator(hModel);
+
+	state = S_STOP;
+	isPlayer = _isPlayer;
+	colIndex = 0;
+	isJumping = false;
+	canReduceHp = false;
+	Hp = PLAYER_HP;
+	DrawValue = Hp * DRAW_SIZE;
+
+	if (isPlayer) {
+		transform.position = VGet(-200.0f, 14.0f, 150.0f);
+		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
+	}
+	else
+	{
+		transform.position = VGet(200.0f, 14.0f, 150.0f);
+		transform.rotation = VGet(0, DegToRad(90.0f), 0);
+	}
+
+	transform.scale = VGet(2, 2, 2);
+
+	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
 	// Playerの骨を取得して、番号をつけてる
 	headBone = MV1SearchFrame(hModel, "Head");
@@ -39,35 +65,6 @@ Player::Player(bool _isPlayer)
 	MV1SetFrameUserLocalMatrix(hModel, mc, MGetIdent());
 	MV1SetFrameUserLocalMatrix(hModel, md, MGetIdent());
 #endif
-
-	anim = new Animator(hModel);
-
-	state = S_STOP;
-	isPlayer = _isPlayer;
-	colIndex = -1;
-	isJumping = false;
-	canReduceHp = false;
-
-	if (isPlayer) {
-		transform.position = VGet(-200.0f, 14.0f, 150.0f);
-		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
-		// S_headcollider = new SphereCollder(VGet(10, 300, 0), 35, "Head");
-		// S_bodycollider = new SphereCollder(VGet(-10, 210, 15), 60, "Body");
-	}
-	else
-	{
-		transform.position = VGet(200.0f, 14.0f, 150.0f);
-		transform.rotation = VGet(0, DegToRad(90.0f), 0);
-		// transform.rotation = VGet(0, 0, 0);
-		// S_headcollider = new SphereCollder(VGet(-10, 300, 0), 35, "Head");
-		// S_bodycollider = new SphereCollder(VGet(10, 210, -15), 60, "Body");
-	}
-	
-	transform.scale = VGet(2, 2, 2);
-
-	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
-	// E_Body_collder = new EllipseCollder(VGet(-10, 250, 0), VGet(-10, 150, 0), 30);
-	// E_collder = nullptr;
 }
 
 Player::~Player()
@@ -77,7 +74,11 @@ Player::~Player()
 
 void Player::Update()
 {
+	canReduceHp = false;
+
 	anim->Update();
+	
+	BoneCollision();
 
 	switch (state) {
 	case S_STOP:
@@ -97,57 +98,15 @@ void Player::Update()
 		break;
 	}
 
-	// Playerの攻撃判定用Colliderの位置を調整
-	heardWorldPos = MV1GetFramePosition(hModel, headBone);
-	bodyWorldPos = MV1GetFramePosition(hModel, bodyBone);
-	left_UpperArmWorldPos = MV1GetFramePosition(hModel, left_UpperArmBone);
-	left_LowerArmWorldPos = MV1GetFramePosition(hModel, left_LowerArmBone);
-	left_HandWorldPos = MV1GetFramePosition(hModel, left_HandBone);
-	right_UpperArmWorldPos = MV1GetFramePosition(hModel, right_UpperArmBone);
-	right_LowerArmWorldPos = MV1GetFramePosition(hModel, right_LowerArmBone);
-	right_HandWorldPos = MV1GetFramePosition(hModel, right_HandBone);
-	left_UpperLegWorldPos = MV1GetFramePosition(hModel, left_UpperLegBone);
-	left_LowerLegWorldPos = MV1GetFramePosition(hModel, left_LowerLegBone);
-	left_FootWorldPos = MV1GetFramePosition(hModel, left_FootBone);
-	right_UpperLegWorldPos = MV1GetFramePosition(hModel, right_UpperLegBone);
-	right_LowerLegWorldPos = MV1GetFramePosition(hModel, right_LowerLegBone);
-	right_FootWorldPos = MV1GetFramePosition(hModel, right_FootBone);
-	hitSpheres[0].localOffset = (heardWorldPos - basePos) + VGet(0,10.0f,0);
-	hitSpheres[1].localOffset = bodyWorldPos - basePos;
-	hitSpheres[2].localOffset = left_UpperArmWorldPos - basePos;
-	hitSpheres[3].localOffset = left_LowerArmWorldPos - basePos;
-	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(8.0f, 3.5f, -10.0f);
-	hitSpheres[5].localOffset = right_UpperArmWorldPos - basePos;
-	hitSpheres[6].localOffset = right_LowerArmWorldPos - basePos;
-	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(5.0f, 7.0f, 0.0f);
-	hitSpheres[8].localOffset = left_UpperLegWorldPos - basePos;
-	hitSpheres[9].localOffset = left_LowerLegWorldPos - basePos;
-	hitSpheres[10].localOffset = left_FootWorldPos - basePos;
-	hitSpheres[11].localOffset = right_UpperLegWorldPos - basePos;
-	hitSpheres[12].localOffset = right_LowerLegWorldPos - basePos;
-	hitSpheres[13].localOffset = right_FootWorldPos - basePos;
-
-	if (!isPlayer) {
-		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
-		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
-	}
-
 	// 地面に立たせる
 	Stage* stage = FindGameObject<Stage>();
 	VECTOR hit;
 	VECTOR hit1;
 	if (stage->SearchObject(transform.position + VGet(0, 1000, 0), transform.position + VGet(0, -10, 0), &hit)) {
 		transform.position = hit + VGet(0, 15.0f, 0);
-		if (state == S_JUMP) {
-			state = S_STOP;
-		}
+		if (state == S_JUMP) { state = S_STOP; }
 	}
-	else {
-		//velocityY = 0.0f;
-		static const float Gravity = 1.0f;
-		velocityY -= Gravity;
-		// transform.position.y += velocityY;
-	}
+	else { static const float Gravity = 1.0f; velocityY -= Gravity; }
 
 	// 壁との当たり判定
 	if (stage->SearchObject(transform.position + VGet(100, 0, 0), transform.position + VGet(-100, 0, 0), &hit1)) {
@@ -188,10 +147,31 @@ void Player::Draw()
 {
 	Object3D::Draw();
 
+	DrawFormatString(50, 50, GetColor(255, 255, 0), "ＨＰ", Hp);
+	DrawFillBox(200, 50, Hp * DRAW_SIZE, 66, GetColor(255, 255, 0));
+	DrawLineBox(200, 50, Hp * DRAW_SIZE, 66, GetColor(0, 0, 0));
+
+	DrawFormatString(50, 100, GetColor(0, 255, 255), "描画の値", DrawValue);
+
+	// バーの色変化
+	int color = GetColor(0, 255, 0);  // 通常：緑
+
+	if (DrawValue <= PLAYER_HP * DRAW_SIZE / 2) {
+		color = GetColor(255, 255, 0);  // 半分以下：黄色
+	}
+
+	if (DrawValue <= DRAW_SIZE) {
+		color = GetColor(255, 0, 0);    // 残りHP1以下：赤
+	}
+
+	// アニメーションバーの描画
+	DrawFillBox(200, 100, 200 + DrawValue, 116, color);
+	DrawLineBox(200, 100, 200 + DrawValue, 116, GetColor(0, 0, 0));
+
 	basePos = transform.position;
 	for (const SphereCollder& col : hitSpheres) {
 		worldCenter = col.GetWorldCenter(basePos);
-		DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
+		// DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
 }
 
@@ -203,7 +183,10 @@ void Player::SetOpponent(Player* other)
 void Player::SetDamage(int dmg)
 {
 	Hp -= dmg;
-	if (Hp == 0) { anim->Play("data/Character/Player/Guard_Hit.mv1", true); }
+	TargetValue = Hp * DRAW_SIZE;
+	if (Hp > PLAYER_HP) Hp = PLAYER_HP;
+	if (Hp < 0) Hp = 0;
+	if (DrawValue > TargetValue) { DrawValue--; }
 }
 
 void Player::ResolvePlayerCollision()
@@ -273,7 +256,7 @@ void Player::UpdateStop()
 {
 	VECTOR inputDir = VGet(0, 0, 0);
 
-	if (VSize(inputDir) == 0) { // 読み込み順でエラーが出るため試験用に配置
+	if (VSize(inputDir) == 0) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
 
@@ -281,14 +264,15 @@ void Player::UpdateStop()
 
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -10.0f;
-		// anim->Play("data/Character/Player/Walk_B.mv1", true);
+		// anim->Play("data/Character/Player/Walk_B.mv1", true); //アニメーションが先行してしまうので、保留
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
 		inputDir.x = 10.0f;
-		// anim->Play("data/Character/Player/Walk_F.mv1", true);
+		// anim->Play("data/Character/Player/Walk_F.mv1", true); //アニメーションが先行してしまうので、保留
 	}
 
-#if false //のちに戻す
+//のちに戻す
+#if false 
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
 		velocityY = PLAYER_JUMP;
 		transform.position.y += velocityY;
@@ -310,57 +294,65 @@ void Player::UpdateStop()
 		transform.position += velocity;
 	}
 
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_I)) { // キック1
+	if (CheckHitKey(KEY_INPUT_J)) { // キック1
 		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
+			canReduceHp = true;
 			colIndex = 13;
 			damage = 10;
 		}
 	}
-	else if (CheckHitKey(KEY_INPUT_I)) { // パンチ1
+	else if (CheckHitKey(KEY_INPUT_U)) { // パンチ1
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
+			canReduceHp = true;
 			colIndex = 4;
 			damage = 10;
 		}
 	}
 
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) { // キック2
+	if (CheckHitKey(KEY_INPUT_K)) { // キック2
 		anim->Play("data/Character/Player/Atk_K_2.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
+			canReduceHp = true;
 			colIndex = 10;
 			damage = 50;
 		}
 	}
-	else if (CheckHitKey(KEY_INPUT_U)) { // パンチ2
+	else if (CheckHitKey(KEY_INPUT_I)) { // パンチ2
 		anim->Play("data/Character/Player/Atk_P_2.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
+			canReduceHp = true;
 			colIndex = 7;
 			damage = 50;
 		}
 	}
 
-	if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) { // キック3
+	if (CheckHitKey(KEY_INPUT_L)) { // キック3
 		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
 		state = S_ATTACK1;
 		if (opponent != nullptr) {
+			canReduceHp = true;
 			colIndex = 13;
 			damage = 70;
 		}
 	}
-	else if (CheckHitKey(KEY_INPUT_P)) { // パンチ3
+	else if (CheckHitKey(KEY_INPUT_O)) { // パンチ3
 		anim->Play("data/Character/Player/Atk_P_3.mv1", false);
 		state = S_ATTACK2;
 		if (opponent != nullptr) {
+			canReduceHp = true;
 			colIndex = 4;
 			damage = 70;
 		}
 
 	}
+
+	CollisionDetection();
 
 	if (CheckHitKey(KEY_INPUT_H)) { // ガード
 		anim->Play("data/Character/Player/Guard_Idle.mv1", false);
@@ -371,11 +363,14 @@ void Player::UpdateStop()
 void Player::UpdateAttack1()
 {
 	if (anim->IsFinish()) {
+		canReduceHp = false;
 		state = S_STOP;
 		return;
 	}
 
-	if (anim->CurrentAnimTime() > 6.0f) {
+// ダメージの高い攻撃を実装予定
+#if 0
+	if (anim->CurrentAnimTime() > 1.0f) {
 		if (CheckHitKey(KEY_INPUT_U)) {
 			anim->Play("data/Character/Player/Atk_P_2.mv1", false);
 			state = S_ATTACK2;
@@ -394,14 +389,21 @@ void Player::UpdateAttack1()
 			}
 		}
 	}
+
+	CollisionDetection();
+#endif // 0
 }
 
 void Player::UpdateAttack2()
 {
 	if (anim->IsFinish()) {
+		canReduceHp = false;
 		state = S_STOP;
+		return;
 	}
 
+// ダメージの高い攻撃を実装予定
+#if 0
 	if (anim->CurrentAnimTime() > 6.0f) {
 		if (CheckHitKey(KEY_INPUT_P)) {
 			anim->Play("data/Character/Player/Atk_P_3.mv1", false);
@@ -421,12 +423,17 @@ void Player::UpdateAttack2()
 			}
 		}
 	}
+
+	CollisionDetection();
+#endif // 0
 }
 
 void Player::UpdateAttack3()
 {
 	if (anim->IsFinish()) {
+		canReduceHp = false;
 		state = S_STOP;
+		return;
 	}
 }
 
@@ -442,6 +449,44 @@ void Player::CollisionDetection()
 		attackPos = hitSpheres[colIndex].GetWorldCenter(transform.position);
 		attackRadius = hitSpheres[colIndex].radius;
 		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-		if (!hitPart.empty()) { opponent->SetDamage(damage); canReduceHp = false; }
+		if (!hitPart.empty() && canReduceHp) { opponent->SetDamage(damage); canReduceHp = false; }
+	}
+}
+
+void Player::BoneCollision()
+{
+	// Playerの攻撃判定用Colliderの位置を調整
+	heardWorldPos = MV1GetFramePosition(hModel, headBone);
+	bodyWorldPos = MV1GetFramePosition(hModel, bodyBone);
+	left_UpperArmWorldPos = MV1GetFramePosition(hModel, left_UpperArmBone);
+	left_LowerArmWorldPos = MV1GetFramePosition(hModel, left_LowerArmBone);
+	left_HandWorldPos = MV1GetFramePosition(hModel, left_HandBone);
+	right_UpperArmWorldPos = MV1GetFramePosition(hModel, right_UpperArmBone);
+	right_LowerArmWorldPos = MV1GetFramePosition(hModel, right_LowerArmBone);
+	right_HandWorldPos = MV1GetFramePosition(hModel, right_HandBone);
+	left_UpperLegWorldPos = MV1GetFramePosition(hModel, left_UpperLegBone);
+	left_LowerLegWorldPos = MV1GetFramePosition(hModel, left_LowerLegBone);
+	left_FootWorldPos = MV1GetFramePosition(hModel, left_FootBone);
+	right_UpperLegWorldPos = MV1GetFramePosition(hModel, right_UpperLegBone);
+	right_LowerLegWorldPos = MV1GetFramePosition(hModel, right_LowerLegBone);
+	right_FootWorldPos = MV1GetFramePosition(hModel, right_FootBone);
+	hitSpheres[0].localOffset = (heardWorldPos - basePos) + VGet(0, 10.0f, 0);
+	hitSpheres[1].localOffset = bodyWorldPos - basePos;
+	hitSpheres[2].localOffset = left_UpperArmWorldPos - basePos;
+	hitSpheres[3].localOffset = left_LowerArmWorldPos - basePos;
+	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(8.0f, 3.5f, -10.0f);
+	hitSpheres[5].localOffset = right_UpperArmWorldPos - basePos;
+	hitSpheres[6].localOffset = right_LowerArmWorldPos - basePos;
+	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(5.0f, 7.0f, 0.0f);
+	hitSpheres[8].localOffset = left_UpperLegWorldPos - basePos;
+	hitSpheres[9].localOffset = left_LowerLegWorldPos - basePos;
+	hitSpheres[10].localOffset = left_FootWorldPos - basePos;
+	hitSpheres[11].localOffset = right_UpperLegWorldPos - basePos;
+	hitSpheres[12].localOffset = right_LowerLegWorldPos - basePos;
+	hitSpheres[13].localOffset = right_FootWorldPos - basePos;
+
+	if (!isPlayer) {
+		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
+		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 	}
 }
