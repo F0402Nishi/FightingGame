@@ -32,7 +32,7 @@ bool Field::SearchGround(VECTOR pos1, VECTOR pos2, VECTOR* hit)
     MV1DrawModel(hitModel);
 
     MV1_COLL_RESULT_POLY ret = MV1CollCheck_Line(hitModel, -1, pos1, pos2);
-    // DrawLine3D(pos1, pos2, GetColor(255, 0, 0));
+    DrawLine3D(pos1, pos2, GetColor(255, 0, 0));
     
 #if  false
     ImGui::Begin("Field");

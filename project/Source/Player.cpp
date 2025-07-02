@@ -22,7 +22,8 @@ Player::Player(bool _isPlayer)
 	isJumping = false;
 	canReduceHp = false;
 	Hp = PLAYER_HP;
-	DrawValue = Hp * DRAW_SIZE;
+	// DrawValue = Hp * DRAW_SIZE;
+	isGuarding = false;
 
 	if (isPlayer) {
 		transform.position = VGet(-200.0f, 14.0f, 150.0f);
@@ -53,14 +54,14 @@ Player::Player(bool _isPlayer)
 	right_UpperLegBone = MV1SearchFrame(hModel, "Right_UpperLeg");
 	right_LowerLegBone = MV1SearchFrame(hModel, "Right_LowerLeg");
 	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
+	hips_Bone = MV1SearchFrame(hModel, "Hips");
 
 #if 0 
 	// アニメーションの制御実験
-	int mA = MV1SearchFrame(hModel, "Hips");
 	int mB = MV1SearchFrame(hModel, "UpperChest");
 	int mc = MV1SearchFrame(hModel, "Neck");
 	int md = MV1SearchFrame(hModel, "Head");
-	MV1SetFrameUserLocalMatrix(hModel, mA, MGetIdent());
+	
 	MV1SetFrameUserLocalMatrix(hModel, mB, MGetIdent());
 	MV1SetFrameUserLocalMatrix(hModel, mc, MGetIdent());
 	MV1SetFrameUserLocalMatrix(hModel, md, MGetIdent());
@@ -74,24 +75,35 @@ Player::~Player()
 
 void Player::Update()
 {
-	canReduceHp = false;
-
 	anim->Update();
 	
 	BoneCollision();
+	ResolvePlayerCollision();
 
 	switch (state) {
 	case S_STOP:
 		UpdateStop();
 		break;
-	case S_ATTACK1:
-		UpdateAttack1();
+	case S_PUNCH1:
+		UpdatePunch1();
 		break;
-	case S_ATTACK2:
-		UpdateAttack2();
+	case S_PUNCH2:
+		UpdatePunch2();
 		break;
-	case S_ATTACK3:
-		UpdateAttack3();
+	case S_PUNCH3:
+		UpdatePunch3();
+		break;
+	case S_KICK1:
+		UpdateKick1();
+		break;
+	case S_KICK2:
+		UpdateKick2();
+		break;
+	case S_KICK3:
+		UpdateKick3();
+		break;
+	case S_PROTECT:
+		UpdateProtect();
 		break;
 	case S_JUMP:
 		UpdateJump();
@@ -131,8 +143,6 @@ void Player::Update()
 	}
 #endif
 
-	ResolvePlayerCollision();
-
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
@@ -147,6 +157,13 @@ void Player::Draw()
 {
 	Object3D::Draw();
 
+	basePos = transform.position;
+	for (const SphereCollder& col : hitSpheres) {
+		worldCenter = col.GetWorldCenter(basePos);
+		DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
+	}
+
+#if 0
 	DrawFormatString(50, 50, GetColor(255, 255, 0), "ＨＰ", Hp);
 	DrawFillBox(200, 50, Hp * DRAW_SIZE, 66, GetColor(255, 255, 0));
 	DrawLineBox(200, 50, Hp * DRAW_SIZE, 66, GetColor(0, 0, 0));
@@ -167,12 +184,7 @@ void Player::Draw()
 	// アニメーションバーの描画
 	DrawFillBox(200, 100, 200 + DrawValue, 116, color);
 	DrawLineBox(200, 100, 200 + DrawValue, 116, GetColor(0, 0, 0));
-
-	basePos = transform.position;
-	for (const SphereCollder& col : hitSpheres) {
-		worldCenter = col.GetWorldCenter(basePos);
-		// DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
-	}
+#endif // 0
 }
 
 void Player::SetOpponent(Player* other)
@@ -183,10 +195,12 @@ void Player::SetOpponent(Player* other)
 void Player::SetDamage(int dmg)
 {
 	Hp -= dmg;
+#if 0
 	TargetValue = Hp * DRAW_SIZE;
 	if (Hp > PLAYER_HP) Hp = PLAYER_HP;
 	if (Hp < 0) Hp = 0;
 	if (DrawValue > TargetValue) { DrawValue--; }
+#endif // 0
 }
 
 void Player::ResolvePlayerCollision()
@@ -256,7 +270,7 @@ void Player::UpdateStop()
 {
 	VECTOR inputDir = VGet(0, 0, 0);
 
-	if (VSize(inputDir) == 0) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
+	if (!isPlayer && VSize(inputDir) == 0) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
 
@@ -264,7 +278,7 @@ void Player::UpdateStop()
 
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -10.0f;
-		// anim->Play("data/Character/Player/Walk_B.mv1", true); //アニメーションが先行してしまうので、保留
+		anim->Play("data/Character/Player/Walk_B.mv1", true); //アニメーションが先行してしまうので、保留
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
 		inputDir.x = 10.0f;
@@ -278,12 +292,12 @@ void Player::UpdateStop()
 		transform.position.y += velocityY;
 		state = S_JUMP;
 	}
-
+#endif
 
 	if (VSize(inputDir) == 0) {
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
-#endif
+
 
 	// 左右移動
 	if (VSize(inputDir) > 0) {
@@ -294,73 +308,91 @@ void Player::UpdateStop()
 		transform.position += velocity;
 	}
 
-	if (CheckHitKey(KEY_INPUT_J)) { // キック1
-		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
-		state = S_ATTACK1;
-		if (opponent != nullptr) {
-			canReduceHp = true;
-			colIndex = 13;
-			damage = 10;
-		}
-	}
-	else if (CheckHitKey(KEY_INPUT_U)) { // パンチ1
+
+	if (CheckHitKey(KEY_INPUT_U)) { // パンチ1
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
-		state = S_ATTACK1;
+		state = S_PUNCH1;
 		if (opponent != nullptr) {
 			canReduceHp = true;
 			colIndex = 4;
 			damage = 10;
-		}
-	}
 
-	if (CheckHitKey(KEY_INPUT_K)) { // キック2
-		anim->Play("data/Character/Player/Atk_K_2.mv1", false);
-		state = S_ATTACK1;
-		if (opponent != nullptr) {
-			canReduceHp = true;
-			colIndex = 10;
-			damage = 50;
+			// 相手がガード中かどうか判定
+			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
 		}
 	}
-	else if (CheckHitKey(KEY_INPUT_I)) { // パンチ2
+	if (CheckHitKey(KEY_INPUT_I)) { // パンチ2
 		anim->Play("data/Character/Player/Atk_P_2.mv1", false);
-		state = S_ATTACK1;
+		state = S_PUNCH2;
 		if (opponent != nullptr) {
 			canReduceHp = true;
 			colIndex = 7;
 			damage = 50;
-		}
-	}
 
-	if (CheckHitKey(KEY_INPUT_L)) { // キック3
-		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
-		state = S_ATTACK1;
-		if (opponent != nullptr) {
-			canReduceHp = true;
-			colIndex = 13;
-			damage = 70;
+			// 相手がガード中かどうか判定
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
 		}
 	}
-	else if (CheckHitKey(KEY_INPUT_O)) { // パンチ3
+	if (CheckHitKey(KEY_INPUT_O)) { // パンチ3
 		anim->Play("data/Character/Player/Atk_P_3.mv1", false);
-		state = S_ATTACK2;
+		state = S_PUNCH3;
 		if (opponent != nullptr) {
 			canReduceHp = true;
 			colIndex = 4;
 			damage = 70;
-		}
 
+			// 相手がガード中かどうか判定
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+		}
+	}
+
+	if (CheckHitKey(KEY_INPUT_J)) { // キック1
+		anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+		state = S_KICK1;
+		if (opponent != nullptr) {
+			canReduceHp = true;
+			colIndex = 13;
+			damage = 10;
+
+			// 相手がガード中かどうか判定
+			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+		}
+	}
+	if (CheckHitKey(KEY_INPUT_K)) { // キック2
+		anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+		state = S_KICK2;
+		if (opponent != nullptr) {
+			canReduceHp = true;
+			colIndex = 10;
+			damage = 50;
+
+			// 相手がガード中かどうか判定
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+		}
+	}
+	if (CheckHitKey(KEY_INPUT_L)) { // キック3
+		anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+		state = S_KICK3;
+		if (opponent != nullptr) {
+			canReduceHp = true;
+			colIndex = 13;
+			damage = 70;
+
+			// 相手がガード中かどうか判定
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+		}
 	}
 
 	CollisionDetection();
 
 	if (CheckHitKey(KEY_INPUT_H)) { // ガード
 		anim->Play("data/Character/Player/Guard_Idle.mv1", false);
-		state = S_ATTACK1;
+		isGuarding = true;
+		state = S_PROTECT;
 	}
 }
 
-void Player::UpdateAttack1()
+void Player::UpdatePunch1()
 {
 	if (anim->IsFinish()) {
 		canReduceHp = false;
@@ -390,11 +422,11 @@ void Player::UpdateAttack1()
 		}
 	}
 
-	CollisionDetection();
 #endif // 0
+	CollisionDetection();
 }
 
-void Player::UpdateAttack2()
+void Player::UpdatePunch2()
 {
 	if (anim->IsFinish()) {
 		canReduceHp = false;
@@ -424,17 +456,64 @@ void Player::UpdateAttack2()
 		}
 	}
 
-	CollisionDetection();
 #endif // 0
+	CollisionDetection();
 }
 
-void Player::UpdateAttack3()
+void Player::UpdatePunch3()
 {
 	if (anim->IsFinish()) {
 		canReduceHp = false;
 		state = S_STOP;
 		return;
 	}
+	
+	CollisionDetection();
+}
+
+void Player::UpdateKick1()
+{
+	if (anim->IsFinish()) {
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
+}
+
+void Player::UpdateKick2()
+{
+	if (anim->IsFinish()) {
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
+}
+
+void Player::UpdateKick3()
+{
+	if (anim->IsFinish()) {
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
+}
+
+void Player::UpdateProtect()
+{
+	if (anim->IsFinish()) {
+		isGuarding = false;
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Player::UpdateJump()
@@ -470,6 +549,8 @@ void Player::BoneCollision()
 	right_UpperLegWorldPos = MV1GetFramePosition(hModel, right_UpperLegBone);
 	right_LowerLegWorldPos = MV1GetFramePosition(hModel, right_LowerLegBone);
 	right_FootWorldPos = MV1GetFramePosition(hModel, right_FootBone);
+	VECTOR hips_WorldPos = MV1GetFramePosition(hModel, hips_Bone);
+	// MV1SetFrameUserLocalMatrix(hModel, hips_Bone, hips_WorldPos);
 	hitSpheres[0].localOffset = (heardWorldPos - basePos) + VGet(0, 10.0f, 0);
 	hitSpheres[1].localOffset = bodyWorldPos - basePos;
 	hitSpheres[2].localOffset = left_UpperArmWorldPos - basePos;

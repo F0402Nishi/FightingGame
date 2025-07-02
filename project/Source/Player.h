@@ -25,7 +25,7 @@ private:
 	bool isJumping;
 	VECTOR velocity;
 	float velocityY = 0.0f;
-	int Hp = 1000;
+	int Hp;
 	int damage;
 	// float time = 0.0f;
 	bool isPlayer;
@@ -35,11 +35,11 @@ private:
 	VECTOR attackPos;
 	float attackRadius;
 	std::string hitPart;
-	VECTOR tp = transform.position;
 	int colIndex;
 	bool canReduceHp; // trueÇÃÇ∆Ç´ÇæÇØHPÇå∏ÇÁÇπÇÈ
 	int DrawValue;
 	int TargetValue;
+	bool isGuarding;
 
 	// PlayerÇÃçúêßå‰
 	int headBone;
@@ -56,6 +56,7 @@ private:
 	int right_UpperLegBone;
 	int right_LowerLegBone;
 	int right_FootBone;
+	int hips_Bone;
 	VECTOR heardWorldPos;
 	VECTOR bodyWorldPos;
 	VECTOR left_UpperArmWorldPos;
@@ -73,17 +74,25 @@ private:
 
 	enum State {
 		S_STOP,
-		S_ATTACK1,
-		S_ATTACK2,
-		S_ATTACK3,
+		S_PUNCH1,
+		S_PUNCH2,
+		S_PUNCH3,
+		S_KICK1,
+		S_KICK2,
+		S_KICK3,
+		S_PROTECT,
 		S_JUMP
 	};
 
 	State state;
 	void UpdateStop();
-	void UpdateAttack1();
-	void UpdateAttack2();
-	void UpdateAttack3();
+	void UpdatePunch1();
+	void UpdatePunch2();
+	void UpdatePunch3();
+	void UpdateKick1();
+	void UpdateKick2();
+	void UpdateKick3();
+	void UpdateProtect();
 	void UpdateJump();
 	void CollisionDetection();
 	void BoneCollision();

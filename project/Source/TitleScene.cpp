@@ -1,4 +1,4 @@
-#include "TitleScene.h"
+ï»¿#include "TitleScene.h"
 #include <DxLib.h>
 #include <fstream>
 #include <assert.h>
@@ -19,16 +19,16 @@ TitleScene::TitleScene()
 	operation = false;
 	TitleKeyInput = false;
 
-// ƒXƒe[ƒWì
+// ã‚¹ãƒ†ãƒ¼ã‚¸è©¦ä½œ
 #if false
-	ofstream f("data/test.txt"); //ƒtƒ@ƒCƒ‹‚ğŠJ‚­
+	ofstream f("data/test.txt"); //ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	// const char* str = "1Aa_";
-	// f.write(str, 4);@//ƒtƒ@ƒCƒ‹‚É‘‚­
+	// f.write(str, 4);ã€€//ãƒ•ã‚¡ã‚¤ãƒ«ã«æ›¸ã
 	// f.write(str, 4);
 
 	const int val = 1234;
 	f.write((char*)&val, 4);
-	f.close(); //ƒtƒ@ƒCƒ‹‚ğ•Â‚¶‚é
+	f.close(); //ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‰ã˜ã‚‹
 
 	ifstream f("data/test.txt");
 	f.read((char*)&readVal, 4);
@@ -67,13 +67,13 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	SetBackgroundColor(199, 199, 199); //¦”wŒi‚ÌF•ÏX‚Ég—p
+	SetBackgroundColor(199, 199, 199); //â€»èƒŒæ™¯ã®è‰²å¤‰æ›´ã«ä½¿ç”¨
 
 	DrawRotaGraph3D(0, 0, 0, 3, 0, TitleImage, TRUE);
 	DrawString(520, 600, "Push [Enter]Key To Play", GetColor(64, 64, 64));
 
 	if (operation == true) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); }
 
-	// DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64)); //¦Scene‚ÌŠm”F‚Ég—p
+	// DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64)); //â€»Sceneã®ç¢ºèªã«ä½¿ç”¨
 	// DrawFormatString(100, 100, GetColor(255, 255, 255), "%d", readVal);
 }
