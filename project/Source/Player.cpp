@@ -24,6 +24,7 @@ Player::Player(bool _isPlayer)
 	Hp = PLAYER_HP;
 	// DrawValue = Hp * DRAW_SIZE;
 	isGuarding = false;
+	isMoveing = false;
 
 	if (isPlayer) {
 		transform.position = VGet(-200.0f, 14.0f, 150.0f);
@@ -55,6 +56,7 @@ Player::Player(bool _isPlayer)
 	right_LowerLegBone = MV1SearchFrame(hModel, "Right_LowerLeg");
 	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
 	hips_Bone = MV1SearchFrame(hModel, "Hips");
+	hips_WorldPos = MV1GetFramePosition(hModel, hips_Bone);
 
 #if 0 
 	// アニメーションの制御実験
@@ -160,7 +162,7 @@ void Player::Draw()
 	basePos = transform.position;
 	for (const SphereCollder& col : hitSpheres) {
 		worldCenter = col.GetWorldCenter(basePos);
-		DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
+		//DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
 
 #if 0
@@ -269,6 +271,7 @@ void Player::InitHitSpheres()
 void Player::UpdateStop()
 {
 	VECTOR inputDir = VGet(0, 0, 0);
+	isMoveing = false;
 
 	if (!isPlayer && VSize(inputDir) == 0) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
@@ -278,6 +281,7 @@ void Player::UpdateStop()
 
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -10.0f;
+		isMoveing = true;
 		anim->Play("data/Character/Player/Walk_B.mv1", true); //アニメーションが先行してしまうので、保留
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
@@ -285,6 +289,23 @@ void Player::UpdateStop()
 		// anim->Play("data/Character/Player/Walk_F.mv1", true); //アニメーションが先行してしまうので、保留
 	}
 
+	if (isMoveing) {
+		
+
+		// アニメによる移動分だけを差分として取得
+		VECTOR offset = VSub(hipsNow, hipsBasePos);
+
+		// プレイヤーの物理移動
+		transform.position.x += inputDir.x;
+		MV1SetPosition(hModel, transform.position);
+
+		// アニメによる見た目の移動を打ち消す
+		MATRIX m = MGetIdent();
+		m.m[3][0] = -offset.x;
+		m.m[3][1] = 0.0f;         // または offset.y に応じて調整
+		m.m[3][2] = -offset.z;
+		MV1SetFrameUserLocalMatrix(hModel, hips_Bone, m);
+	}
 //のちに戻す
 #if false 
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
@@ -534,6 +555,8 @@ void Player::CollisionDetection()
 
 void Player::BoneCollision()
 {
+	VECTOR hipsNow = MV1GetFramePosition(hModel, hips_Bone);
+
 	// Playerの攻撃判定用Colliderの位置を調整
 	heardWorldPos = MV1GetFramePosition(hModel, headBone);
 	bodyWorldPos = MV1GetFramePosition(hModel, bodyBone);
@@ -549,8 +572,6 @@ void Player::BoneCollision()
 	right_UpperLegWorldPos = MV1GetFramePosition(hModel, right_UpperLegBone);
 	right_LowerLegWorldPos = MV1GetFramePosition(hModel, right_LowerLegBone);
 	right_FootWorldPos = MV1GetFramePosition(hModel, right_FootBone);
-	VECTOR hips_WorldPos = MV1GetFramePosition(hModel, hips_Bone);
-	// MV1SetFrameUserLocalMatrix(hModel, hips_Bone, hips_WorldPos);
 	hitSpheres[0].localOffset = (heardWorldPos - basePos) + VGet(0, 10.0f, 0);
 	hitSpheres[1].localOffset = bodyWorldPos - basePos;
 	hitSpheres[2].localOffset = left_UpperArmWorldPos - basePos;

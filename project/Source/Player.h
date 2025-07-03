@@ -40,6 +40,7 @@ private:
 	int DrawValue;
 	int TargetValue;
 	bool isGuarding;
+	bool isMoveing;
 
 	// PlayerÇÃçúêßå‰
 	int headBone;
@@ -71,6 +72,8 @@ private:
 	VECTOR right_UpperLegWorldPos;
 	VECTOR right_LowerLegWorldPos;
 	VECTOR right_FootWorldPos;
+	VECTOR hips_WorldPos;
+	VECTOR hipsBasePos;
 
 	enum State {
 		S_STOP,

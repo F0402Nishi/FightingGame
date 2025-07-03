@@ -70,7 +70,8 @@ void TitleScene::Draw()
 	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
 
 	DrawRotaGraph3D(0, 0, 0, 3, 0, TitleImage, TRUE);
-	DrawString(520, 600, "Push [Enter]Key To Play", GetColor(64, 64, 64));
+	DrawString(520, 550, "Push [Enter]Key To Play", GetColor(64, 64, 64));
+	DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(64, 64, 64));
 
 	if (operation == true) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); }
 

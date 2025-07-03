@@ -4,10 +4,10 @@
 
 Field::Field()
 {
-    hModel = MV1LoadModel("data/Stage/TrainingStage.mv1");
-    assert(hModel >= 0);
-    hitModel = MV1LoadModel("data/Stage/Ground_col.mv1");
-    assert(hitModel >= 0);
+    //hModel = MV1LoadModel("data/Stage/TrainingStage.mv1");
+    //assert(hModel >= 0);
+    //hitModel = MV1LoadModel("data/Stage/Ground_col.mv1");
+    //assert(hitModel >= 0);
 
     transform.scale = VGet(2, 2, 2);
 
