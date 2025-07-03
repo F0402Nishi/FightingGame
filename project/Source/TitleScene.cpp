@@ -18,6 +18,7 @@ TitleScene::TitleScene()
 
 	operation = false;
 	TitleKeyInput = false;
+	isSetting = false;
 
 // ステージ試作
 #if false
@@ -49,7 +50,7 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-	if (CheckHitKey(KEY_INPUT_RETURN)) {
+	if (CheckHitKey(KEY_INPUT_RETURN) && !isSetting) {
 		SceneManager::ChangeScene("PLAY");
 	}
 	if (CheckHitKey(KEY_INPUT_ESCAPE)) {
@@ -57,6 +58,7 @@ void TitleScene::Update()
 	}
 	if (CheckHitKey(KEY_INPUT_TAB) && TitleKeyInput == false) {
 		operation = !operation;
+		isSetting = !isSetting;
 		TitleKeyInput = true;
 	}
 	if (!CheckHitKey(KEY_INPUT_TAB)) {
@@ -73,7 +75,7 @@ void TitleScene::Draw()
 	DrawString(520, 550, "Push [Enter]Key To Play", GetColor(64, 64, 64));
 	DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(64, 64, 64));
 
-	if (operation == true) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); }
+	if (operation == true) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
 
 	// DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64)); //※Sceneの確認に使用
 	// DrawFormatString(100, 100, GetColor(255, 255, 255), "%d", readVal);

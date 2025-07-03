@@ -18,6 +18,9 @@ public:
 	void InitHitSpheres();
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
+	
+	int GetHp() const { return Hp; return MaxHp; }
+	bool CanReduceHp() const { return canReduceHp; }
 
 private:
 	Animator* anim;
@@ -26,6 +29,7 @@ private:
 	VECTOR velocity;
 	float velocityY = 0.0f;
 	int Hp;
+	int MaxHp;
 	int damage;
 	// float time = 0.0f;
 	bool isPlayer;
@@ -41,6 +45,7 @@ private:
 	int TargetValue;
 	bool isGuarding;
 	bool isMoveing;
+	bool isPunching;
 
 	// PlayerÇÃçúêßå‰
 	int headBone;
@@ -73,7 +78,7 @@ private:
 	VECTOR right_LowerLegWorldPos;
 	VECTOR right_FootWorldPos;
 	VECTOR hips_WorldPos;
-	VECTOR hipsBasePos;
+	VECTOR hipsNow;
 
 	enum State {
 		S_STOP,

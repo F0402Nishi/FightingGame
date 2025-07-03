@@ -4,6 +4,7 @@
 #include "Stage.h"
 #include "Field.h"
 #include "../ImGui/imgui.h"
+#include <assert.h>
 
 static int n = 0;
 static float posx = 000.0f;
@@ -23,6 +24,9 @@ PlayScene::PlayScene()
 	p2->InitHitSpheres();
 
 	PlayerKeyInput = false;
+
+	HPImage = LoadGraph("data/2D/HpImage.png");
+	assert(HPImage >= 0);
 }
 
 PlayScene::~PlayScene()
@@ -47,6 +51,8 @@ void PlayScene::Update()
 void PlayScene::Draw()
 {
 	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
+
+	// DrawRotaGraph3D(200.0f, 430.0f, 0, 0.38f, 0, HPImage, TRUE);
 	
 	// DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0)); //※ステージのx座標を確認に使用
 	// DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0)); //※ステージのy座標を確認に使用
@@ -80,4 +86,10 @@ void PlayScene::UpdateCamera()
 	ImGui::InputFloat("zoomZ", &zoomZ);
 	ImGui::End();
 #endif // 0
+}
+
+void PlayScene::DrawHpBer(int x, int y, int hp, int maxhp, int hpImage)
+{
+	float ratio = (float)hp / maxhp;
+	int frameCount = 4;
 }

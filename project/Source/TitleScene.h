@@ -20,4 +20,5 @@ private:
 	int OperationImage;
 	bool operation;
 	bool TitleKeyInput;
+	bool isSetting;
 };

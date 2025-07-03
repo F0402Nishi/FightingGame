@@ -10,10 +10,12 @@ public:
 	void Update() override;
 	void Draw() override;
 	void UpdateCamera();
+	void DrawHpBer(int x, int y, int hp, int maxhp, int hpImage);
 
 private:
 	Player* p1;
 	Player* p2;
 	int Hpbar;
 	bool PlayerKeyInput;
+	int HPImage;
 };

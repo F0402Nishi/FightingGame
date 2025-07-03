@@ -7,7 +7,6 @@
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
 #define PLAYER_HP 1000
-#define DRAW_SIZE  1.0f
 
 Player::Player(bool _isPlayer)
 {
@@ -22,9 +21,11 @@ Player::Player(bool _isPlayer)
 	isJumping = false;
 	canReduceHp = false;
 	Hp = PLAYER_HP;
+	MaxHp = PLAYER_HP;
 	// DrawValue = Hp * DRAW_SIZE;
 	isGuarding = false;
 	isMoveing = false;
+	isPunching = false;
 
 	if (isPlayer) {
 		transform.position = VGet(-200.0f, 14.0f, 150.0f);
@@ -55,18 +56,18 @@ Player::Player(bool _isPlayer)
 	right_UpperLegBone = MV1SearchFrame(hModel, "Right_UpperLeg");
 	right_LowerLegBone = MV1SearchFrame(hModel, "Right_LowerLeg");
 	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
-	hips_Bone = MV1SearchFrame(hModel, "Hips");
-	hips_WorldPos = MV1GetFramePosition(hModel, hips_Bone);
+
 
 #if 0 
 	// アニメーションの制御実験
 	int mB = MV1SearchFrame(hModel, "UpperChest");
 	int mc = MV1SearchFrame(hModel, "Neck");
 	int md = MV1SearchFrame(hModel, "Head");
-	
 	MV1SetFrameUserLocalMatrix(hModel, mB, MGetIdent());
 	MV1SetFrameUserLocalMatrix(hModel, mc, MGetIdent());
 	MV1SetFrameUserLocalMatrix(hModel, md, MGetIdent());
+	hips_Bone = MV1SearchFrame(hModel, "Hips");
+	hips_WorldPos = MV1GetFramePosition(hModel, hips_Bone);
 #endif
 }
 
@@ -273,7 +274,8 @@ void Player::UpdateStop()
 	VECTOR inputDir = VGet(0, 0, 0);
 	isMoveing = false;
 
-	if (!isPlayer && VSize(inputDir) == 0) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
+	if (!isPlayer && isPunching) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
+	if (!isPlayer) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
 
@@ -281,31 +283,13 @@ void Player::UpdateStop()
 
 	if (CheckHitKey(KEY_INPUT_A)) {
 		inputDir.x = -10.0f;
-		isMoveing = true;
-		anim->Play("data/Character/Player/Walk_B.mv1", true); //アニメーションが先行してしまうので、保留
+		// anim->Play("data/Character/Player/Walk_B.mv1", true); //アニメーションが先行してしまうので、保留
 	}
 	if (CheckHitKey(KEY_INPUT_D)) {
 		inputDir.x = 10.0f;
 		// anim->Play("data/Character/Player/Walk_F.mv1", true); //アニメーションが先行してしまうので、保留
 	}
 
-	if (isMoveing) {
-		
-
-		// アニメによる移動分だけを差分として取得
-		VECTOR offset = VSub(hipsNow, hipsBasePos);
-
-		// プレイヤーの物理移動
-		transform.position.x += inputDir.x;
-		MV1SetPosition(hModel, transform.position);
-
-		// アニメによる見た目の移動を打ち消す
-		MATRIX m = MGetIdent();
-		m.m[3][0] = -offset.x;
-		m.m[3][1] = 0.0f;         // または offset.y に応じて調整
-		m.m[3][2] = -offset.z;
-		MV1SetFrameUserLocalMatrix(hModel, hips_Bone, m);
-	}
 //のちに戻す
 #if false 
 	if (CheckHitKey(KEY_INPUT_SPACE)) {
@@ -333,6 +317,7 @@ void Player::UpdateStop()
 	if (CheckHitKey(KEY_INPUT_U)) { // パンチ1
 		anim->Play("data/Character/Player/Atk_P_1.mv1", false);
 		state = S_PUNCH1;
+		isPunching = true;
 		if (opponent != nullptr) {
 			canReduceHp = true;
 			colIndex = 4;
@@ -347,6 +332,7 @@ void Player::UpdateStop()
 		state = S_PUNCH2;
 		if (opponent != nullptr) {
 			canReduceHp = true;
+			isPunching = true;
 			colIndex = 7;
 			damage = 50;
 
@@ -359,6 +345,7 @@ void Player::UpdateStop()
 		state = S_PUNCH3;
 		if (opponent != nullptr) {
 			canReduceHp = true;
+			isPunching = true;
 			colIndex = 4;
 			damage = 70;
 
@@ -416,6 +403,7 @@ void Player::UpdateStop()
 void Player::UpdatePunch1()
 {
 	if (anim->IsFinish()) {
+		isPunching = false;
 		canReduceHp = false;
 		state = S_STOP;
 		return;
@@ -450,6 +438,7 @@ void Player::UpdatePunch1()
 void Player::UpdatePunch2()
 {
 	if (anim->IsFinish()) {
+		isPunching = false;
 		canReduceHp = false;
 		state = S_STOP;
 		return;
@@ -484,6 +473,7 @@ void Player::UpdatePunch2()
 void Player::UpdatePunch3()
 {
 	if (anim->IsFinish()) {
+		isPunching = false;
 		canReduceHp = false;
 		state = S_STOP;
 		return;
@@ -549,14 +539,15 @@ void Player::CollisionDetection()
 		attackPos = hitSpheres[colIndex].GetWorldCenter(transform.position);
 		attackRadius = hitSpheres[colIndex].radius;
 		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-		if (!hitPart.empty() && canReduceHp) { opponent->SetDamage(damage); canReduceHp = false; }
+		if (!hitPart.empty() && canReduceHp) {
+			opponent->SetDamage(damage);
+			canReduceHp = false;
+		}
 	}
 }
 
 void Player::BoneCollision()
 {
-	VECTOR hipsNow = MV1GetFramePosition(hModel, hips_Bone);
-
 	// Playerの攻撃判定用Colliderの位置を調整
 	heardWorldPos = MV1GetFramePosition(hModel, headBone);
 	bodyWorldPos = MV1GetFramePosition(hModel, bodyBone);
