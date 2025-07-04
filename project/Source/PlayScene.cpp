@@ -4,7 +4,6 @@
 #include "Stage.h"
 #include "Field.h"
 #include "../ImGui/imgui.h"
-#include <assert.h>
 
 static int n = 0;
 static float posx = 000.0f;
@@ -24,9 +23,6 @@ PlayScene::PlayScene()
 	p2->InitHitSpheres();
 
 	PlayerKeyInput = false;
-
-	HPImage = LoadGraph("data/2D/HpImage.png");
-	assert(HPImage >= 0);
 }
 
 PlayScene::~PlayScene()
@@ -86,10 +82,4 @@ void PlayScene::UpdateCamera()
 	ImGui::InputFloat("zoomZ", &zoomZ);
 	ImGui::End();
 #endif // 0
-}
-
-void PlayScene::DrawHpBer(int x, int y, int hp, int maxhp, int hpImage)
-{
-	float ratio = (float)hp / maxhp;
-	int frameCount = 4;
 }
