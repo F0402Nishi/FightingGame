@@ -1,14 +1,16 @@
 #pragma once
 #include <DxLib.h>
+#include "Object3D.h"
 #include "Player.h"
 
-class HPber
+class HPber : public Object3D
 {
 public:
+	HPber();
 	bool Init(const char* filename);
 	void SetHp(int hp);
 	void SetMaxHp(int hp);
-	void Draw(int x, int y);
+	void Draw() override;
 
 private:
 	int HPImage = -1;

@@ -71,7 +71,9 @@
     <ClCompile Include="Source\HitCheck.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\HPber.cpp" />
+    <ClCompile Include="Source\HPber.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />

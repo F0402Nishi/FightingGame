@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Stage.h"
 #include "Field.h"
+#include "HPber.h"
 #include "../ImGui/imgui.h"
 
 static int n = 0;
@@ -14,6 +15,7 @@ PlayScene::PlayScene()
 {
 	p1 = new Player(true);
 	p2 = new Player(false);
+	new HPber();
 	new Stage();
 	new Field();
 
