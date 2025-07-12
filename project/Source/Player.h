@@ -19,7 +19,8 @@ public:
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
 	
-	int GetHp() const { return Hp; return MaxHp; }
+	int GetHp() const { return Hp; }
+	int GeMaxHp() const { return MaxHp; }
 	bool CanReduceHp() const { return canReduceHp; }
 
 private:

@@ -15,9 +15,9 @@ PlayScene::PlayScene()
 {
 	p1 = new Player(true);
 	p2 = new Player(false);
-	new HPber();
 	new Stage();
 	new Field();
+	new HPber();
 
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
