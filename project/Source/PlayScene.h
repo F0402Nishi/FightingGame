@@ -1,6 +1,7 @@
 #pragma once
 #include "../Library/SceneBase.h"
 #include "Player.h"
+#include "HPber.h"
 
 class PlayScene : public SceneBase
 {
@@ -14,6 +15,7 @@ public:
 private:
 	Player* p1;
 	Player* p2;
+
 	int Hpbar;
 	bool PlayerKeyInput;
 };

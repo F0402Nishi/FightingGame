@@ -2,6 +2,7 @@
 #include "Object3D.h"
 #include "Animator.h"
 #include "Field.h"
+#include "HPber.h"
 #include <string>
 #include <vector>
 
@@ -12,38 +13,44 @@ public:
 	~Player();
 	void Update() override;
 	void Draw() override;
+	void SetHitSpheres();
 	void SetOpponent(Player* other);
-	void SetDamage(int dmg);
-	void ResolvePlayerCollision();
-	void InitHitSpheres();
+
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
-	
 	int GetHp() const { return Hp; }
-	int GeMaxHp() const { return MaxHp; }
+	int GetMaxHp() const { return MaxHp; }
 	bool CanReduceHp() const { return canReduceHp; }
 
 private:
+	Player* opponent;
 	Animator* anim;
 	Field* field;
-	bool isJumping;
+	HPber* hpber;
+	HPber* h1;
+	HPber* h2;
+
+	std::string hitPart;
+
 	VECTOR velocity;
-	float velocityY = 0.0f;
-	int Hp;
-	int MaxHp;
-	int damage;
-	// float time = 0.0f;
-	bool isPlayer;
-	Player* opponent;
 	VECTOR basePos;
 	VECTOR worldCenter;
 	VECTOR attackPos;
-	float attackRadius;
-	std::string hitPart;
+
+	int Hp;
+	int MaxHp;
+	int damage;
 	int colIndex;
-	bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ðŒ¸‚ç‚¹‚é
 	int DrawValue;
 	int TargetValue;
+
+	// float time = 0.0f;
+	float velocityY = 0.0f;
+	float attackRadius;
+
+	bool isJumping;
+	bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ðŒ¸‚ç‚¹‚é
+	bool isPlayer;
 	bool isGuarding;
 	bool isMoveing;
 	bool isPunching;
@@ -103,6 +110,8 @@ private:
 	void UpdateKick3();
 	void UpdateProtect();
 	void UpdateJump();
+	void UpdateDamage(int dmg);
 	void CollisionDetection();
+	void ResolvePlayerCollision();
 	void BoneCollision();
 };

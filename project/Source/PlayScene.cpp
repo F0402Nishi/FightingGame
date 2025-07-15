@@ -21,8 +21,8 @@ PlayScene::PlayScene()
 
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
-	p1->InitHitSpheres();
-	p2->InitHitSpheres();
+	p1->SetHitSpheres();
+	p2->SetHitSpheres();
 
 	PlayerKeyInput = false;
 }

@@ -27,15 +27,8 @@ Player::Player(bool _isPlayer)
 	isMoveing = false;
 	isPunching = false;
 
-	if (isPlayer) {
-		transform.position = VGet(-200.0f, 14.0f, 150.0f);
-		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
-	}
-	else
-	{
-		transform.position = VGet(200.0f, 14.0f, 150.0f);
-		transform.rotation = VGet(0, DegToRad(90.0f), 0);
-	}
+	
+	// hpber->SetMaxHp(opponent->GetMaxHp());
 
 	transform.scale = VGet(2, 2, 2);
 
@@ -190,49 +183,7 @@ void Player::Draw()
 #endif // 0
 }
 
-void Player::SetOpponent(Player* other)
-{
-	opponent = other;
-}
-
-void Player::SetDamage(int dmg)
-{
-	Hp -= dmg;
-#if 0
-	TargetValue = Hp * DRAW_SIZE;
-	if (Hp > PLAYER_HP) Hp = PLAYER_HP;
-	if (Hp < 0) Hp = 0;
-	if (DrawValue > TargetValue) { DrawValue--; }
-#endif // 0
-}
-
-void Player::ResolvePlayerCollision()
-{
-	Player* p = FindGameObject<Player>();
-	if (p == nullptr || p == this) { return; }
-
-	// カプセルの中心線（今回は left〜right の midpoint）
-	VECTOR center = (E_collder->left + E_collder->right) * 0.5f + transform.position;
-	VECTOR center2 = (p->E_collder->left + p->E_collder->right) * 0.5f + p->GetTransform().position;
-
-	// 距離ベクトルと長さ
-	VECTOR diff = center2 - center;
-	float dist = VSize(diff);
-	float minDist = E_collder->radius;
-
-	// 重なっている（当たり判定）
-	if (dist < minDist && dist > 0.0001f)
-	{
-		float overlap = minDist - dist;
-		VECTOR dir = VNorm(diff); // 押し返し方向（単位ベクトル）
-
-		// 双方を均等に押し返す
-		transform.position -= dir * (overlap * 0.5f);
-		p->transform.position += dir * (overlap * 0.5f);
-	}
-}
-
-void Player::InitHitSpheres()
+void Player::SetHitSpheres()
 {
 	hitSpheres.clear();
 
@@ -251,22 +202,27 @@ void Player::InitHitSpheres()
 	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_UpperLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_LowerLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 42, "Right_Foot");
+}
 
-#if 0
+void Player::SetOpponent(Player* other)
+{
+	opponent = other;
+
+	h1 = FindGameObject<HPber>();
+	h2 = FindGameObject<HPber>();
+
 	if (isPlayer) {
+		transform.position = VGet(-200.0f, 14.0f, 150.0f);
+		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
+		h1->Init(this, true);
 	}
-	else {
-		hitSpheres.emplace_back(VGet(-10, 300, 0), 32, "Head");
-		hitSpheres.emplace_back(VGet(10, 210, -15), 60, "Body");
-		hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_UpperArm");
-		hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_LowerArm");
-		hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_Hand");
-		hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Right_Hand");
-		hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Left_Foot");
-		hitSpheres.emplace_back(VGet(0, 0, 0), 10, "Right_Foot");
+	else
+	{
+		transform.position = VGet(200.0f, 14.0f, 150.0f);
+		transform.rotation = VGet(0, DegToRad(90.0f), 0);
+		h2->Init(this, false);
 	}
-
-#endif
+	// hpber->SetMaxHp(opponent->GetMaxHp());
 }
 
 void Player::UpdateStop()
@@ -274,10 +230,10 @@ void Player::UpdateStop()
 	VECTOR inputDir = VGet(0, 0, 0);
 	isMoveing = false;
 
-	if (!isPlayer && isPunching) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
 	if (!isPlayer) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	}
+	// if (!isPlayer && isPunching) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
 
 	if (!isPlayer) return;
 
@@ -409,30 +365,8 @@ void Player::UpdatePunch1()
 		return;
 	}
 
-// ダメージの高い攻撃を実装予定
-#if 0
-	if (anim->CurrentAnimTime() > 1.0f) {
-		if (CheckHitKey(KEY_INPUT_U)) {
-			anim->Play("data/Character/Player/Atk_P_2.mv1", false);
-			state = S_ATTACK2;
-			if (opponent != nullptr) {
-				colIndex = 7;
-				damage = 120;
-			}
-		}
-
-		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_U)) {
-			anim->Play("data/Character/Player/Atk_K_2.mv1", false);
-			state = S_ATTACK2;
-			if (opponent != nullptr) {
-				colIndex = 10;
-				damage = 120;
-			}
-		}
-	}
-
-#endif // 0
 	CollisionDetection();
+	// ダメージの高い攻撃を実装予定
 }
 
 void Player::UpdatePunch2()
@@ -444,30 +378,8 @@ void Player::UpdatePunch2()
 		return;
 	}
 
-// ダメージの高い攻撃を実装予定
-#if 0
-	if (anim->CurrentAnimTime() > 6.0f) {
-		if (CheckHitKey(KEY_INPUT_P)) {
-			anim->Play("data/Character/Player/Atk_P_3.mv1", false);
-			state = S_ATTACK3;
-			if (opponent != nullptr) {
-				colIndex = 4;
-				damage = 200;
-			}
-
-		}
-		if (CheckHitKey(KEY_INPUT_S) && CheckHitKey(KEY_INPUT_P)) {
-			anim->Play("data/Character/Player/Atk_K_3.mv1", false);
-			state = S_ATTACK3;
-			if (opponent != nullptr) {
-				colIndex = 13;
-				damage = 200;
-			}
-		}
-	}
-
-#endif // 0
 	CollisionDetection();
+	// ダメージの高い攻撃を実装予定
 }
 
 void Player::UpdatePunch3()
@@ -533,6 +445,18 @@ void Player::UpdateJump()
 	transform.position.y += velocityY;
 }
 
+void Player::UpdateDamage(int dmg)
+{
+	Hp -= dmg;
+	// hpber->SetHp(opponent->GetHp());
+#if 0
+	TargetValue = Hp * DRAW_SIZE;
+	if (Hp > PLAYER_HP) Hp = PLAYER_HP;
+	if (Hp < 0) Hp = 0;
+	if (DrawValue > TargetValue) { DrawValue--; }
+#endif // 0
+}
+
 void Player::CollisionDetection()
 {
 	if (opponent != nullptr) {
@@ -540,9 +464,35 @@ void Player::CollisionDetection()
 		attackRadius = hitSpheres[colIndex].radius;
 		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
 		if (!hitPart.empty() && canReduceHp) {
-			opponent->SetDamage(damage);
+			opponent->UpdateDamage(damage);
 			canReduceHp = false;
 		}
+	}
+}
+
+void Player::ResolvePlayerCollision()
+{
+	Player* p = FindGameObject<Player>();
+	if (p == nullptr || p == this) { return; }
+
+	// カプセルの中心線（今回は left〜right の midpoint）
+	VECTOR center = (E_collder->left + E_collder->right) * 0.5f + transform.position;
+	VECTOR center2 = (p->E_collder->left + p->E_collder->right) * 0.5f + p->GetTransform().position;
+
+	// 距離ベクトルと長さ
+	VECTOR diff = center2 - center;
+	float dist = VSize(diff);
+	float minDist = E_collder->radius;
+
+	// 重なっている（当たり判定）
+	if (dist < minDist && dist > 0.0001f)
+	{
+		float overlap = minDist - dist;
+		VECTOR dir = VNorm(diff); // 押し返し方向（単位ベクトル）
+
+		// 双方を均等に押し返す
+		transform.position -= dir * (overlap * 0.5f);
+		p->transform.position += dir * (overlap * 0.5f);
 	}
 }
 
