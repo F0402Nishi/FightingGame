@@ -18,8 +18,6 @@ HPber::HPber()
     player = nullptr;
     isLeftPlayer = true;
 
-    if (player == nullptr || HPImage == -1) return;
-
     currenthp = 0;
     maxhp = 0;
 }
@@ -57,6 +55,8 @@ void HPber::Update()
 
 void HPber::Draw()
 {
+    if (player == nullptr || HPImage == -1) return;
+
     int graphW = 0, graphH = 0;
     GetGraphSize(HPImage, &graphW, &graphH);
 

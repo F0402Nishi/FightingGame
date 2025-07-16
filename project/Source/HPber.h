@@ -1,8 +1,8 @@
 #pragma once
 #include <DxLib.h>
+#include <algorithm>
 #include "Object3D.h"
 #include "Player.h"
-#include <algorithm>
 
 class HPber : public Object3D
 {

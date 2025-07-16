@@ -2,9 +2,10 @@
 #include "Object3D.h"
 #include "Animator.h"
 #include "Field.h"
-#include "HPber.h"
 #include <string>
 #include <vector>
+
+class HPber;
 
 class Player : public Object3D
 {
@@ -20,15 +21,12 @@ public:
 	std::string GetHit() { return hitPart; }
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
-	bool CanReduceHp() const { return canReduceHp; }
+	// bool CanReduceHp() const { return canReduceHp; }
 
 private:
 	Player* opponent;
 	Animator* anim;
 	Field* field;
-	HPber* hpber;
-	HPber* h1;
-	HPber* h2;
 
 	std::string hitPart;
 

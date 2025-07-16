@@ -1,12 +1,11 @@
-#include "PlayScene.h"
 #include <DxLib.h>
+#include "../ImGui/imgui.h"
+#include "PlayScene.h"
 #include "Player.h"
 #include "Stage.h"
 #include "Field.h"
 #include "HPber.h"
-#include "../ImGui/imgui.h"
 
-static int n = 0;
 static float posx = 000.0f;
 static float posy = 200.0f;
 static float posz = -400.0f;
@@ -17,8 +16,11 @@ PlayScene::PlayScene()
 	p2 = new Player(false);
 	new Stage();
 	new Field();
-	new HPber();
+	h1 = new HPber();
+	h2 = new HPber();
 
+	h1->Init(p1, true);
+	h2->Init(p2, false);
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
 	p1->SetHitSpheres();

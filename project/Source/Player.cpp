@@ -3,6 +3,7 @@
 #include "../ImGui/imgui.h"
 #include "Stage.h"
 #include "HitCheck.h"
+#include "HPber.h"
 
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
@@ -13,7 +14,9 @@ Player::Player(bool _isPlayer)
 	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
 	assert(hModel >= 0);
 
+	transform.scale = VGet(2, 2, 2);
 	anim = new Animator(hModel);
+	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
 	state = S_STOP;
 	isPlayer = _isPlayer;
@@ -22,17 +25,9 @@ Player::Player(bool _isPlayer)
 	canReduceHp = false;
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
-	// DrawValue = Hp * DRAW_SIZE;
 	isGuarding = false;
 	isMoveing = false;
 	isPunching = false;
-
-	
-	// hpber->SetMaxHp(opponent->GetMaxHp());
-
-	transform.scale = VGet(2, 2, 2);
-
-	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
 	// Playerの骨を取得して、番号をつけてる
 	headBone = MV1SearchFrame(hModel, "Head");
@@ -208,19 +203,14 @@ void Player::SetOpponent(Player* other)
 {
 	opponent = other;
 
-	h1 = FindGameObject<HPber>();
-	h2 = FindGameObject<HPber>();
-
 	if (isPlayer) {
 		transform.position = VGet(-200.0f, 14.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
-		h1->Init(this, true);
 	}
 	else
 	{
 		transform.position = VGet(200.0f, 14.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
-		h2->Init(this, false);
 	}
 	// hpber->SetMaxHp(opponent->GetMaxHp());
 }
