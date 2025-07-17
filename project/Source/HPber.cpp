@@ -1,14 +1,15 @@
 #define NOMINMAX
 #include <Windows.h>
-#include "HPber.h"
-#include "Player.h"
 #include <DxLib.h>
 #include <assert.h>
 #include <algorithm>
+#include "../ImGui/imgui.h"
+#include "HPber.h"
+#include "Player.h"
 
 #define IMAGE_SCALE 0.4f
-#define IMAGE_POSITION_X 320.0f
-#define IMAGE_POSITION_Y 50.0f
+#define IMAGE_POSITION_X 0.0f
+#define IMAGE_POSITION_Y 0.0f
 
 HPber::HPber()
 {
@@ -51,19 +52,26 @@ void HPber::Update()
         SetHp(player->GetHp());
         SetMaxHp(player->GetMaxHp());
     }
+
+    ImGui::Begin("HPbar");
+    ImGui::InputInt("graphW：", &graphW);
+    ImGui::InputInt("graphH：", &graphH);
+    ImGui::End();
 }
 
 void HPber::Draw()
 {
     if (player == nullptr || HPImage == -1) return;
 
-    int graphW = 0, graphH = 0;
+    graphW = 0, graphH = 0;
     GetGraphSize(HPImage, &graphW, &graphH);
 
-    float hpRatio = (float)currenthp / maxhp;
-    int drawW = static_cast<int>(graphW * hpRatio * IMAGE_SCALE);
-    int drawH = static_cast<int>(graphH * IMAGE_SCALE);
+    float hpRatio = (float)currenthp / (float)maxhp;
+    // int drawW = static_cast<int>(graphW * IMAGE_SCALE);
+    // int drawH = static_cast<int>(graphH * IMAGE_SCALE);
+    int barW = static_cast<int>(graphW * hpRatio);
 
-    if (isLeftPlayer) { DrawRectGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE, TRUE);} // 左
-    else { DrawRotaGraph(IMAGE_POSITION_X * 3, IMAGE_POSITION_Y, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);} // 右
+    // if (isLeftPlayer) { DrawRectExtendGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, IMAGE_POSITION_X + barW, IMAGE_POSITION_Y + drawH, HPImage, TRUE, TRUE);} // 左
+    // else { DrawRotaGraph(IMAGE_POSITION_X * 3, IMAGE_POSITION_Y, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);} // 右
+    DrawRectGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, 0.0f, 0.0f, barW, graphH, HPImage, TRUE, TRUE);
 }

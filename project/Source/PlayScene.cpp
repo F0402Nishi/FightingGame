@@ -40,12 +40,15 @@ void PlayScene::Update()
 	if (CheckHitKey(KEY_INPUT_T)) {
 		SceneManager::ChangeScene("TITLE");
 	}
+
+#if false
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
 		PlayerKeyInput = true;
 	}
 	if (!CheckHitKey(KEY_INPUT_TAB)) {
 		PlayerKeyInput = false;
 	}
+#endif
 }
 
 void PlayScene::Draw()

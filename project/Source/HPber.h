@@ -20,6 +20,8 @@ private:
 	bool isLeftPlayer;
 	int currenthp;
 	int maxhp;
+	int graphW;
+	int graphH;
 
 #if false
 	int HPbarCount = 4;
