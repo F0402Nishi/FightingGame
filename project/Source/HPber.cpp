@@ -1,3 +1,4 @@
+
 #define NOMINMAX
 #include <Windows.h>
 #include <DxLib.h>
@@ -7,13 +8,13 @@
 #include "HPber.h"
 #include "Player.h"
 
-#define IMAGE_SCALE 0.4f
-#define IMAGE_POSITION_X 0.0f
+#define IMAGE_SCALE 2.0f
+#define IMAGE_POSITION_X 480.0f
 #define IMAGE_POSITION_Y 0.0f
 
 HPber::HPber()
 {
-    HPImage = LoadGraph("data/2D/HpImage.png");
+    HPImage = LoadGraph("data/2D/HpImage_4.png");
     assert(HPImage >= 0);
 
     player = nullptr;
@@ -67,11 +68,12 @@ void HPber::Draw()
     GetGraphSize(HPImage, &graphW, &graphH);
 
     float hpRatio = (float)currenthp / (float)maxhp;
-    // int drawW = static_cast<int>(graphW * IMAGE_SCALE);
-    // int drawH = static_cast<int>(graphH * IMAGE_SCALE);
+    int drawW = static_cast<int>(graphW * IMAGE_SCALE);
+    int drawH = static_cast<int>(graphH * IMAGE_SCALE);
     int barW = static_cast<int>(graphW * hpRatio);
 
     // if (isLeftPlayer) { DrawRectExtendGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, IMAGE_POSITION_X + barW, IMAGE_POSITION_Y + drawH, HPImage, TRUE, TRUE);} // ç∂
     // else { DrawRotaGraph(IMAGE_POSITION_X * 3, IMAGE_POSITION_Y, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);} // âE
-    DrawRectGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, 0.0f, 0.0f, barW, graphH, HPImage, TRUE, TRUE);
+    DrawRectExtendGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, IMAGE_POSITION_X + drawW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);
+    // DrawRectExtendGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, IMAGE_POSITION_X + drawW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, drawW, drawH, HPImage, FALSE);
 }
