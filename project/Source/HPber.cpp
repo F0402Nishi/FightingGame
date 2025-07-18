@@ -1,4 +1,3 @@
-
 #define NOMINMAX
 #include <Windows.h>
 #include <DxLib.h>
@@ -9,25 +8,24 @@
 #include "Player.h"
 
 #define IMAGE_SCALE 2.0f
-#define IMAGE_POSITION_X 480.0f
+#define IMAGE_POSITION_RIGHT_X 590.0f
+#define IMAGE_POSITION_LEFT_X -710.0f
 #define IMAGE_POSITION_Y 0.0f
 
 HPber::HPber()
 {
-    HPImage = LoadGraph("data/2D/HpImage_4.png");
+    HPImage = LoadGraph("data/2D/HpImage_6.png");
     assert(HPImage >= 0);
 
     player = nullptr;
-    isLeftPlayer = true;
 
     currenthp = 0;
     maxhp = 0;
 }
 
-bool HPber::Init(Player* target, bool isLeft)
+bool HPber::Init(Player* target)
 {
     player = target;
-    isLeftPlayer = isLeft;
 
     if (player) {
         currenthp = player->GetHp();
@@ -74,6 +72,6 @@ void HPber::Draw()
 
     // if (isLeftPlayer) { DrawRectExtendGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, IMAGE_POSITION_X + barW, IMAGE_POSITION_Y + drawH, HPImage, TRUE, TRUE);} // ç∂
     // else { DrawRotaGraph(IMAGE_POSITION_X * 3, IMAGE_POSITION_Y, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);} // âE
-    DrawRectExtendGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, IMAGE_POSITION_X + drawW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);
-    // DrawRectExtendGraph(IMAGE_POSITION_X, IMAGE_POSITION_Y, IMAGE_POSITION_X + drawW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, drawW, drawH, HPImage, FALSE);
+    DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + drawW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);
+    DrawRectExtendGraph(IMAGE_POSITION_LEFT_X + drawW, IMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, drawW, drawH, HPImage, TRUE);
 }

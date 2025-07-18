@@ -21,7 +21,7 @@ public:
 	std::string GetHit() { return hitPart; }
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
-	// bool CanReduceHp() const { return canReduceHp; }
+	bool GetisPlayer() const { return isPlayer; }
 
 private:
 	Player* opponent;

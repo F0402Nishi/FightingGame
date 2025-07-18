@@ -8,15 +8,15 @@ class HPber : public Object3D
 {
 public:
 	HPber();
-	bool Init(Player* target, bool isLeft);
+	bool Init(Player* target);
 	void Update() override;
 	void Draw() override;
 	void SetHp(int hp);
 	void SetMaxHp(int hp);
 
 private:
-	int HPImage = -1;
 	Player* player;
+	int HPImage = -1;
 	bool isLeftPlayer;
 	int currenthp;
 	int maxhp;

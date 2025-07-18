@@ -19,8 +19,8 @@ PlayScene::PlayScene()
 	h1 = new HPber();
 	h2 = new HPber();
 
-	h1->Init(p1, true);
-	h2->Init(p2, false);
+	h1->Init(p1);
+	h2->Init(p2);
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
 	p1->SetHitSpheres();
