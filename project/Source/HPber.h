@@ -16,6 +16,7 @@ public:
 
 private:
 	Player* player;
+	int HPbackImage = -1;
 	int HPImage = -1;
 	bool isLeftPlayer;
 	int currenthp;
