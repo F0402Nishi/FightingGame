@@ -8,14 +8,16 @@
 #include "Player.h"
 
 #define IMAGE_SCALE 1.0f
-#define IMAGE_POSITION_RIGHT_X 590.0f
 #define IMAGE_POSITION_LEFT_X -10.0f
+#define IMAGE_POSITION_RIGHT_X 590.0f
 #define IMAGE_POSITION_Y 0.0f
 
 HPber::HPber()
 {
-    HPbackImage = LoadGraph("data/2D/HPImage_6.png");
+    HPbackImage = LoadGraph("data/2D/HPImage_1.png");
     assert(HPbackImage >= 0);
+    HPImage = LoadGraph("data/2D/HP_FrontImage.png");
+    assert(HPImage >= 0);
 
     player = nullptr;
 
@@ -64,19 +66,23 @@ void HPber::Draw()
     if (player == nullptr || HPbackImage == -1) return;
 
     graphW = 0, graphH = 0;
-    GetGraphSize(HPbackImage, &graphW, &graphH);
+    GetGraphSize(HPImage, &graphW, &graphH);
 
-    float hpRatio = (float)currenthp / (float)maxhp;
-    int drawW = static_cast<int>(graphW * IMAGE_SCALE);
-    int drawH = static_cast<int>(graphH * IMAGE_SCALE);
+    float hpRatio = static_cast<float>(currenthp) / static_cast<float>(maxhp);
     int barW = static_cast<int>(graphW * hpRatio);
     int scaleBarW = static_cast<int>(barW * IMAGE_SCALE);
 
+    int drawW = static_cast<int>(graphW * IMAGE_SCALE);
+    int drawH = static_cast<int>(graphH * IMAGE_SCALE);
+
     
-    if (isLeftPlayer) { DrawRectExtendGraph(IMAGE_POSITION_LEFT_X + scaleBarW, IMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, drawH, HPbackImage, TRUE); }
-    else if (!isLeftPlayer) { 
-        DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + barW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, drawH, HPbackImage, TRUE);
+
+    if (isLeftPlayer) { 
+        DrawTurnGraph(IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
+        DrawRectExtendGraph(IMAGE_POSITION_LEFT_X + scaleBarW, IMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
     }
-    
-    DrawExtendGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + drawW, IMAGE_POSITION_Y + drawH, HPbackImage, TRUE);
+    else if (!isLeftPlayer) { 
+        DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
+        DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+    }
 }
