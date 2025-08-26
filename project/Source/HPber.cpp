@@ -11,6 +11,7 @@
 #define IMAGE_POSITION_LEFT_X -10.0f
 #define IMAGE_POSITION_RIGHT_X 590.0f
 #define IMAGE_POSITION_Y 0.0f
+#define HPIMAGE_POSITION_Y 14.0f
 
 HPber::HPber()
 {
@@ -23,6 +24,7 @@ HPber::HPber()
 
     currenthp = 0;
     maxhp = 0;
+    displayHp = 0;
 }
 
 bool HPber::Init(Player* target)
@@ -32,6 +34,7 @@ bool HPber::Init(Player* target)
     if (player) {
         currenthp = player->GetHp();
         maxhp = player->GetMaxHp();
+        displayHp = currenthp;
         isLeftPlayer = player->GetisPlayer();
         return true;
     }
@@ -55,6 +58,10 @@ void HPber::Update()
         SetMaxHp(player->GetMaxHp());
     }
 
+    if (displayHp > currenthp) { // 見た目用HPを徐々にcurrenthpに近づける
+        displayHp -= std::max(1, (displayHp - currenthp) / 10); // 徐々に減る
+    }
+
     ImGui::Begin("HPbar");
     ImGui::InputInt("currenthp：", &currenthp);
     // ImGui::InputInt("graphH：", &graphH);
@@ -68,7 +75,7 @@ void HPber::Draw()
     graphW = 0, graphH = 0;
     GetGraphSize(HPImage, &graphW, &graphH);
 
-    float hpRatio = static_cast<float>(currenthp) / static_cast<float>(maxhp);
+    float hpRatio = static_cast<float>(displayHp) / static_cast<float>(maxhp);
     int barW = static_cast<int>(graphW * hpRatio);
     int scaleBarW = static_cast<int>(barW * IMAGE_SCALE);
 
@@ -79,10 +86,10 @@ void HPber::Draw()
 
     if (isLeftPlayer) { 
         DrawTurnGraph(IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
-        DrawRectExtendGraph(IMAGE_POSITION_LEFT_X + scaleBarW, IMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+        DrawRectExtendGraph((IMAGE_POSITION_LEFT_X + 15.0f) + scaleBarW, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + 15.0f, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
     }
     else if (!isLeftPlayer) { 
         DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
-        DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, IMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+        DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X + 100.0f, HPIMAGE_POSITION_Y, (IMAGE_POSITION_RIGHT_X + 100.0f) + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
     }
 }

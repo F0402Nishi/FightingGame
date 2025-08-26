@@ -220,11 +220,6 @@ void Player::UpdateStop()
 	VECTOR inputDir = VGet(0, 0, 0);
 	isMoveing = false;
 
-	if (!isPlayer) { // 待機アニメーションと移動アニメーションが読み込み順でバグるので、待機アニメーションを優先
-		anim->Play("data/Character/Player/Fight_Idle.mv1", true);
-	}
-	// if (!isPlayer && isPunching) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
-
 	if (!isPlayer) return;
 
 	if (CheckHitKey(KEY_INPUT_A)) {

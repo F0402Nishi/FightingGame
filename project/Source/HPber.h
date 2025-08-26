@@ -18,11 +18,12 @@ private:
 	Player* player;
 	int HPbackImage = -1;
 	int HPImage = -1;
-	bool isLeftPlayer;
 	int currenthp;
 	int maxhp;
 	int graphW;
 	int graphH;
+	int displayHp;
+	bool isLeftPlayer;
 
 #if false
 	int HPbarCount = 4;

@@ -5,6 +5,7 @@
 #include "Stage.h"
 #include "Field.h"
 #include "HPber.h"
+#include "Opponent.h"
 
 static float posx = 000.0f;
 static float posy = 200.0f;
@@ -13,7 +14,7 @@ static float posz = -400.0f;
 PlayScene::PlayScene()
 {
 	p1 = new Player(true);
-	p2 = new Player(false);
+	p2 = new Player(false), new Opponent();
 	new Stage();
 	new Field();
 	h1 = new HPber();

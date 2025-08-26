@@ -22,6 +22,7 @@ public:
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
 	bool GetisPlayer() const { return isPlayer; }
+	bool GetisPunching() const { return isPunching; }
 
 private:
 	Player* opponent;

@@ -158,6 +158,7 @@
     <ClInclude Include="Source\HitCheck.h" />
     <ClInclude Include="Source\HPber.h" />
     <ClInclude Include="Source\Object3D.h" />
+    <ClInclude Include="Source\Opponent.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Screen.h" />
     <ClInclude Include="Source\PlayScene.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="Source\HitCheck.cpp" />
     <ClCompile Include="Source\HPber.cpp" />
     <ClCompile Include="Source\Object3D.cpp" />
+    <ClCompile Include="Source\Opponent.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayScene.cpp" />
     <ClCompile Include="Source\SceneFactory.cpp" />

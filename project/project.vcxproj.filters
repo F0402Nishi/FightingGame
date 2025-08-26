@@ -74,6 +74,7 @@
     <ClCompile Include="Source\HPber.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Opponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -160,6 +161,9 @@
       <Filter>PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Source\HPber.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Opponent.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
   </ItemGroup>
