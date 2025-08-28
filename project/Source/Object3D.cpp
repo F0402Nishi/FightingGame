@@ -37,15 +37,6 @@ void Object3D::Draw()
 	MV1DrawModel(hModel);
 	MV1DrawModel(hitModel);
 
-#if 0
-	if (S_headcollider != nullptr) {
-		DrawSphere3D(S_headcollider->localOffset + transform.position, S_headcollider->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
-	}
-	if (S_bodycollider != nullptr) {
-		DrawSphere3D(S_bodycollider->localOffset + transform.position, S_bodycollider->radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
-	}
-#endif // 0
-
 	if (E_collder != nullptr) {
 		EllipseCollider(transform.position, transform.position, TRUE);
 		// DrawCapsule3D(E_collder->left + transform.position, E_collder->right + transform.position, E_collder->radius, 20, GetColor(255, 255, 255), GetColor(255, 255, 255), FALSE);

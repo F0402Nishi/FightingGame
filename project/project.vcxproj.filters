@@ -74,7 +74,10 @@
     <ClCompile Include="Source\HPber.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Opponent.cpp" />
+    <ClCompile Include="Source\Opponent.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Character.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -164,6 +167,9 @@
       <Filter>PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Opponent.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Character.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
   </ItemGroup>
