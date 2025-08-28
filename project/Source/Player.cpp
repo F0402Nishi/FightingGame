@@ -11,12 +11,6 @@
 
 Player::Player(bool _isPlayer)
 {
-	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
-	assert(hModel >= 0);
-
-	transform.scale = VGet(2, 2, 2);
-	anim = new Animator(hModel);
-	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
 	state = S_STOP;
 	isPlayer = _isPlayer;
@@ -28,6 +22,12 @@ Player::Player(bool _isPlayer)
 	isGuarding = false;
 	isMoveing = false;
 	isPunching = false;
+
+#if 0 
+	transform.scale = VGet(2, 2, 2);
+	anim = new Animator(hModel);
+	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
+
 
 	// Playerの骨を取得して、番号をつけてる
 	headBone = MV1SearchFrame(hModel, "Head");
@@ -46,7 +46,6 @@ Player::Player(bool _isPlayer)
 	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
 
 
-#if 0 
 	// アニメーションの制御実験
 	int mB = MV1SearchFrame(hModel, "UpperChest");
 	int mc = MV1SearchFrame(hModel, "Neck");
@@ -61,16 +60,13 @@ Player::Player(bool _isPlayer)
 
 Player::~Player()
 {
-	delete anim;
+	// delete anim;
 }
 
 void Player::Update()
 {
-	anim->Update();
+	Character::Always();
 	
-	BoneCollision();
-	ResolvePlayerCollision();
-
 	switch (state) {
 	case S_STOP:
 		UpdateStop();
@@ -101,6 +97,21 @@ void Player::Update()
 		break;
 	}
 
+	ImGui::Begin("PLAYER");
+	ImGui::InputFloat("position.x", &transform.position.x);
+	ImGui::InputFloat("position.y", &transform.position.y);
+	// ImGui::Text("push.x: %.2f", hit.x);
+	// ImGui::Text("push.y: %.2f", hit.y);
+	// ImGui::Text("state: %d", (int)state);
+	ImGui::Text("HP: %d", (int)Hp);
+	ImGui::End();
+
+#if false 
+	anim->Update();
+	
+	BoneCollision();
+	ResolvePlayerCollision();
+
 	// 地面に立たせる
 	Stage* stage = FindGameObject<Stage>();
 	VECTOR hit;
@@ -122,7 +133,7 @@ void Player::Update()
 		}
 	}
 
-#if false // 地面に立たせる(初期構想)
+	// 地面に立たせる(初期構想)
 	VECTOR hitPos; // 当たったら場所を返してもらう
 	if (stage->SearchObject(transform.position + VGet(0, 1000, 0), transform.position + VGet(0, -1000, 0), &hitPos)) {
 		transform.position = hitPos;
@@ -133,28 +144,19 @@ void Player::Update()
 		}
 	}
 #endif
-
-	ImGui::Begin("PLAYER");
-	ImGui::InputFloat("position.x", &transform.position.x);
-	ImGui::InputFloat("position.y", &transform.position.y);
-	// ImGui::Text("push.x: %.2f", hit.x);
-	// ImGui::Text("push.y: %.2f", hit.y);
-	// ImGui::Text("state: %d", (int)state);
-	ImGui::Text("HP: %d", (int)Hp);
-	ImGui::End();
 }
 
 void Player::Draw()
 {
-	Object3D::Draw();
+	Character::Draw();
 
+#if 0
 	basePos = transform.position;
 	for (const SphereCollder& col : hitSpheres) {
 		worldCenter = col.GetWorldCenter(basePos);
 		//DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
 
-#if 0
 	DrawFormatString(50, 50, GetColor(255, 255, 0), "ＨＰ", Hp);
 	DrawFillBox(200, 50, Hp * DRAW_SIZE, 66, GetColor(255, 255, 0));
 	DrawLineBox(200, 50, Hp * DRAW_SIZE, 66, GetColor(0, 0, 0));
@@ -180,6 +182,7 @@ void Player::Draw()
 
 void Player::SetHitSpheres()
 {
+#if 0
 	hitSpheres.clear();
 
 	// Colliderのサイズを骨ごとに調整
@@ -197,10 +200,13 @@ void Player::SetHitSpheres()
 	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_UpperLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_LowerLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 42, "Right_Foot");
+#endif // 0
 }
 
 void Player::SetOpponent(Player* other)
 {
+#if false
+
 	opponent = other;
 
 	if (isPlayer) {
@@ -213,6 +219,7 @@ void Player::SetOpponent(Player* other)
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
 	// hpber->SetMaxHp(opponent->GetMaxHp());
+#endif // false
 }
 
 void Player::UpdateStop()
@@ -455,6 +462,7 @@ void Player::CollisionDetection()
 	}
 }
 
+#if false "参考のために保留" 
 void Player::ResolvePlayerCollision()
 {
 	Player* p = FindGameObject<Player>();
@@ -518,3 +526,4 @@ void Player::BoneCollision()
 		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 	}
 }
+#endif

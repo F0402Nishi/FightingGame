@@ -16,7 +16,6 @@ public:
 private:
 	Player* p1;
 	Player* p2;
-	Character* p3;
 	HPber* h1;
 	HPber* h2;
 

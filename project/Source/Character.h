@@ -4,6 +4,7 @@
 #include "Field.h"
 #include <string>
 #include <vector>
+#include <iostream>
 
 class HPber;
 
@@ -12,11 +13,12 @@ class Character : public Object3D
 public:
 	Character();
 	~Character();
-	void Draw() override;
+	void Always();
 	void SetHitSpheres();
 	void SetOpponent(Character* other);
 	
 	virtual void Update() override = 0;
+	virtual void Draw() override;
 
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
@@ -25,7 +27,7 @@ public:
 	bool GetisPunching() const { return isPunching; }
 	// bool GetisPlayer() const { return isPlayer; }
 
-private:
+protected:
 	Character* opponent;
 	Animator* anim;
 	Field* field;

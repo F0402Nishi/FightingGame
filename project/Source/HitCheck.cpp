@@ -1,10 +1,10 @@
 #include "HitCheck.h"
 #include <cmath>
 #include <DxLib.h>
-#include "Player.h"
+#include "Character.h"
 #include "Object3D.h"
 
-std::string HitCheck::CheckHitToPart(const Player& target, const VECTOR& attackPos, float attackRadius)
+std::string HitCheck::CheckHitToPart(const Character& target, const VECTOR& attackPos, float attackRadius)
 {
     const std::vector<SphereCollder>& spheres = target.hitSpheres;
     VECTOR targetPos = target.GetTransform().position;

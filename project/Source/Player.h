@@ -1,5 +1,5 @@
 #pragma once
-#include "Object3D.h"
+#include "Character.h"
 #include "Animator.h"
 #include "Field.h"
 #include <string>
@@ -7,7 +7,7 @@
 
 class HPber;
 
-class Player : public Object3D
+class Player : public Character
 {
 public:
 	Player(bool _isPlayer);
@@ -17,7 +17,7 @@ public:
 	void SetHitSpheres();
 	void SetOpponent(Player* other);
 
-	std::vector<SphereCollder> hitSpheres;
+	// std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
@@ -26,7 +26,7 @@ public:
 
 private:
 	Player* opponent;
-	Animator* anim;
+	// Animator* anim;
 	Field* field;
 
 	std::string hitPart;
@@ -111,6 +111,6 @@ private:
 	void UpdateJump();
 	void UpdateDamage(int dmg);
 	void CollisionDetection();
-	void ResolvePlayerCollision();
-	void BoneCollision();
+	// void ResolvePlayerCollision();
+	// void BoneCollision();
 };

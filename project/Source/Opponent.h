@@ -1,21 +1,22 @@
 #pragma once
-#include "Object3D.h"
+#include "Character.h"
 #include "Animator.h"
 #include "Field.h"
-#include "Player.h"
 #include <string>
 #include <vector>
+#include <iostream>  // Å© Ç±ÇÍÇ™ïKê{
+// #include "Player.h"
 
-class Opponent : public Object3D
+class Opponent : public Character
 {
 public:
 	Opponent();
 	~Opponent();
-	void Update() override;
-	void Draw() override;
+	void Update() override { std::cout << "Opponent Update" << std::endl; };
+	void Draw() override { std::cout << "Character Draw" << std::endl; };
 
 private:
-	Player* player;
+	// Player* player;
 	Animator* anim;
 	
 	bool opponent;
