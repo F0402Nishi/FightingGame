@@ -4,6 +4,8 @@
 #include "Object3D.h"
 #include "Player.h"
 
+class Character;
+
 class HPber : public Object3D
 {
 public:

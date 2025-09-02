@@ -1,11 +1,12 @@
 #include <DxLib.h>
 #include "../ImGui/imgui.h"
 #include "PlayScene.h"
+#include "Character.h"
 #include "Player.h"
+#include "Opponent.h"
 #include "Stage.h"
 #include "Field.h"
 #include "HPber.h"
-#include "Opponent.h"
 
 static float posx = 000.0f;
 static float posy = 200.0f;
@@ -56,14 +57,17 @@ void PlayScene::Draw()
 {
 	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
 
-	// DrawRotaGraph3D(200.0f, 430.0f, 0, 0.38f, 0, HPImage, TRUE);
-	
-	// DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0)); //※ステージのx座標を確認に使用
-	// DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0)); //※ステージのy座標を確認に使用
-	// DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255)); //※ステージのy座標を確認に使用
+#if false
 
-	// DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
-	// DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
+	DrawRotaGraph3D(200.0f, 430.0f, 0, 0.38f, 0, HPImage, TRUE);
+	
+	DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0)); //※ステージのx座標を確認に使用
+	DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0)); //※ステージのy座標を確認に使用
+	DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255)); //※ステージのy座標を確認に使用
+
+	DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
+	DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
+#endif // false
 }
 
 void PlayScene::UpdateCamera()

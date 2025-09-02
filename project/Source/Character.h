@@ -34,6 +34,7 @@ protected:
 
 	std::string hitPart;
 
+	VECTOR inputDir;
 	VECTOR velocity;
 	VECTOR basePos;
 	VECTOR worldCenter;

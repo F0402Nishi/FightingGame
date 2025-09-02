@@ -6,6 +6,7 @@
 #include "../ImGui/imgui.h"
 #include "HPber.h"
 #include "Player.h"
+#include "Character.h"
 
 #define IMAGE_SCALE 1.0f
 #define IMAGE_POSITION_LEFT_X -10.0f

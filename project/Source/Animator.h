@@ -10,6 +10,7 @@ public:
 	void Play(std::string filename, bool loop);
 	bool IsFinish();
 	float CurrentAnimTime() { return animTime; }
+	int GetModelHandle() const;
 
 private:
 	int handle;

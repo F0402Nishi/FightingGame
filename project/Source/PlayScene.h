@@ -2,6 +2,7 @@
 #include "../Library/SceneBase.h"
 
 class Player;
+class Character;
 class HPber;
 
 class PlayScene : public SceneBase

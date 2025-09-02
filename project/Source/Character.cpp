@@ -14,9 +14,15 @@ Character::Character()
 	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
 	assert(hModel >= 0);
 
+	transform.position = VGet(200.0f, 14.0f, 150.0f);
+	transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	transform.scale = VGet(2, 2, 2);
 	anim = new Animator(hModel);
 	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
+
+	canReduceHp = false;
+	Hp = PLAYER_HP;
+	MaxHp = PLAYER_HP;
 
 	// Playerの骨を取得して、番号をつけてる
 	headBone = MV1SearchFrame(hModel, "Head");
@@ -46,6 +52,36 @@ void Character::Always()
 
 	BoneCollision();
 	ResolvePlayerCollision();
+
+	switch (state) {
+	case S_STOP:
+		UpdateStop();
+		break;
+	case S_PUNCH1:
+		UpdatePunch1();
+		break;
+	case S_PUNCH2:
+		UpdatePunch2();
+		break;
+	case S_PUNCH3:
+		UpdatePunch3();
+		break;
+	case S_KICK1:
+		UpdateKick1();
+		break;
+	case S_KICK2:
+		UpdateKick2();
+		break;
+	case S_KICK3:
+		UpdateKick3();
+		break;
+	case S_PROTECT:
+		UpdateProtect();
+		break;
+	case S_JUMP:
+		UpdateJump();
+		break;
+	}
 
 	// 地面に立たせる
 	Stage* stage = FindGameObject<Stage>();
@@ -78,6 +114,10 @@ void Character::Draw()
 		worldCenter = col.GetWorldCenter(basePos);
 		//DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
+
+	if (!anim) return;
+	const int h = anim->GetModelHandle();
+	if (h >= 0) { MV1DrawModel(h); }
 }
 
 void Character::SetHitSpheres()
@@ -104,48 +144,107 @@ void Character::SetHitSpheres()
 void Character::SetOpponent(Character* other)
 {
 	opponent = other;
-
-	if (isPlayer) {
-		transform.position = VGet(-200.0f, 14.0f, 150.0f);
-		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
-	}
-	else
-	{
-		transform.position = VGet(200.0f, 14.0f, 150.0f);
-		transform.rotation = VGet(0, DegToRad(90.0f), 0);
-	}
 }
 
 void Character::UpdateStop()
 {
+	inputDir = VGet(0, 0, 0);
+	// anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 }
 
 void Character::UpdatePunch1()
 {
+	anim->Play("data/Character/Player/Atk_P_1.mv1", false);
+
+	if (anim->IsFinish()) {
+		isPunching = false;
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Character::UpdatePunch2()
 {
+	anim->Play("data/Character/Player/Atk_P_2.mv1", false);
+
+	if (anim->IsFinish()) {
+		isPunching = false;
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Character::UpdatePunch3()
 {
+	anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+
+	if (anim->IsFinish()) {
+		isPunching = false;
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Character::UpdateKick1()
 {
+	anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+
+	if (anim->IsFinish()) {
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Character::UpdateKick2()
 {
+	anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+
+	if (anim->IsFinish()) {
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Character::UpdateKick3()
 {
+	anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+
+	if (anim->IsFinish()) {
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Character::UpdateProtect()
 {
+	anim->Play("data/Character/Player/Guard_Idle.mv1", false);
+
+	if (anim->IsFinish()) {
+		isGuarding = false;
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+
+	CollisionDetection();
 }
 
 void Character::UpdateJump()
@@ -154,10 +253,20 @@ void Character::UpdateJump()
 
 void Character::UpdateDamage(int dmg)
 {
+	Hp -= dmg;
 }
 
 void Character::CollisionDetection()
 {
+	if (opponent != nullptr) {
+		attackPos = hitSpheres[colIndex].GetWorldCenter(transform.position);
+		attackRadius = hitSpheres[colIndex].radius;
+		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
+		if (!hitPart.empty() && canReduceHp) {
+			opponent->UpdateDamage(damage);
+			canReduceHp = false;
+		}
+	}
 }
 
 void Character::ResolvePlayerCollision()

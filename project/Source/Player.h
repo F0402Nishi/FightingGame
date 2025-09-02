@@ -14,20 +14,21 @@ public:
 	~Player();
 	void Update() override;
 	void Draw() override;
-	void SetHitSpheres();
-	void SetOpponent(Player* other);
 
-	// std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
-	int GetHp() const { return Hp; }
-	int GetMaxHp() const { return MaxHp; }
 	bool GetisPlayer() const { return isPlayer; }
 	bool GetisPunching() const { return isPunching; }
 
+	// void SetHitSpheres();
+	// void SetOpponent(Player* other);
+	// std::vector<SphereCollder> hitSpheres;
+	// int GetHp() const { return Hp; }
+	// int GetMaxHp() const { return MaxHp; }
+
 private:
 	Player* opponent;
-	// Animator* anim;
 	Field* field;
+	// Animator* anim;
 
 	std::string hitPart;
 
@@ -87,6 +88,8 @@ private:
 	VECTOR hips_WorldPos;
 	VECTOR hipsNow;
 
+#if falsse
+
 	enum State {
 		S_STOP,
 		S_PUNCH1,
@@ -98,6 +101,8 @@ private:
 		S_PROTECT,
 		S_JUMP
 	};
+
+#endif // falsse
 
 	State state;
 	void UpdateStop();

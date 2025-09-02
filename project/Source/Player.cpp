@@ -16,12 +16,17 @@ Player::Player(bool _isPlayer)
 	isPlayer = _isPlayer;
 	colIndex = 0;
 	isJumping = false;
-	canReduceHp = false;
-	Hp = PLAYER_HP;
-	MaxHp = PLAYER_HP;
 	isGuarding = false;
 	isMoveing = false;
 	isPunching = false;
+	// canReduceHp = false;
+	// Hp = PLAYER_HP;
+	// MaxHp = PLAYER_HP;
+
+	if (isPlayer) {
+		transform.position = VGet(-200.0f, 14.0f, 150.0f);
+		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
+	}
 
 #if 0 
 	transform.scale = VGet(2, 2, 2);
@@ -66,7 +71,48 @@ Player::~Player()
 void Player::Update()
 {
 	Character::Always();
+
+	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+	if (!isPlayer) return;
+
+	if (state == S_STOP) {
+		if (CheckHitKey(KEY_INPUT_A)) {
+			inputDir.x = -10.0f;
+			// anim->Play("data/Character/Player/Walk_B.mv1", true); // 後ろ歩き
+		}
+		else if (CheckHitKey(KEY_INPUT_D)) {
+			inputDir.x = 10.0f;
+			// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
+		}
+		else {
+			anim->Play("data/Character/Player/Fight_Idle.mv1", true); // 入力なしならIdle
+		}
+	}
+
+	if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; } // パンチ1
+	if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; } // パンチ2
+	if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; } // パンチ3
+	if (CheckHitKey(KEY_INPUT_J)) { state = S_KICK1; } // キック1
+	if (CheckHitKey(KEY_INPUT_K)) { state = S_KICK2; } // キック2
+	if (CheckHitKey(KEY_INPUT_L)) { state = S_KICK3; } // キック3
+	if (CheckHitKey(KEY_INPUT_H)) { state = S_PROTECT; } // ガード
+
+	ImGui::Begin("PLAYER");
+	ImGui::InputFloat("position.x", &transform.position.x);
+	ImGui::InputFloat("position.y", &transform.position.y);
+	// ImGui::Text("push.x: %.2f", hit.x);
+	// ImGui::Text("push.y: %.2f", hit.y);
+	// ImGui::Text("state: %d", (int)state);
+	ImGui::Text("HP: %d", (int)Hp);
+	ImGui::End();
+
+#if false 
 	
+	anim->Update();
+	
+	BoneCollision();
+	ResolvePlayerCollision();
+
 	switch (state) {
 	case S_STOP:
 		UpdateStop();
@@ -96,21 +142,6 @@ void Player::Update()
 		UpdateJump();
 		break;
 	}
-
-	ImGui::Begin("PLAYER");
-	ImGui::InputFloat("position.x", &transform.position.x);
-	ImGui::InputFloat("position.y", &transform.position.y);
-	// ImGui::Text("push.x: %.2f", hit.x);
-	// ImGui::Text("push.y: %.2f", hit.y);
-	// ImGui::Text("state: %d", (int)state);
-	ImGui::Text("HP: %d", (int)Hp);
-	ImGui::End();
-
-#if false 
-	anim->Update();
-	
-	BoneCollision();
-	ResolvePlayerCollision();
 
 	// 地面に立たせる
 	Stage* stage = FindGameObject<Stage>();
@@ -180,9 +211,9 @@ void Player::Draw()
 #endif // 0
 }
 
+#if false "参考のために保留"
 void Player::SetHitSpheres()
 {
-#if 0
 	hitSpheres.clear();
 
 	// Colliderのサイズを骨ごとに調整
@@ -200,12 +231,10 @@ void Player::SetHitSpheres()
 	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_UpperLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 45, "Right_LowerLeg");
 	hitSpheres.emplace_back(VGet(0, 0, 0), 42, "Right_Foot");
-#endif // 0
 }
 
 void Player::SetOpponent(Player* other)
 {
-#if false
 
 	opponent = other;
 
@@ -219,7 +248,6 @@ void Player::SetOpponent(Player* other)
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
 	// hpber->SetMaxHp(opponent->GetMaxHp());
-#endif // false
 }
 
 void Player::UpdateStop()
@@ -227,6 +255,7 @@ void Player::UpdateStop()
 	VECTOR inputDir = VGet(0, 0, 0);
 	isMoveing = false;
 
+	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isPlayer) return;
 
 	if (CheckHitKey(KEY_INPUT_A)) {
@@ -462,7 +491,6 @@ void Player::CollisionDetection()
 	}
 }
 
-#if false "参考のために保留" 
 void Player::ResolvePlayerCollision()
 {
 	Player* p = FindGameObject<Player>();
