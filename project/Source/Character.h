@@ -46,6 +46,7 @@ protected:
 	int colIndex;
 	int DrawValue;
 	int TargetValue;
+	int speed;
 
 	// float time = 0.0f;
 	float velocityY = 0.0f;
@@ -53,7 +54,7 @@ protected:
 
 	bool isJumping;
 	bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ðŒ¸‚ç‚¹‚é
-	bool isPlayer;
+	// bool isPlayer;
 	bool isGuarding;
 	bool isMoveing;
 	bool isPunching;

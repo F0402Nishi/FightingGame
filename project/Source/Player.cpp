@@ -5,20 +5,20 @@
 #include "HitCheck.h"
 #include "HPber.h"
 
-#define PLAYER_SPEED 2.0f
-#define PLAYER_JUMP 25.0f
-#define PLAYER_HP 1000
+// #define PLAYER_SPEED 2.0f
+// #define PLAYER_JUMP 25.0f
+// #define PLAYER_HP 1000
 
 Player::Player(bool _isPlayer)
 {
 
-	state = S_STOP;
 	isPlayer = _isPlayer;
 	colIndex = 0;
 	isJumping = false;
 	isGuarding = false;
 	isMoveing = false;
 	isPunching = false;
+	// state = S_STOP;
 	// canReduceHp = false;
 	// Hp = PLAYER_HP;
 	// MaxHp = PLAYER_HP;
@@ -72,6 +72,12 @@ void Player::Update()
 {
 	Character::Always();
 
+	// !isPlayerの攻撃判定用Colliderの位置を調整
+	if (!isPlayer) {
+		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
+		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
+	}
+
 	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isPlayer) return;
 
@@ -84,26 +90,40 @@ void Player::Update()
 			inputDir.x = 10.0f;
 			// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
 		}
-		else {
-			anim->Play("data/Character/Player/Fight_Idle.mv1", true); // 入力なしならIdle
-		}
 	}
 
-	if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; } // パンチ1
-	if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; } // パンチ2
-	if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; } // パンチ3
-	if (CheckHitKey(KEY_INPUT_J)) { state = S_KICK1; } // キック1
-	if (CheckHitKey(KEY_INPUT_K)) { state = S_KICK2; } // キック2
-	if (CheckHitKey(KEY_INPUT_L)) { state = S_KICK3; } // キック3
-	if (CheckHitKey(KEY_INPUT_H)) { state = S_PROTECT; } // ガード
+	// 左右移動
+	if (VSize(inputDir) > 0) {
+		if (VSize(inputDir) >= 1.0f) {
+			inputDir = VNorm(inputDir);
+		}
+		velocity = inputDir * speed;
+		transform.position += velocity;
+	}
+
+	// KEYが押しっぱなしの時に、canReduceHpがtrueとfalseを繰り返している
+	// そのため、ダメージが重複している。かつ、アニメーションは１回しか再生されておらず分かりにくい
+	// KEY_INPUTの際に、bool型の変数を追加して条件を「KEY_INPUT＆false」の時に変更
+	// アニメーションが終わったときに、trueにする。
+
+	// キャンセル用の関数または変数を定義
+	// 例.Uのアニメーション中にIを押されたら、、、
+
+	if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; canReduceHp = true; } // パンチ1
+	if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; } // パンチ2
+	if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; canReduceHp = true;} // パンチ3
+	if (CheckHitKey(KEY_INPUT_J)) { state = S_KICK1; canReduceHp = true; } // キック1
+	if (CheckHitKey(KEY_INPUT_K)) { state = S_KICK2; canReduceHp = true; } // キック2
+	if (CheckHitKey(KEY_INPUT_L)) { state = S_KICK3; canReduceHp = true; } // キック3
+	if (CheckHitKey(KEY_INPUT_H)) { state = S_PROTECT;} // ガード
 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
 	// ImGui::Text("push.x: %.2f", hit.x);
 	// ImGui::Text("push.y: %.2f", hit.y);
-	// ImGui::Text("state: %d", (int)state);
-	ImGui::Text("HP: %d", (int)Hp);
+	ImGui::Text("state: %d", (int)state);
+	// ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
 
 #if false 

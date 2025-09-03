@@ -26,8 +26,8 @@ public:
 	// int GetMaxHp() const { return MaxHp; }
 
 private:
-	Player* opponent;
 	Field* field;
+	// Player* opponent;
 	// Animator* anim;
 
 	std::string hitPart;
@@ -39,8 +39,8 @@ private:
 
 	int Hp;
 	int MaxHp;
-	int damage;
-	int colIndex;
+	// int damage;
+	// int colIndex;
 	int DrawValue;
 	int TargetValue;
 
@@ -49,12 +49,13 @@ private:
 	float attackRadius;
 
 	bool isJumping;
-	bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ğŒ¸‚ç‚¹‚é
+	// bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ğŒ¸‚ç‚¹‚é
 	bool isPlayer;
 	bool isGuarding;
 	bool isMoveing;
 	bool isPunching;
 
+#if false "Ql‚Ì‚½‚ß‚É•Û—¯"
 	// Player‚Ìœ§Œä
 	int headBone;
 	int bodyBone;
@@ -88,7 +89,6 @@ private:
 	VECTOR hips_WorldPos;
 	VECTOR hipsNow;
 
-#if falsse
 
 	enum State {
 		S_STOP,
@@ -102,7 +102,6 @@ private:
 		S_JUMP
 	};
 
-#endif // falsse
 
 	State state;
 	void UpdateStop();
@@ -116,6 +115,7 @@ private:
 	void UpdateJump();
 	void UpdateDamage(int dmg);
 	void CollisionDetection();
-	// void ResolvePlayerCollision();
-	// void BoneCollision();
+	void ResolvePlayerCollision();
+	void BoneCollision();
+#endif // falsse
 };

@@ -4,6 +4,7 @@
 #include "Stage.h"
 #include "HitCheck.h"
 #include "HPber.h"
+#include "../ImGui/imgui.h"
 
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
@@ -20,9 +21,11 @@ Character::Character()
 	anim = new Animator(hModel);
 	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
+	state = S_STOP;
 	canReduceHp = false;
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
+	speed = PLAYER_SPEED;
 
 	// Playerの骨を取得して、番号をつけてる
 	headBone = MV1SearchFrame(hModel, "Head");
@@ -148,13 +151,18 @@ void Character::SetOpponent(Character* other)
 
 void Character::UpdateStop()
 {
+	anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+	
 	inputDir = VGet(0, 0, 0);
-	// anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 }
 
 void Character::UpdatePunch1()
 {
 	anim->Play("data/Character/Player/Atk_P_1.mv1", false);
+	if (opponent != nullptr) {  
+		colIndex = 4;
+		damage = 10;
+	}
 
 	if (anim->IsFinish()) {
 		isPunching = false;
@@ -169,6 +177,10 @@ void Character::UpdatePunch1()
 void Character::UpdatePunch2()
 {
 	anim->Play("data/Character/Player/Atk_P_2.mv1", false);
+	if (opponent != nullptr) {
+		colIndex = 7;
+		damage = 50;
+	}
 
 	if (anim->IsFinish()) {
 		isPunching = false;
@@ -183,6 +195,10 @@ void Character::UpdatePunch2()
 void Character::UpdatePunch3()
 {
 	anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+	if (opponent != nullptr) {
+		colIndex = 4;
+		damage = 70;
+	}
 
 	if (anim->IsFinish()) {
 		isPunching = false;
@@ -197,6 +213,10 @@ void Character::UpdatePunch3()
 void Character::UpdateKick1()
 {
 	anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+	if (opponent != nullptr) {
+		colIndex = 13;
+		damage = 10;
+	}
 
 	if (anim->IsFinish()) {
 		canReduceHp = false;
@@ -210,6 +230,10 @@ void Character::UpdateKick1()
 void Character::UpdateKick2()
 {
 	anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+	if (opponent != nullptr) {
+		colIndex = 10;
+		damage = 50;
+	}
 
 	if (anim->IsFinish()) {
 		canReduceHp = false;
@@ -223,6 +247,10 @@ void Character::UpdateKick2()
 void Character::UpdateKick3()
 {
 	anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+	if (opponent != nullptr) {
+		colIndex = 13;
+		damage = 70;
+	}
 
 	if (anim->IsFinish()) {
 		canReduceHp = false;
@@ -327,9 +355,4 @@ void Character::BoneCollision()
 	hitSpheres[11].localOffset = right_UpperLegWorldPos - basePos;
 	hitSpheres[12].localOffset = right_LowerLegWorldPos - basePos;
 	hitSpheres[13].localOffset = right_FootWorldPos - basePos;
-
-	if (!isPlayer) {
-		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
-		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
-	}
 }
