@@ -13,12 +13,12 @@ Player::Player(bool _isPlayer)
 {
 
 	isPlayer = _isPlayer;
-	colIndex = 0;
 	isJumping = false;
-	isGuarding = false;
-	isMoveing = false;
 	isPunching = false;
 	// state = S_STOP;
+	// colIndex = 0;
+	// isMoveing = false;
+	// isGuarding = false;
 	// canReduceHp = false;
 	// Hp = PLAYER_HP;
 	// MaxHp = PLAYER_HP;
@@ -78,7 +78,7 @@ void Player::Update()
 		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 	}
 
-	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+	if (!isPlayer) anim->Play("data/Character/Player/Guard_Idle.mv1", false);
 	if (!isPlayer) return;
 
 	if (state == S_STOP) {
@@ -109,13 +109,13 @@ void Player::Update()
 	// キャンセル用の関数または変数を定義
 	// 例.Uのアニメーション中にIを押されたら、、、
 
-	if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; canReduceHp = true; } // パンチ1
-	if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; } // パンチ2
-	if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; canReduceHp = true;} // パンチ3
-	if (CheckHitKey(KEY_INPUT_J)) { state = S_KICK1; canReduceHp = true; } // キック1
-	if (CheckHitKey(KEY_INPUT_K)) { state = S_KICK2; canReduceHp = true; } // キック2
-	if (CheckHitKey(KEY_INPUT_L)) { state = S_KICK3; canReduceHp = true; } // キック3
-	if (CheckHitKey(KEY_INPUT_H)) { state = S_PROTECT;} // ガード
+	if (CheckHitKey(KEY_INPUT_U) && !isMoveing) { state = S_PUNCH1; canReduceHp = true; isMoveing = true; } // パンチ1
+	if (CheckHitKey(KEY_INPUT_I) && !isMoveing) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; } // パンチ2
+	if (CheckHitKey(KEY_INPUT_O) && !isMoveing) { state = S_PUNCH3; canReduceHp = true; isMoveing = true; } // パンチ3
+	if (CheckHitKey(KEY_INPUT_J) && !isMoveing) { state = S_KICK1; canReduceHp = true; isMoveing = true; } // キック1
+	if (CheckHitKey(KEY_INPUT_K) && !isMoveing) { state = S_KICK2; canReduceHp = true; isMoveing = true;} // キック2
+	if (CheckHitKey(KEY_INPUT_L) && !isMoveing) { state = S_KICK3; canReduceHp = true; isMoveing = true; } // キック3
+	if (CheckHitKey(KEY_INPUT_H)) { state = S_PROTECT; isGuarding = true; } // ガード
 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
@@ -123,6 +123,7 @@ void Player::Update()
 	// ImGui::Text("push.x: %.2f", hit.x);
 	// ImGui::Text("push.y: %.2f", hit.y);
 	ImGui::Text("state: %d", (int)state);
+	ImGui::InputFloat("frame: %d", &total);
 	// ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
 

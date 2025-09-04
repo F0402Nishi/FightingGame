@@ -72,8 +72,3 @@ bool Animator::IsFinish()
 
 	return false;
 }
-
-int Animator::GetModelHandle() const
-{
-	return model;
-}

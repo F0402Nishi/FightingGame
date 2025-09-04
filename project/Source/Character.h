@@ -25,6 +25,7 @@ public:
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
 	bool GetisPunching() const { return isPunching; }
+	bool isGuarding;
 	// bool GetisPlayer() const { return isPlayer; }
 
 protected:
@@ -51,11 +52,13 @@ protected:
 	// float time = 0.0f;
 	float velocityY = 0.0f;
 	float attackRadius;
+	float frame; // 今のフレーム取得
+	float total; // 総フレーム数
+	float ratio; // 0～1 の割合
 
 	bool isJumping;
 	bool canReduceHp; // trueのときだけHPを減らせる
 	// bool isPlayer;
-	bool isGuarding;
 	bool isMoveing;
 	bool isPunching;
 
@@ -113,6 +116,7 @@ protected:
 	void UpdateKick2();
 	void UpdateKick3();
 	void UpdateProtect();
+	void InReturn();
 	void UpdateJump();
 	void UpdateDamage(int dmg);
 	void CollisionDetection();

@@ -9,8 +9,14 @@ public:
 	void Update();
 	void Play(std::string filename, bool loop);
 	bool IsFinish();
-	float CurrentAnimTime() { return animTime; }
-	int GetModelHandle() const;
+	
+	int GetModelHandle() const { return model; }
+	float CurrentAnimTime() const { return static_cast<int> (animTime); }
+	float TotalTime() const { return static_cast<int> (animMaxTime); }
+	float NormalizedTime() const {
+		if (animMaxTime > 0.0f) { return animTime / animMaxTime; }
+		return 0.0f;
+	}
 
 private:
 	int handle;

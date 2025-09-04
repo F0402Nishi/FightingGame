@@ -10,6 +10,13 @@
 #define PLAYER_JUMP 25.0f
 #define PLAYER_HP 1000
 
+struct AttackDate {
+	int hitStartFrame;
+	int hitEndFrame;
+	int cancelStartFrame;
+	int cancelEndFrame;
+};
+
 Character::Character()
 {
 	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
@@ -22,7 +29,10 @@ Character::Character()
 	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
 	state = S_STOP;
+	colIndex = 0;
 	canReduceHp = false;
+	isMoveing = false;
+	isGuarding = false;
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
 	speed = PLAYER_SPEED;
@@ -85,6 +95,7 @@ void Character::Always()
 		UpdateJump();
 		break;
 	}
+
 
 	// 地面に立たせる
 	Stage* stage = FindGameObject<Stage>();
@@ -159,105 +170,106 @@ void Character::UpdateStop()
 void Character::UpdatePunch1()
 {
 	anim->Play("data/Character/Player/Atk_P_1.mv1", false);
+	
+	frame = anim->CurrentAnimTime();
+	total = anim->TotalTime();
+	ratio = anim->NormalizedTime();
+	
 	if (opponent != nullptr) {  
 		colIndex = 4;
 		damage = 10;
+		
+		// 相手がガード中かどうか判定
+		if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
 	}
 
-	if (anim->IsFinish()) {
-		isPunching = false;
-		canReduceHp = false;
-		state = S_STOP;
-		return;
-	}
 
+	InReturn();
 	CollisionDetection();
 }
 
 void Character::UpdatePunch2()
 {
 	anim->Play("data/Character/Player/Atk_P_2.mv1", false);
+	
+	total = anim->TotalTime();
+	
 	if (opponent != nullptr) {
 		colIndex = 7;
 		damage = 50;
+
+		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
 	}
 
-	if (anim->IsFinish()) {
-		isPunching = false;
-		canReduceHp = false;
-		state = S_STOP;
-		return;
-	}
-
+	InReturn();
 	CollisionDetection();
 }
 
 void Character::UpdatePunch3()
 {
 	anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+	
+	total = anim->TotalTime();
+
 	if (opponent != nullptr) {
 		colIndex = 4;
 		damage = 70;
+
+		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
 	}
 
-	if (anim->IsFinish()) {
-		isPunching = false;
-		canReduceHp = false;
-		state = S_STOP;
-		return;
-	}
-
+	InReturn();
 	CollisionDetection();
 }
 
 void Character::UpdateKick1()
 {
 	anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+	
+	total = anim->TotalTime();
+
 	if (opponent != nullptr) {
 		colIndex = 13;
 		damage = 10;
+
+		if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
 	}
 
-	if (anim->IsFinish()) {
-		canReduceHp = false;
-		state = S_STOP;
-		return;
-	}
-
+	InReturn();
 	CollisionDetection();
 }
 
 void Character::UpdateKick2()
 {
 	anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+	
+	total = anim->TotalTime();
+
 	if (opponent != nullptr) {
 		colIndex = 10;
 		damage = 50;
+
+		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
 	}
 
-	if (anim->IsFinish()) {
-		canReduceHp = false;
-		state = S_STOP;
-		return;
-	}
-
+	InReturn();
 	CollisionDetection();
 }
 
 void Character::UpdateKick3()
 {
 	anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+	
+	total = anim->TotalTime();
+
 	if (opponent != nullptr) {
 		colIndex = 13;
 		damage = 70;
+
+		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
 	}
 
-	if (anim->IsFinish()) {
-		canReduceHp = false;
-		state = S_STOP;
-		return;
-	}
-
+	InReturn();
 	CollisionDetection();
 }
 
@@ -275,8 +287,19 @@ void Character::UpdateProtect()
 	CollisionDetection();
 }
 
+void Character::InReturn()
+{
+	if (anim->IsFinish()) {
+		isMoveing = false;
+		canReduceHp = false;
+		state = S_STOP;
+		return;
+	}
+}
+
 void Character::UpdateJump()
 {
+	transform.position.y += velocityY;
 }
 
 void Character::UpdateDamage(int dmg)

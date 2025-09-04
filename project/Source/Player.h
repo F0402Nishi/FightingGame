@@ -51,9 +51,9 @@ private:
 	bool isJumping;
 	// bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ğŒ¸‚ç‚¹‚é
 	bool isPlayer;
-	bool isGuarding;
-	bool isMoveing;
-	bool isPunching;
+	// bool isGuarding;
+	// bool isMoveing;
+	// bool isPunching;
 
 #if false "Ql‚Ì‚½‚ß‚É•Û—¯"
 	// Player‚Ìœ§Œä
