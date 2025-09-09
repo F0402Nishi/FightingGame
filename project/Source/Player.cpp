@@ -78,7 +78,7 @@ void Player::Update()
 		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 	}
 
-	if (!isPlayer) anim->Play("data/Character/Player/Guard_Idle.mv1", false);
+	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true, false);
 	if (!isPlayer) return;
 
 	if (state == S_STOP) {
@@ -117,13 +117,20 @@ void Player::Update()
 	if (CheckHitKey(KEY_INPUT_L) && !isMoveing) { state = S_KICK3; canReduceHp = true; isMoveing = true; } // キック3
 	if (CheckHitKey(KEY_INPUT_H)) { state = S_PROTECT; isGuarding = true; } // ガード
 
+	if (state == S_PUNCH1 && canCancel) {
+		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
+		if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; canReduceHp = true; isMoveing = true; }
+	}
+
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
 	// ImGui::Text("push.x: %.2f", hit.x);
 	// ImGui::Text("push.y: %.2f", hit.y);
 	ImGui::Text("state: %d", (int)state);
-	ImGui::InputFloat("frame: %d", &total);
+	ImGui::InputFloat("frame: ", &frame);
+	ImGui::InputFloat("totalframe: ", &total);
+	ImGui::InputFloat("ratioframe: ", &ratio);
 	// ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
 

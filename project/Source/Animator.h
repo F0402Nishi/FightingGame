@@ -7,7 +7,7 @@ public:
 	Animator(int m);
 	~Animator();
 	void Update();
-	void Play(std::string filename, bool loop);
+	void Play(std::string filename, bool loop, bool force);
 	bool IsFinish();
 	
 	int GetModelHandle() const { return model; }

@@ -4,18 +4,24 @@
 #include "Stage.h"
 #include "HitCheck.h"
 #include "HPber.h"
-#include "../ImGui/imgui.h"
 
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
 #define PLAYER_HP 1000
 
-struct AttackDate {
-	int hitStartFrame;
-	int hitEndFrame;
-	int cancelStartFrame;
-	int cancelEndFrame;
+struct AttackData {
+	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
+	int hitEndFrame; // 当たり判定が「消える」最後のフレーム
+	int cancelStartFrame; // 別の技へ“キャンセルしてよい”最初のフレーム
+	int cancelEndFrame; // キャンセル“してよい”最後のフレーム
 };
+
+static const AttackData Punch1Data = { 7, 9, 0, 5 };
+static const AttackData Punch2Data = { 5, 9, 0, 5 };
+static const AttackData Punch3Data = { 5, 9, 0, 5 };
+static const AttackData Kick1Data = { 5, 9, 0, 5 };
+static const AttackData Kick2Data = { 5, 9, 0, 5 };
+static const AttackData Kick3Data = { 5, 9, 0, 5 };
 
 Character::Character()
 {
@@ -33,6 +39,7 @@ Character::Character()
 	canReduceHp = false;
 	isMoveing = false;
 	isGuarding = false;
+	canCancel = false;
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
 	speed = PLAYER_SPEED;
@@ -162,25 +169,32 @@ void Character::SetOpponent(Character* other)
 
 void Character::UpdateStop()
 {
-	anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+	anim->Play("data/Character/Player/Fight_Idle.mv1", true, false);
 	
 	inputDir = VGet(0, 0, 0);
 }
 
 void Character::UpdatePunch1()
 {
-	anim->Play("data/Character/Player/Atk_P_1.mv1", false);
+	anim->Play("data/Character/Player/Atk_P_1.mv1", false, true);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 	ratio = anim->NormalizedTime();
 	
-	if (opponent != nullptr) {  
-		colIndex = 4;
-		damage = 10;
-		
-		// 相手がガード中かどうか判定
-		if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+	if (opponent != nullptr) {
+		if (frame >= Punch1Data.hitStartFrame && frame <= Punch1Data.hitEndFrame) {
+			colIndex = 4;
+			damage = 10;
+
+			// 相手がガード中かどうか判定
+			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+
+			std::cout << "[Punch1] First hit at frame: " << frame << std::endl;
+		}
+
+		if (frame >= Punch1Data.cancelStartFrame && frame <= Punch1Data.cancelEndFrame) { canCancel = true; }
+		else { canCancel = false; }
 	}
 
 
@@ -190,8 +204,9 @@ void Character::UpdatePunch1()
 
 void Character::UpdatePunch2()
 {
-	anim->Play("data/Character/Player/Atk_P_2.mv1", false);
+	anim->Play("data/Character/Player/Atk_P_2.mv1", false, true);
 	
+	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 	
 	if (opponent != nullptr) {
@@ -207,8 +222,9 @@ void Character::UpdatePunch2()
 
 void Character::UpdatePunch3()
 {
-	anim->Play("data/Character/Player/Atk_P_3.mv1", false);
+	anim->Play("data/Character/Player/Atk_P_3.mv1", false, true);
 	
+	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
@@ -224,8 +240,9 @@ void Character::UpdatePunch3()
 
 void Character::UpdateKick1()
 {
-	anim->Play("data/Character/Player/Atk_K_1.mv1", false);
+	anim->Play("data/Character/Player/Atk_K_1.mv1", false, true);
 	
+	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
@@ -241,8 +258,9 @@ void Character::UpdateKick1()
 
 void Character::UpdateKick2()
 {
-	anim->Play("data/Character/Player/Atk_K_2.mv1", false);
+	anim->Play("data/Character/Player/Atk_K_2.mv1", false, true);
 	
+	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
@@ -258,8 +276,9 @@ void Character::UpdateKick2()
 
 void Character::UpdateKick3()
 {
-	anim->Play("data/Character/Player/Atk_K_3.mv1", false);
+	anim->Play("data/Character/Player/Atk_K_3.mv1", false, true);
 	
+	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
@@ -275,7 +294,7 @@ void Character::UpdateKick3()
 
 void Character::UpdateProtect()
 {
-	anim->Play("data/Character/Player/Guard_Idle.mv1", false);
+	anim->Play("data/Character/Player/Guard_Idle.mv1", false, false);
 
 	if (anim->IsFinish()) {
 		isGuarding = false;

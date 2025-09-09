@@ -44,9 +44,9 @@ void Animator::Update()
 
 }
 
-void Animator::Play(std::string filename, bool loop)
+void Animator::Play(std::string filename, bool loop, bool force)
 {
-	if (currentFile == filename) return;
+	if (!force && currentFile == filename) return;
 
 	if (attachID >= 0) {
 		MV1DetachAnim(model, attachID);

@@ -61,6 +61,7 @@ protected:
 	// bool isPlayer;
 	bool isMoveing;
 	bool isPunching;
+	bool canCancel;
 
 	// Player‚Ìœ§Œä
 	int headBone;
