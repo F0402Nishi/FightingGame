@@ -64,7 +64,7 @@ void HPber::Update()
     }
 
     ImGui::Begin("HPbar");
-    ImGui::InputInt("currenthpÅF", &currenthp);
+    ImGui::InputInt("currenthp", &currenthp);
     // ImGui::InputInt("graphHÅF", &graphH);
     ImGui::End();
 }

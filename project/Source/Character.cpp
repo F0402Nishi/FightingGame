@@ -16,12 +16,12 @@ struct AttackData {
 	int cancelEndFrame; // キャンセル“してよい”最後のフレーム
 };
 
-static const AttackData Punch1Data = { 7, 9, 0, 5 };
-static const AttackData Punch2Data = { 5, 9, 0, 5 };
-static const AttackData Punch3Data = { 5, 9, 0, 5 };
-static const AttackData Kick1Data = { 5, 9, 0, 5 };
-static const AttackData Kick2Data = { 5, 9, 0, 5 };
-static const AttackData Kick3Data = { 5, 9, 0, 5 };
+static const AttackData Punch1Data = { 7, 10, 0, 6 }; // 15
+static const AttackData Punch2Data = { 7, 11, 0, 6 }; // 19
+static const AttackData Punch3Data = { 12, 17, 0, 11 }; // 22
+static const AttackData Kick1Data = { 15, 20, 0, 14 }; // 27
+static const AttackData Kick2Data = { 15, 20, 0, 14 }; // 27
+static const AttackData Kick3Data = { 18, 23, 0, 17 }; // 44
 
 Character::Character()
 {
@@ -32,6 +32,7 @@ Character::Character()
 	transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	transform.scale = VGet(2, 2, 2);
 	anim = new Animator(hModel);
+	// anim->Play("data/Character/Player/Fight_Idle.mv1", true, true);
 	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
 
 	state = S_STOP;
@@ -169,6 +170,7 @@ void Character::SetOpponent(Character* other)
 
 void Character::UpdateStop()
 {
+	// PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
 	anim->Play("data/Character/Player/Fight_Idle.mv1", true, false);
 	
 	inputDir = VGet(0, 0, 0);
@@ -176,7 +178,7 @@ void Character::UpdateStop()
 
 void Character::UpdatePunch1()
 {
-	anim->Play("data/Character/Player/Atk_P_1.mv1", false, true);
+ 	PlayAttack("data/Character/Player/Atk_P_1.mv1", true);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
@@ -204,16 +206,21 @@ void Character::UpdatePunch1()
 
 void Character::UpdatePunch2()
 {
-	anim->Play("data/Character/Player/Atk_P_2.mv1", false, true);
+	PlayAttack("data/Character/Player/Atk_P_2.mv1", false);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 	
 	if (opponent != nullptr) {
-		colIndex = 7;
-		damage = 50;
+		if (frame >= Punch2Data.hitStartFrame && frame <= Punch2Data.hitEndFrame) {
+			colIndex = 7;
+			damage = 50;
 
-		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+		}
+
+		if (frame >= Punch2Data.cancelStartFrame && frame <= Punch2Data.cancelEndFrame) { canCancel = true; }
+		else { canCancel = false; }
 	}
 
 	InReturn();
@@ -222,16 +229,21 @@ void Character::UpdatePunch2()
 
 void Character::UpdatePunch3()
 {
-	anim->Play("data/Character/Player/Atk_P_3.mv1", false, true);
+	PlayAttack("data/Character/Player/Atk_P_3.mv1", false);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
-		colIndex = 4;
-		damage = 70;
+		if (frame >= Punch3Data.hitStartFrame && frame <= Punch3Data.hitEndFrame) {
+			colIndex = 4;
+			damage = 70;
 
-		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+		}
+
+		if (frame >= Punch3Data.cancelStartFrame && frame <= Punch3Data.cancelEndFrame) { canCancel = true; }
+		else { canCancel = false; }
 	}
 
 	InReturn();
@@ -246,10 +258,15 @@ void Character::UpdateKick1()
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
-		colIndex = 13;
-		damage = 10;
+		if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
+			colIndex = 13;
+			damage = 10;
 
-		if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+		}
+
+		if (frame >= Kick1Data.cancelStartFrame && frame <= Kick1Data.cancelEndFrame) { canCancel = true; }
+		else { canCancel = false; }
 	}
 
 	InReturn();
@@ -264,10 +281,16 @@ void Character::UpdateKick2()
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
-		colIndex = 10;
-		damage = 50;
+		if (frame >= Kick2Data.hitStartFrame && frame <= Kick2Data.hitEndFrame) {
+			colIndex = 10;
+			damage = 50;
 
-		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+		}
+
+		if (frame >= Kick2Data.cancelStartFrame && frame <= Kick2Data.cancelEndFrame) { canCancel = true; }
+		else { canCancel = false; }
+
 	}
 
 	InReturn();
@@ -282,10 +305,16 @@ void Character::UpdateKick3()
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
-		colIndex = 13;
-		damage = 70;
+		if (frame >= Kick3Data.hitStartFrame && frame <= Kick3Data.hitEndFrame) {
+			colIndex = 13;
+			damage = 70;
 
-		if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+		}
+
+		if (frame >= Kick3Data.cancelStartFrame && frame <= Kick3Data.cancelEndFrame) { canCancel = true; }
+		else { canCancel = false; }
+
 	}
 
 	InReturn();
@@ -304,6 +333,25 @@ void Character::UpdateProtect()
 	}
 
 	CollisionDetection();
+}
+
+void Character::PlayAttack(const std::string& animFile, bool loop)
+{
+	if (!anim) { return; } // 安全対策
+
+	const std::string cur = anim->GetCurrentFile(); // 現在再生中のアニメ名を1回だけ取得
+
+	// Idle からの移行なら force = false、攻撃中など Idle 以外からの移行なら force = true
+	// const bool isFromIdle = (cur == "data/Character/Player/Fight_Idle.mv1"); 
+	// const bool force = !isFromIdle;
+
+	anim->Play(animFile, loop, true);
+
+	ImGui::Begin("PlayAttack");
+	ImGui::Text("Current Animation: %s", cur.c_str());
+	// ImGui::Text("isFromIdle: %s", isFromIdle ? "true" : "false");
+	// ImGui::Text("force: %s", force ? "true" : "false");
+	ImGui::End();
 }
 
 void Character::InReturn()

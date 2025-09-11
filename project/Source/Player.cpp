@@ -121,16 +121,24 @@ void Player::Update()
 		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
 		if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; canReduceHp = true; isMoveing = true; }
 	}
+	if (state == S_PUNCH2 && canCancel) {
+		if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; canReduceHp = true; isMoveing = true; }
+		if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; canReduceHp = true; isMoveing = true; }
+	}
+	if (state == S_PUNCH3 && canCancel) {
+		if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; canReduceHp = true; isMoveing = true; }
+		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
+	}
 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
 	// ImGui::Text("push.x: %.2f", hit.x);
 	// ImGui::Text("push.y: %.2f", hit.y);
+	ImGui::InputFloat("frame", &frame);
+	ImGui::InputFloat("totalframe", &total);
+	ImGui::InputFloat("ratioframe", &ratio);
 	ImGui::Text("state: %d", (int)state);
-	ImGui::InputFloat("frame: ", &frame);
-	ImGui::InputFloat("totalframe: ", &total);
-	ImGui::InputFloat("ratioframe: ", &ratio);
 	// ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
 

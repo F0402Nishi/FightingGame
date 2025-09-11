@@ -9,6 +9,7 @@ Animator::Animator(int m)
 	attachID = -1;
 	animTime = 0;
 	animMaxTime = 0;
+	currentFile = "";
 }
 
 Animator::~Animator()
@@ -50,9 +51,9 @@ void Animator::Play(std::string filename, bool loop, bool force)
 
 	if (attachID >= 0) {
 		MV1DetachAnim(model, attachID);
-		attachID = -1;
 		MV1DeleteModel(handle);
 		attachID = -1;
+		handle = -1;
 	}
 
 	handle = MV1LoadModel(filename.c_str());

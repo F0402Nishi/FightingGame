@@ -80,6 +80,9 @@
     <ClCompile Include="Source\Character.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SelectScene.cpp">
+      <Filter>SelectScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -174,6 +177,9 @@
     <ClInclude Include="Source\Character.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SelectScene.h">
+      <Filter>SelectScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Library">
@@ -190,6 +196,9 @@
     </Filter>
     <Filter Include="ImGui">
       <UniqueIdentifier>{a717257b-67b3-4bfa-834c-1e34032b33b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SelectScene">
+      <UniqueIdentifier>{9076f27e-467e-4221-b0cb-322d7143a214}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

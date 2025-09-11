@@ -17,6 +17,10 @@ public:
 		if (animMaxTime > 0.0f) { return animTime / animMaxTime; }
 		return 0.0f;
 	}
+	const std::string& GetCurrentFile() const { 
+		if (currentFile.empty()) { return "data/Character/Player/Fight_Idle.mv1";}
+		return currentFile;
+	}
 
 private:
 	int handle;

@@ -117,6 +117,7 @@ protected:
 	void UpdateKick2();
 	void UpdateKick3();
 	void UpdateProtect();
+	void PlayAttack(const std::string& animFile, bool loop);
 	void InReturn();
 	void UpdateJump();
 	void UpdateDamage(int dmg);
