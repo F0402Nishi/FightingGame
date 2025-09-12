@@ -171,14 +171,14 @@ void Character::SetOpponent(Character* other)
 void Character::UpdateStop()
 {
 	// PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
-	anim->Play("data/Character/Player/Fight_Idle.mv1", true, false);
+	anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
 	
 	inputDir = VGet(0, 0, 0);
 }
 
 void Character::UpdatePunch1()
 {
- 	PlayAttack("data/Character/Player/Atk_P_1.mv1", true);
+ 	PlayAttack("data/Character/Player/Atk_P_1.mv1", false);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
@@ -252,7 +252,7 @@ void Character::UpdatePunch3()
 
 void Character::UpdateKick1()
 {
-	anim->Play("data/Character/Player/Atk_K_1.mv1", false, true);
+	PlayAttack("data/Character/Player/Atk_K_1.mv1", false);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
@@ -275,7 +275,7 @@ void Character::UpdateKick1()
 
 void Character::UpdateKick2()
 {
-	anim->Play("data/Character/Player/Atk_K_2.mv1", false, true);
+	PlayAttack("data/Character/Player/Atk_K_2.mv1", false);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
@@ -299,7 +299,7 @@ void Character::UpdateKick2()
 
 void Character::UpdateKick3()
 {
-	anim->Play("data/Character/Player/Atk_K_3.mv1", false, true);
+	PlayAttack("data/Character/Player/Atk_K_3.mv1", false);
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
@@ -323,7 +323,7 @@ void Character::UpdateKick3()
 
 void Character::UpdateProtect()
 {
-	anim->Play("data/Character/Player/Guard_Idle.mv1", false, false);
+	PlayAttack("data/Character/Player/Guard_Idle.mv1", false);
 
 	if (anim->IsFinish()) {
 		isGuarding = false;
@@ -335,6 +335,12 @@ void Character::UpdateProtect()
 	CollisionDetection();
 }
 
+/// <summary>
+/// 攻撃キャンセル処理の試作
+/// 時間が足りないため、一時保留
+/// </summary>
+/// <param name="animFile"></param>
+/// <param name="loop"></param>
 void Character::PlayAttack(const std::string& animFile, bool loop)
 {
 	if (!anim) { return; } // 安全対策
@@ -345,7 +351,7 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 	// const bool isFromIdle = (cur == "data/Character/Player/Fight_Idle.mv1"); 
 	// const bool force = !isFromIdle;
 
-	anim->Play(animFile, loop, true);
+	anim->Play(animFile, loop); // , true のちに追加
 
 	ImGui::Begin("PlayAttack");
 	ImGui::Text("Current Animation: %s", cur.c_str());

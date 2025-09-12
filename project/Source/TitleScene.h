@@ -15,10 +15,10 @@ public:
 	void Draw() override;
 
 private:
-	int readVal;
-	int TitleImage;
-	int OperationImage;
-	bool operation;
-	bool TitleKeyInput;
-	bool isSetting;
+	// int readVal;
+	int MechImage;
+	int BrawlersImage;
+	int PoseLeftImage;
+	int PoseRightImage;
+	int TitleBackImage;
 };

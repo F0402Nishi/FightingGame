@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "BootScene.h"
 #include "TitleScene.h"
+#include "SelectScene.h"
 #include "PlayScene.h"
 
 SceneBase* SceneFactory::CreateFirst()
@@ -15,6 +16,10 @@ SceneBase * SceneFactory::Create(const std::string & name)
 	if (name == "TITLE")
 	{
 		return new TitleScene();
+	}
+	if (name == "SELECT")
+	{
+		return new SelectScene();
 	}
 	if (name == "PLAY")
 	{

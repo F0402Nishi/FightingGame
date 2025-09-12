@@ -78,7 +78,7 @@ void Player::Update()
 		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 	}
 
-	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true, false);
+	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isPlayer) return;
 
 	if (state == S_STOP) {

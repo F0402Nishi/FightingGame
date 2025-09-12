@@ -13,7 +13,19 @@ public:
 	~SelectScene();
 	void Update() override;
 	void Draw() override;
+	void KeyMovement();
 
 private:
-	int readVal;
+	int OperationImage;
+	int CommandImage;
+	int BattleImage;
+	int SelectionArrowImage;
+	int SelectBackImage;
+	int Xkey;
+	int Ykey;
+
+	bool operation;
+	bool TitleKeyInput;
+	bool isSetting;
+	bool atInit;
 };
