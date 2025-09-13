@@ -5,13 +5,14 @@
 #include <string>
 #include <vector>
 #include <iostream>  // © ‚±‚ê‚ª•K{
-// #include "Player.h"
+#include "Player.h"
 
 class Opponent : public Character
 {
 public:
 	Opponent();
 	~Opponent();
+	bool OpponentInit(Player* target);
 	void Update() override { std::cout << "Opponent Update" << std::endl; };
 	void Draw() override { std::cout << "Character Draw" << std::endl; };
 

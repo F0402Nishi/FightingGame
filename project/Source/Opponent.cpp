@@ -8,3 +8,8 @@ Opponent::Opponent()
 Opponent::~Opponent()
 {
 }
+
+bool Opponent::OpponentInit(Player* target)
+{
+	return false;
+}

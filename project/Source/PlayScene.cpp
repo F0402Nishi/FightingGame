@@ -14,6 +14,8 @@ static float posz = -400.0f;
 
 PlayScene::PlayScene()
 {
+	// InitGameFromSelect();
+
 	p1 = new Player(true);
 	p2 = new Player(false);
 	new Stage();
@@ -94,4 +96,9 @@ void PlayScene::UpdateCamera()
 	ImGui::InputFloat("zoomZ", &zoomZ);
 	ImGui::End();
 #endif // 0
+}
+
+void PlayScene::InitGameFromSelect(int opponentType)
+{
+
 }

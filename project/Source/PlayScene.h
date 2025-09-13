@@ -13,12 +13,14 @@ public:
 	void Update() override;
 	void Draw() override;
 	void UpdateCamera();
+	void InitGameFromSelect(int opponentType);
 
 private:
 	Player* p1;
 	Player* p2;
 	HPber* h1;
 	HPber* h2;
+	Character* cpu;
 
 	int Hpbar;
 	bool PlayerKeyInput;

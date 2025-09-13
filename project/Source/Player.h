@@ -30,15 +30,15 @@ private:
 	// Player* opponent;
 	// Animator* anim;
 
-	std::string hitPart;
+	// std::string hitPart;
 
 	VECTOR velocity;
 	VECTOR basePos;
 	VECTOR worldCenter;
 	VECTOR attackPos;
 
-	int Hp;
-	int MaxHp;
+	// int Hp;
+	// int MaxHp;
 	// int damage;
 	// int colIndex;
 	int DrawValue;
@@ -48,7 +48,7 @@ private:
 	float velocityY = 0.0f;
 	float attackRadius;
 
-	bool isJumping;
+	// bool isJumping;
 	// bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ðŒ¸‚ç‚¹‚é
 	bool isPlayer;
 	// bool isGuarding;

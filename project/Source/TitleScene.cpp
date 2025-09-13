@@ -22,8 +22,8 @@ TitleScene::TitleScene()
 	TitleBackImage = LoadGraph("data/2D/Title_Back.png");
 	assert(TitleBackImage >= 0);
 
-// ステージ試作
-#if false
+
+#if false "ステージ試作"
 	ofstream f("data/test.txt"); //ファイルを開く
 	// const char* str = "1Aa_";
 	// f.write(str, 4);　//ファイルに書く
