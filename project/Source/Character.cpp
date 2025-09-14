@@ -28,8 +28,8 @@ Character::Character()
 	hModel = MV1LoadModel("data/Character/Armature/Armature.mv1");
 	assert(hModel >= 0);
 
-	transform.position = VGet(200.0f, 14.0f, 150.0f);
-	transform.rotation = VGet(0, DegToRad(90.0f), 0);
+	transform.position = VGet(-200.0f, 14.0f, 150.0f);
+	transform.rotation = VGet(0, DegToRad(-90.0f), 0);
 	transform.scale = VGet(2, 2, 2);
 	anim = new Animator(hModel);
 	// anim->Play("data/Character/Player/Fight_Idle.mv1", true, true);
@@ -195,8 +195,8 @@ void Character::UpdatePunch1()
 			std::cout << "[Punch1] First hit at frame: " << frame << std::endl;
 		}
 
-		if (frame >= Punch1Data.cancelStartFrame && frame <= Punch1Data.cancelEndFrame) { canCancel = true; }
-		else { canCancel = false; }
+		// if (frame >= Punch1Data.cancelStartFrame && frame <= Punch1Data.cancelEndFrame) { canCancel = true; }
+		// else { canCancel = false; }
 	}
 
 
@@ -219,8 +219,8 @@ void Character::UpdatePunch2()
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
 		}
 
-		if (frame >= Punch2Data.cancelStartFrame && frame <= Punch2Data.cancelEndFrame) { canCancel = true; }
-		else { canCancel = false; }
+		// if (frame >= Punch2Data.cancelStartFrame && frame <= Punch2Data.cancelEndFrame) { canCancel = true; }
+		// else { canCancel = false; }
 	}
 
 	InReturn();
@@ -242,8 +242,8 @@ void Character::UpdatePunch3()
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
 		}
 
-		if (frame >= Punch3Data.cancelStartFrame && frame <= Punch3Data.cancelEndFrame) { canCancel = true; }
-		else { canCancel = false; }
+		// if (frame >= Punch3Data.cancelStartFrame && frame <= Punch3Data.cancelEndFrame) { canCancel = true; }
+		// else { canCancel = false; }
 	}
 
 	InReturn();
@@ -265,8 +265,8 @@ void Character::UpdateKick1()
 			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
 		}
 
-		if (frame >= Kick1Data.cancelStartFrame && frame <= Kick1Data.cancelEndFrame) { canCancel = true; }
-		else { canCancel = false; }
+		// if (frame >= Kick1Data.cancelStartFrame && frame <= Kick1Data.cancelEndFrame) { canCancel = true; }
+		// else { canCancel = false; }
 	}
 
 	InReturn();
@@ -288,8 +288,8 @@ void Character::UpdateKick2()
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
 		}
 
-		if (frame >= Kick2Data.cancelStartFrame && frame <= Kick2Data.cancelEndFrame) { canCancel = true; }
-		else { canCancel = false; }
+		// if (frame >= Kick2Data.cancelStartFrame && frame <= Kick2Data.cancelEndFrame) { canCancel = true; }
+		// else { canCancel = false; }
 
 	}
 
@@ -312,8 +312,8 @@ void Character::UpdateKick3()
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
 		}
 
-		if (frame >= Kick3Data.cancelStartFrame && frame <= Kick3Data.cancelEndFrame) { canCancel = true; }
-		else { canCancel = false; }
+		// if (frame >= Kick3Data.cancelStartFrame && frame <= Kick3Data.cancelEndFrame) { canCancel = true; }
+		// else { canCancel = false; }
 
 	}
 

@@ -5,8 +5,8 @@
 #include <algorithm>
 #include "../ImGui/imgui.h"
 #include "HPber.h"
-#include "Player.h"
 #include "Character.h"
+#include "Player.h"
 
 #define IMAGE_SCALE 1.0f
 #define IMAGE_POSITION_LEFT_X -10.0f
@@ -21,22 +21,23 @@ HPber::HPber()
     HPImage = LoadGraph("data/2D/HP_FrontImage.png");
     assert(HPImage >= 0);
 
-    player = nullptr;
+    character = nullptr;
 
     currenthp = 0;
     maxhp = 0;
     displayHp = 0;
 }
 
-bool HPber::Init(Player* target)
+bool HPber::Init(Character* target)
 {
-    player = target;
+    character = target;
 
-    if (player) {
-        currenthp = player->GetHp();
-        maxhp = player->GetMaxHp();
+    if (character) {
+        currenthp = character->GetHp();
+        maxhp = character->GetMaxHp();
         displayHp = currenthp;
-        isLeftPlayer = player->GetisPlayer();
+        isLeftPlayer = character->GetisPlayey();
+        isLeftCpu = character->GetisCpu();
         return true;
     }
     else { return false; }
@@ -54,9 +55,9 @@ void HPber::SetMaxHp(int hp)
 
 void HPber::Update()
 {
-    if (player) {
-        SetHp(player->GetHp());
-        SetMaxHp(player->GetMaxHp());
+    if (character) {
+        SetHp(character->GetHp());
+        SetMaxHp(character->GetMaxHp());
     }
 
     if (displayHp > currenthp) { // å©ÇΩñ⁄ópHPÇèôÅXÇ…currenthpÇ…ãﬂÇ√ÇØÇÈ
@@ -71,7 +72,7 @@ void HPber::Update()
 
 void HPber::Draw()
 {
-    if (player == nullptr || HPbackImage == -1) return;
+    if (character == nullptr || HPbackImage == -1) return;
 
     graphW = 0, graphH = 0;
     GetGraphSize(HPImage, &graphW, &graphH);
@@ -84,13 +85,20 @@ void HPber::Draw()
     int drawH = static_cast<int>(graphH * IMAGE_SCALE);
 
     
-
-    if (isLeftPlayer) { 
-        DrawTurnGraph(IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
-        DrawRectExtendGraph((IMAGE_POSITION_LEFT_X + 15.0f) + scaleBarW, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + 15.0f, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
-    }
-    else if (!isLeftPlayer) { 
+    if (isLeftCpu) {
         DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
         DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X + 100.0f, HPIMAGE_POSITION_Y, (IMAGE_POSITION_RIGHT_X + 100.0f) + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+
+    }
+    else
+    {
+        if (isLeftPlayer) { 
+            DrawTurnGraph(IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
+            DrawRectExtendGraph((IMAGE_POSITION_LEFT_X + 15.0f) + scaleBarW, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + 15.0f, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+        }
+        else if (!isLeftPlayer) { 
+            DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
+            DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X + 100.0f, HPIMAGE_POSITION_Y, (IMAGE_POSITION_RIGHT_X + 100.0f) + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+        }
     }
 }

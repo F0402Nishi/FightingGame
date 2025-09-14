@@ -1,8 +1,9 @@
 #pragma once
 #include "../Library/SceneBase.h"
 
-class Player;
 class Character;
+class Player;
+class CPU;
 class HPber;
 
 class PlayScene : public SceneBase
@@ -13,15 +14,15 @@ public:
 	void Update() override;
 	void Draw() override;
 	void UpdateCamera();
-	void InitGameFromSelect(int opponentType);
 
 private:
-	Player* p1;
-	Player* p2;
+	Character* p1;
+	Character* p2;
+	CPU* cpu;
 	HPber* h1;
 	HPber* h2;
-	Character* cpu;
 
 	int Hpbar;
 	bool PlayerKeyInput;
+	int opponentType;
 };

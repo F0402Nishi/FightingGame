@@ -19,6 +19,8 @@ public:
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
+	virtual bool GetisPlayey() const = 0;
+	virtual bool GetisCpu() const = 0;
 
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
@@ -35,33 +37,33 @@ protected:
 
 	std::string hitPart;
 
-	VECTOR inputDir;
-	VECTOR velocity;
-	VECTOR basePos;
-	VECTOR worldCenter;
-	VECTOR attackPos;
+	VECTOR inputDir; // 初期位置
+	// VECTOR velocity;
+	VECTOR basePos; // 現在位置
+	VECTOR worldCenter;  // Colliderの現在位置
+	VECTOR attackPos; // 攻撃の時に当たったColliderの位置
 
-	int Hp;
-	int MaxHp;
-	int damage;
-	int colIndex;
-	int DrawValue;
-	int TargetValue;
-	int speed;
+	int Hp; // 現在のHP
+	int MaxHp; // 最大値のHP
+	int damage; // 攻撃のダメージ
+	int colIndex; // 攻撃時に判定に使うCollider
+	// int DrawValue;
+	// int TargetValue;
+	int speed; // 移動の速さ
 
 	// float time = 0.0f;
-	float velocityY = 0.0f;
-	float attackRadius;
+	float velocityY = 0.0f; // ジャンプ時のY座標
+	float attackRadius; // 攻撃時に当たったColliderの半径
 	float frame; // 今のフレーム取得
 	float total; // 総フレーム数
 	float ratio; // 0～1 の割合
 
-	bool isJumping;
+	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる
 	// bool isPlayer;
-	bool isMoveing;
-	bool isPunching;
-	bool canCancel;
+	bool isMoveing; // アニメーションが再生中かの判定
+	bool isPunching; // パンチ中かの判定
+	bool canCancel; // 攻撃キャンセル可能かの判定中
 
 	// Playerの骨制御
 	int headBone;

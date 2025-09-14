@@ -11,10 +11,9 @@
 
 Player::Player(bool _isPlayer)
 {
-
 	isPlayer = _isPlayer;
 	isJumping = false;
-	isPunching = false;
+	// isPunching = false;
 	// state = S_STOP;
 	// colIndex = 0;
 	// isMoveing = false;
@@ -23,9 +22,9 @@ Player::Player(bool _isPlayer)
 	// Hp = PLAYER_HP;
 	// MaxHp = PLAYER_HP;
 
-	if (isPlayer) {
-		transform.position = VGet(-200.0f, 14.0f, 150.0f);
-		transform.rotation = VGet(0, DegToRad(-90.0f), 0);
+	if (!isPlayer) {
+		transform.position = VGet(200.0f, 14.0f, 150.0f);
+		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
 
 #if 0 
@@ -72,8 +71,7 @@ void Player::Update()
 {
 	Character::Always();
 
-	// !isPlayerの攻撃判定用Colliderの位置を調整
-	if (!isPlayer) {
+	if (!isPlayer) { // !isPlayerの攻撃判定用Colliderの位置を調整
 		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
 		hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 	}
@@ -91,6 +89,15 @@ void Player::Update()
 			// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
 		}
 	}
+
+	//のちに戻す
+#if false 
+	if (CheckHitKey(KEY_INPUT_SPACE)) {
+		velocityY = PLAYER_JUMP;
+		transform.position.y += velocityY;
+		state = S_JUMP;
+	}
+#endif
 
 	// 左右移動
 	if (VSize(inputDir) > 0) {

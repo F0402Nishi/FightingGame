@@ -1,9 +1,10 @@
+#include "PlayScene.h"
 #include <DxLib.h>
 #include "../ImGui/imgui.h"
-#include "PlayScene.h"
+#include "SelectScene.h"
 #include "Character.h"
 #include "Player.h"
-#include "Opponent.h"
+#include "Cpu.h"
 #include "Stage.h"
 #include "Field.h"
 #include "HPber.h"
@@ -14,10 +15,20 @@ static float posz = -400.0f;
 
 PlayScene::PlayScene()
 {
-	// InitGameFromSelect();
+	opponentType = SelectScene::gameType;
 
 	p1 = new Player(true);
-	p2 = new Player(false);
+
+	if (opponentType == 1) { // トレーニングモード
+		p2 = new CPU(false);
+	}
+	else if (opponentType == 2) { // CPU戦モード
+		p2 = new CPU(true);
+	}
+	else if (opponentType == 3) { // Player戦モード
+		p2 = new Player(false);
+	}
+
 	new Stage();
 	new Field();
 	h1 = new HPber();
@@ -44,6 +55,7 @@ void PlayScene::Update()
 	if (CheckHitKey(KEY_INPUT_T)) {
 		SceneManager::ChangeScene("TITLE");
 	}
+
 
 #if false
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
@@ -94,11 +106,7 @@ void PlayScene::UpdateCamera()
 #if 0
 	ImGui::Begin("Camera");
 	ImGui::InputFloat("zoomZ", &zoomZ);
+	//ImGui::InputInt("Type", &opponentType);
 	ImGui::End();
 #endif // 0
-}
-
-void PlayScene::InitGameFromSelect(int opponentType)
-{
-
 }

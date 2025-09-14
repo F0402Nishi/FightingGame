@@ -74,14 +74,14 @@
     <ClCompile Include="Source\HPber.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Opponent.cpp">
-      <Filter>PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Character.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Source\SelectScene.cpp">
       <Filter>SelectScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cpu.cpp">
+      <Filter>PlayScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,14 +171,14 @@
     <ClInclude Include="Source\HPber.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Opponent.h">
-      <Filter>PlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Character.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Source\SelectScene.h">
       <Filter>SelectScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Cpu.h">
+      <Filter>PlayScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

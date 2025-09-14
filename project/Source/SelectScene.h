@@ -1,8 +1,6 @@
 #pragma once
 #include "../Library/SceneBase.h"
 
-class PlayScene;
-
 /// <summary>
 /// セレクトシーン
 /// CommandImageを表示して、キーを押したらOperationImageを表示。
@@ -18,9 +16,9 @@ public:
 	void KeyMovement();
 	void UpdateKey();
 
-private:
-	PlayScene* playscene;
+	static int gameType;
 
+private:
 	int OperationImage;
 	int CommandImage;
 	int BattleImage;

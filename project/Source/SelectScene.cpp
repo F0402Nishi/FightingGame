@@ -4,6 +4,8 @@
 #include <assert.h>
 #include "PlayScene.h"
 
+int SelectScene::gameType = 0;
+
 SelectScene::SelectScene()
 {
 	OperationImage = LoadGraph("data/2D/Ki-Bo-Do_4.png");
@@ -37,6 +39,7 @@ SelectScene::SelectScene()
 	YPosition[1] = 75;
 	YPosition[2] = -85;
 	YPosition[3] = -250;
+
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -72,8 +75,8 @@ void SelectScene::Draw()
 
 	if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
 	if (OpponentSelection) {
-		DrawExtendString(930, 300, 2, 2, "TRINING", GetColor(255, 255, 255));
-		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(192, 192, 192));
+		DrawExtendString(930, 300, 2, 2, "TRINING", GetColor(192, 192, 192));
+		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
 		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(192, 192, 192));
 	}
 }
@@ -98,13 +101,16 @@ void SelectScene::KeyMovement()
 			isSetting = !isSetting;
 			break;
 		case 1:
-			SceneManager::ChangeScene("PLAY");
+			gameType = YInit;
+			// SceneManager::ChangeScene("PLAY");
 			break;
 		case 2:
-			playscene->InitGameFromSelect(YInit);
+			gameType = YInit;
+			SceneManager::ChangeScene("PLAY");
 			break;
 		case 3:
-			playscene->InitGameFromSelect(YInit);
+			gameType = YInit;
+			// SceneManager::ChangeScene("PLAY");
 			break;
 		}
 	}

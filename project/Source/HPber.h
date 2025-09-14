@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include <algorithm>
 #include "Object3D.h"
-#include "Player.h"
+// #include "Player.h"
 
 class Character;
 
@@ -10,14 +10,14 @@ class HPber : public Object3D
 {
 public:
 	HPber();
-	bool Init(Player* target);
+	bool Init(Character* target);
 	void Update() override;
 	void Draw() override;
 	void SetHp(int hp);
 	void SetMaxHp(int hp);
 
 private:
-	Player* player;
+	Character* character;
 	int HPbackImage = -1;
 	int HPImage = -1;
 	int currenthp;
@@ -25,7 +25,9 @@ private:
 	int graphW;
 	int graphH;
 	int displayHp;
+	
 	bool isLeftPlayer;
+	bool isLeftCpu;
 
 #if false
 	int HPbarCount = 4;

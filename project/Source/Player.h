@@ -1,9 +1,9 @@
 #pragma once
 #include "Character.h"
 #include "Animator.h"
-#include "Field.h"
 #include <string>
 #include <vector>
+// #include "Field.h"
 
 class HPber;
 
@@ -12,12 +12,15 @@ class Player : public Character
 public:
 	Player(bool _isPlayer);
 	~Player();
+
 	void Update() override;
 	void Draw() override;
+	virtual bool GetisPlayey() const override { return isPlayer; }
+	virtual bool GetisCpu() const override { return false; }
 
-	std::string GetHit() { return hitPart; }
-	bool GetisPlayer() const { return isPlayer; }
-	bool GetisPunching() const { return isPunching; }
+	// std::string GetHit() { return hitPart; }
+	// bool GetisPlayer() const { return isPlayer; }
+	// bool GetisPunching() const { return isPunching; }
 
 	// void SetHitSpheres();
 	// void SetOpponent(Player* other);
@@ -26,36 +29,37 @@ public:
 	// int GetMaxHp() const { return MaxHp; }
 
 private:
-	Field* field;
+	VECTOR velocity;
+	bool isPlayer;
+
+#if false "参考のために保留"
+	// Field* field;
 	// Player* opponent;
 	// Animator* anim;
 
 	// std::string hitPart;
 
-	VECTOR velocity;
-	VECTOR basePos;
-	VECTOR worldCenter;
-	VECTOR attackPos;
+	// VECTOR basePos;
+	// VECTOR worldCenter;
+	// VECTOR attackPos;
 
 	// int Hp;
 	// int MaxHp;
 	// int damage;
 	// int colIndex;
-	int DrawValue;
-	int TargetValue;
+	// int DrawValue;
+	// int TargetValue;
 
 	// float time = 0.0f;
-	float velocityY = 0.0f;
-	float attackRadius;
+	// float velocityY = 0.0f;
+	// float attackRadius;
 
 	// bool isJumping;
 	// bool canReduceHp; // trueのときだけHPを減らせる
-	bool isPlayer;
 	// bool isGuarding;
 	// bool isMoveing;
 	// bool isPunching;
 
-#if false "参考のために保留"
 	// Playerの骨制御
 	int headBone;
 	int bodyBone;
