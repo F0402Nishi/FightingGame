@@ -29,9 +29,13 @@ private:
 	VECTOR mypos; // 自分の位置
 	VECTOR playerpos; // Playerの位置
 
-	float dx;
+	float targetDistance; // 理想の間合い
+	float expandThreshold; // ここまで広がったら詰め直す
+	float dx; // Playerの位置からCPUの位置を引いた位置(中心値)
+	float playerMoveDir; // 現在のPlayerの座標と前の座標の差分
 
 	bool opponent;
 	bool punch;
 	bool isCpu;
+	bool reachedTarget;
 };

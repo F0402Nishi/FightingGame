@@ -64,10 +64,12 @@ void HPber::Update()
         displayHp -= std::max(1, (displayHp - currenthp) / 10); // èôÅXÇ…å∏ÇÈ
     }
 
+#if 0
     ImGui::Begin("HPbar");
     ImGui::InputInt("currenthp", &currenthp);
-    // ImGui::InputInt("graphHÅF", &graphH);
+    ImGui::InputInt("graphHÅF", &graphH);
     ImGui::End();
+#endif // 0
 }
 
 void HPber::Draw()

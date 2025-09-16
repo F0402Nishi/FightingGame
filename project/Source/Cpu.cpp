@@ -4,13 +4,17 @@
 
 CPU::CPU(bool _iscpu)
 {
-	isCpu = _iscpu;
-	dx = 0.0f;
-
+	player = FindGameObject<Player>();
+	
 	transform.position = VGet(200.0f, 14.0f, 150.0f);
 	transform.rotation = VGet(0, DegToRad(90.0f), 0);
 
-	player = FindGameObject<Player>();
+	isCpu = _iscpu;
+	dx = 0.0f;
+	targetDistance = 10.0f;
+	expandThreshold = 200.0f;
+
+	reachedTarget = false;
 }
 
 CPU::~CPU()
@@ -31,6 +35,13 @@ void CPU::Update()
 	if (!isCpu) return;
 
 	EffectiveRange();
+
+	ImGui::Begin("CPU-pos");
+	ImGui::InputFloat("dx", &dx);
+	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
+	ImGui::Text("MyPosition：%d", (int) & mypos);
+	//ImGui::InputInt("Type", &opponentType);
+	ImGui::End();
 }
 
 void CPU::Draw()
@@ -42,28 +53,69 @@ void CPU::Draw()
 
 void CPU::EffectiveRange()
 {
+	// === 座標取得 ===
 	mypos = transform.position;
 	playerpos = player->GetTransform().position;
 
 	dx = playerpos.x - mypos.x;
 	float dist = fabsf(dx);
 
-	const float minDistance = 1.0f; // これ以上近づかない
-	const float maxDistance = 10.0f; // この距離より離れてたら近づく
+	// === Player の移動方向を判定 ===
+	static float prevPlayerX = playerpos.x; // 前のフレームの Player の X 座標
+	playerMoveDir = playerpos.x - prevPlayerX; // >0:右に動いた, <0:左に動いた
+	prevPlayerX = playerpos.x;
+	const float followThreshold = 400.0f; // この距離以上離れたら追従
+	static bool isFollowing = false;
 
-	if (dist > maxDistance) {
-		// 相手の方へ移動
-		mypos.x += (dx > 0) ? speed : -speed;
+	// === CPUの挙動 ===
+	if (!reachedTarget) {
+		if (dist > targetDistance + expandThreshold) {
+			// 相手の方へ移動
+			mypos.x -= speed;
+		}
+		else if (dist < targetDistance) {
+			// 相手から離れる
+			mypos.x += speed;
+		}
+		else {
+			// 距離が許容範囲内なら基本的に止まる
+			// ただしプレイヤーが大きく動いたときのみ追従
+			reachedTarget = true;
+		}
 	}
-	else if (dist < minDistance) {
-		// 相手から離れる
-		mypos.x += (dx > 0) ? -speed : speed;
+	else
+	{
+		// Player が移動したときの追従
+		if (playerMoveDir > 0 && dx < -targetDistance) {
+			// Player が右に移動 → CPU も右に下がる
+			mypos.x += speed + 1.0f;
+		}
+		// 追尾開始判定
+		if (!isFollowing && dist > followThreshold)
+		{
+			isFollowing = true; // Player が遠すぎる → 追尾開始
+		}
+
+		if (isFollowing)
+		{
+			// Player に近づく（targetDistance + expandThreshold まで）
+			if (dist > targetDistance + expandThreshold)
+			{
+				mypos.x += (dx > 0) ? speed : -speed;
+			}
+			else
+			{
+				isFollowing = false; // 目標距離まで詰めたら追尾終了
+			}
+		}
 	}
-	
+
 	transform.position = mypos;
 
-	ImGui::Begin("CPU-pos");
-	ImGui::InputFloat("dx", &dx);
-	//ImGui::InputInt("Type", &opponentType);
-	ImGui::End();
+#if 0
+		if (fabsf(playerpos.x - prevPlayerX) > expandThreshold)
+		{
+			mypos.x -= speed + 1.0f;
+		}
+#endif // 0
 }

@@ -137,6 +137,7 @@ void Player::Update()
 		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
 	}
 
+#if false 
 	ImGui::Begin("PLAYER");
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
@@ -149,7 +150,6 @@ void Player::Update()
 	// ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
 
-#if false 
 	
 	anim->Update();
 	
