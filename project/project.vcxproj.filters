@@ -83,6 +83,7 @@
     <ClCompile Include="Source\Cpu.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MiniWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -178,6 +179,9 @@
       <Filter>SelectScene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Cpu.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MiniWindow.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
   </ItemGroup>

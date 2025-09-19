@@ -17,6 +17,7 @@ public:
 	void UpdateKey();
 
 	static int gameType;
+	bool GetMiniWindow() const { return isWindowOpen; }
 
 private:
 	int OperationImage;
@@ -40,4 +41,5 @@ private:
 	bool atInit;
 	bool InputPossible;
 	bool OpponentSelection;
+	bool isWindowOpen;
 };

@@ -27,7 +27,6 @@ public:
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
 	bool GetisPunching() const { return isPunching; }
-	bool isGuarding;
 	// bool GetisPlayer() const { return isPlayer; }
 
 protected:
@@ -64,6 +63,7 @@ protected:
 	bool isMoveing; // アニメーションが再生中かの判定
 	bool isPunching; // パンチ中かの判定
 	bool canCancel; // 攻撃キャンセル可能かの判定中
+	bool isGuarding; // ガード中かの判定
 
 	// Playerの骨制御
 	int headBone;

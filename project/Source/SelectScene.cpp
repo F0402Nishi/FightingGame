@@ -3,6 +3,7 @@
 #include <fstream>
 #include <assert.h>
 #include "PlayScene.h"
+#include "MiniWindow.h"
 
 int SelectScene::gameType = 0;
 
@@ -25,6 +26,7 @@ SelectScene::SelectScene()
 	atInit = true;
 	InputPossible = true;
 	OpponentSelection = false;
+	isWindowOpen = false;
 	
 	COMMAND_X = -850;
 	COMMAND_Y = -200;
@@ -43,6 +45,8 @@ SelectScene::SelectScene()
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
+
+	new MiniWindow(this);
 }
 
 SelectScene::~SelectScene()
@@ -73,7 +77,7 @@ void SelectScene::Draw()
 	// DrawString(0, 0, "SELECT SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
 	// DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(255, 255, 255));
 
-	if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
+	// if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
 	if (OpponentSelection) {
 		DrawExtendString(930, 300, 2, 2, "TRINING", GetColor(192, 192, 192));
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
@@ -87,6 +91,7 @@ void SelectScene::KeyMovement()
 
 	if (atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
 		operation = !operation;
+		isWindowOpen = !isWindowOpen;
 		isSetting = !isSetting;
 		InputPossible = !InputPossible;
 		SelectKeyInput = true;
