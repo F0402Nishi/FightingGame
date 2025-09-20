@@ -5,11 +5,16 @@
 // === CPUの動作 ===
 // 1. Playerとの距離によるパターン (Brain)
 // 500.0f以上：移動 90% (前進：90%、後進：10%)
-//			　 攻撃 10% (弱P：5%、中P：10%、強P：20%、弱K：10%、中K：20%、強K：35%)
-// 500.0f未満210.0以上：移動 50% (前進：%、後進：%)
-//						攻撃 50% (弱P：%、中P：%、強P：%、弱K：%、中K：%、強K：%)
-// 210.0以内：移動 20% (前進：%、後進：%)
-//			　攻撃 80% (弱P：%、中P：%、強P：%、弱K：%、中K：%、強K：%)
+//			　 攻撃 10% (弱P：%、中P：%、強P：%、弱K：%、中K：%、強K：%、ガード：%)
+// 500.0f未満210.0以上：移動 50% (前進：50%、後進：50%)
+//						攻撃 50% (弱P：%、中P：%、強P：%、弱K：%、中K：%、強K：%、ガード：%)
+// 210.0以内：移動 20% (前進：20%、後進：80%)
+//			　攻撃 80% (弱P：%、中P：%、強P：%、弱K：%、中K：%、強K：%、ガード：%)
+
+// === 次のCPUの行動をいつ始めるか ===
+// 前提条件.攻撃中は強制的に他の行動に切り替えない（キャンセル可能技なら別処理）
+// 1.行動ごとに 持続フレーム数 を持たせる
+// 2.行動再判定の 間隔をランダム化 する
 
 CPU::CPU(bool _iscpu)
 {
@@ -19,6 +24,8 @@ CPU::CPU(bool _iscpu)
 	transform.rotation = VGet(0, DegToRad(90.0f), 0);
 
 	previousStop = transform.position;
+
+	r = 0;
 
 	dx = 0.0f;
 	dist = 0.0f;
@@ -31,6 +38,7 @@ CPU::CPU(bool _iscpu)
 	isFollowing = true;
 
 	brain = MID_COMBAT;
+	UpdateDice();
 }
 
 CPU::~CPU()
@@ -44,7 +52,6 @@ void CPU::Update()
 	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
 	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 
-	// if (!opponent) return;
 	if (!isCpu) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isCpu) return;
 
@@ -78,9 +85,10 @@ void CPU::Update()
 		break;
 	}
 
-	EffectiveRange();
+	// EffectiveRange();
 
 	ImGui::Begin("CPU");
+	ImGui::InputInt("r", &r);
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
 	ImGui::InputFloat("dx", &dx);
@@ -225,4 +233,9 @@ void CPU::UpdateMidCombat()
 
 void CPU::UpdateLongCombat()
 {
+}
+
+void CPU::UpdateDice()
+{
+	r = rand() % 100; // 0～99 の乱数を作る
 }

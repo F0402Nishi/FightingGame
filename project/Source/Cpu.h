@@ -30,6 +30,8 @@ private:
 	VECTOR playerpos; // Playerの位置
 	VECTOR previousStop; // 前回の停止位置
 
+	int r; // 乱数
+
 	float targetDistance; // 理想の間合い
 	float expandThreshold; // ここまで広がったら詰め直す
 	float dx; // Playerの位置からCPUの位置を引いた位置(中心値)
@@ -53,4 +55,5 @@ private:
 	void UpdateCloseCombat();
 	void UpdateMidCombat();
 	void UpdateLongCombat();
+	void UpdateDice();
 };
