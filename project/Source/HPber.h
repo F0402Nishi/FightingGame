@@ -20,6 +20,7 @@ private:
 	Character* character;
 	int HPbackImage = -1;
 	int HPImage = -1;
+	int HPImageLeft = -1;
 	int currenthp;
 	int maxhp;
 	int graphW;
@@ -27,7 +28,7 @@ private:
 	int displayHp;
 	
 	bool isLeftPlayer;
-	bool isLeftCpu;
+	bool isRightCpu;
 
 #if false
 	int HPbarCount = 4;

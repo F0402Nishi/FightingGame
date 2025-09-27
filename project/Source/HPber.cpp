@@ -20,6 +20,8 @@ HPber::HPber()
     assert(HPbackImage >= 0);
     HPImage = LoadGraph("data/2D/HP_FrontImage.png");
     assert(HPImage >= 0);
+    HPImageLeft = LoadGraph("data/2D/HP_FrontImage_Left.png");
+    assert(HPImageLeft >= 0);
 
     character = nullptr;
 
@@ -37,7 +39,7 @@ bool HPber::Init(Character* target)
         maxhp = character->GetMaxHp();
         displayHp = currenthp;
         isLeftPlayer = character->GetisPlayey();
-        isLeftCpu = character->GetisCpu();
+        isRightCpu = character->GetisCpu();
         return true;
     }
     else { return false; }
@@ -87,7 +89,7 @@ void HPber::Draw()
     int drawH = static_cast<int>(graphH * IMAGE_SCALE);
 
     
-    if (isLeftCpu) {
+    if (isRightCpu) {
         DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
         DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X + 100.0f, HPIMAGE_POSITION_Y, (IMAGE_POSITION_RIGHT_X + 100.0f) + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
 
@@ -96,7 +98,7 @@ void HPber::Draw()
     {
         if (isLeftPlayer) { 
             DrawTurnGraph(IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
-            DrawRectExtendGraph((IMAGE_POSITION_LEFT_X + 15.0f) + scaleBarW, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + 15.0f, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+            DrawRectExtendGraph(IMAGE_POSITION_LEFT_X + 15.0f, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + 15.0f + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImageLeft, TRUE);
         }
         else if (!isLeftPlayer) { 
             DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);

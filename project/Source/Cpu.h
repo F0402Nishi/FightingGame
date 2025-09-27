@@ -4,10 +4,11 @@
 #include <vector>
 // #include "Animator.h"
 // #include "Field.h"
-// #include <iostream>  // © ‚±‚ê‚ª•K{
 // #include "Player.h"
+// #include <iostream>  // © ‚±‚ê‚ª•K{
 
 class Player;
+class Animator;
 
 class CPU : public Character
 {
@@ -44,6 +45,8 @@ private:
 	bool isCpu;
 	bool reachedTarget;
 	bool isFollowing;
+	bool NowAnim;
+	bool NowDice;
 
 	enum Brain {
 		CLOSE_COMBAT, // ‹ß‹——£

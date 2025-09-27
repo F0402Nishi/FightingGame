@@ -3,13 +3,9 @@
 #include <fstream>
 #include <assert.h>
 
-using namespace std;
-float _posx;
-float _posy;
-
 TitleScene::TitleScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(_posx, _posy, -1000.0f), VGet(_posx, _posy, 0));
+	SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
 
 	MechImage = LoadGraph("data/2D/mech.png");
 	assert(MechImage >= 0);

@@ -36,9 +36,10 @@ CPU::CPU(bool _iscpu)
 	isCpu = _iscpu;
 	reachedTarget = false;
 	isFollowing = true;
+	NowAnim = false;
+	NowDice = false;
 
 	brain = MID_COMBAT;
-	UpdateDice();
 }
 
 CPU::~CPU()
@@ -72,7 +73,7 @@ void CPU::Update()
 		brain = LONG_COMBAT;
 	}
 
-	// === CPUの思考パターンによる行動 ===
+	// === CPUの思考パターン別による関数に移動 ===
 	switch (brain) {
 	case CLOSE_COMBAT:
 		UpdateCloseCombat();
@@ -95,7 +96,7 @@ void CPU::Update()
 	ImGui::InputFloat("dist", &dist);
 	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
 	// ImGui::Text("MyPosition：%d", (int) & mypos);
-	//ImGui::InputInt("Type", &opponentType);
+	// ImGui::InputInt("Type", &opponentType);
 	ImGui::End();
 }
 
@@ -225,17 +226,31 @@ void CPU::EffectiveRange()
 
 void CPU::UpdateCloseCombat()
 {
+	if (!NowDice) { UpdateDice(); NowDice = true; }
 }
 
 void CPU::UpdateMidCombat()
 {
+	if (!NowDice) { UpdateDice(); NowDice = true; }
+	if (r > 50) { }
+	else {
+		// === 攻撃系 ===
+		state = S_PUNCH1; canReduceHp = true; isMoveing = true;
+	}
 }
 
 void CPU::UpdateLongCombat()
 {
+	if (!NowDice) { UpdateDice(); NowDice = true; }
 }
 
 void CPU::UpdateDice()
 {
 	r = rand() % 100; // 0～99 の乱数を作る
+	
+	if (NowAnim) {
+		// === 乱数で思考パターン別による行動 ===
+		bool animFinish = anim->IsFinish();
+		if (animFinish) { UpdateDice(); }
+	}
 }

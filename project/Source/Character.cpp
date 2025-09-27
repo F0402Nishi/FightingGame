@@ -353,11 +353,11 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 
 	anim->Play(animFile, loop); // , true のちに追加
 
-	ImGui::Begin("PlayAttack");
-	ImGui::Text("Current Animation: %s", cur.c_str());
+	//ImGui::Begin("PlayAttack");
+	// ImGui::Text("Current Animation: %s", cur.c_str());
 	// ImGui::Text("isFromIdle: %s", isFromIdle ? "true" : "false");
 	// ImGui::Text("force: %s", force ? "true" : "false");
-	ImGui::End();
+	//ImGui::End();
 }
 
 void Character::InReturn()
