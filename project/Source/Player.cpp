@@ -88,6 +88,7 @@ void Player::Update()
 			inputDir.x = 10.0f;
 			// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
 		}
+		// else { anim->Play("data/Character/Player/Fight_Idle.mv1", true); }
 	}
 
 	//のちに戻す

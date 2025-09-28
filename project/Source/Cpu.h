@@ -32,6 +32,8 @@ private:
 	VECTOR previousStop; // ‘O‰ñ‚Ì’â~ˆÊ’u
 
 	int r; // —”
+	int m;
+	int time;
 
 	float targetDistance; // —‘z‚ÌŠÔ‡‚¢
 	float expandThreshold; // ‚±‚±‚Ü‚ÅL‚ª‚Á‚½‚ç‹l‚ß’¼‚·
@@ -47,6 +49,7 @@ private:
 	bool isFollowing;
 	bool NowAnim;
 	bool NowDice;
+	bool NowMovement;
 
 	enum Brain {
 		CLOSE_COMBAT, // ‹ß‹——£
