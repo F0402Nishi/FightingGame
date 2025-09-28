@@ -9,8 +9,8 @@
 #include "Player.h"
 
 #define IMAGE_SCALE 1.0f
-#define IMAGE_POSITION_LEFT_X -10.0f
-#define IMAGE_POSITION_RIGHT_X 590.0f
+#define IMAGE_POSITION_LEFT_X 5.0f
+#define IMAGE_POSITION_RIGHT_X 690.0f
 #define IMAGE_POSITION_Y 0.0f
 #define HPIMAGE_POSITION_Y 14.0f
 
@@ -84,25 +84,27 @@ void HPber::Draw()
     float hpRatio = static_cast<float>(displayHp) / static_cast<float>(maxhp);
     int barW = static_cast<int>(graphW * hpRatio);
     int scaleBarW = static_cast<int>(barW * IMAGE_SCALE);
+    int scaleBarZ = static_cast<int>(barW * IMAGE_SCALE);
 
     int drawW = static_cast<int>(graphW * IMAGE_SCALE);
     int drawH = static_cast<int>(graphH * IMAGE_SCALE);
 
     
     if (isRightCpu) {
-        DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
-        DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X + 100.0f, HPIMAGE_POSITION_Y, (IMAGE_POSITION_RIGHT_X + 100.0f) + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+        DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE); // îwåiÇ∆HPÇçáÇÌÇπÇÈÇΩÇﬂÇ…Xç¿ïWÇí≤êÆ
 
+        // DrawRectExtendGraph(ç∂í[, è„, âEí[, â∫,,,)
+        DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, HPIMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
     }
     else
     {
         if (isLeftPlayer) { 
-            DrawTurnGraph(IMAGE_POSITION_LEFT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
-            DrawRectExtendGraph(IMAGE_POSITION_LEFT_X + 15.0f, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + 15.0f + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImageLeft, TRUE);
+            DrawTurnGraph(IMAGE_POSITION_LEFT_X - 15.0f, IMAGE_POSITION_Y, HPbackImage, TRUE); // îwåiÇ∆HPÇçáÇÌÇπÇÈÇΩÇﬂÇ…Xç¿ïWÇí≤êÆ
+            DrawRectExtendGraph((IMAGE_POSITION_LEFT_X + drawW) - scaleBarW, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + drawW, HPIMAGE_POSITION_Y + drawH, graphW - barW, 0.0f, barW, graphH, HPImageLeft, TRUE);
         }
         else if (!isLeftPlayer) { 
-            DrawGraph(IMAGE_POSITION_RIGHT_X, IMAGE_POSITION_Y, HPbackImage, TRUE);
-            DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X + 100.0f, HPIMAGE_POSITION_Y, (IMAGE_POSITION_RIGHT_X + 100.0f) + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+            DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE);
+            DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, HPIMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
         }
     }
 }

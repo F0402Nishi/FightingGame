@@ -86,7 +86,7 @@ void CPU::Update()
 		break;
 	}
 
-	// EffectiveRange();
+	EffectiveRange();
 
 	ImGui::Begin("CPU");
 	ImGui::InputInt("r", &r);
