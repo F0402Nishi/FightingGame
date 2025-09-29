@@ -31,9 +31,10 @@ private:
 	VECTOR playerpos; // Playerの位置
 	VECTOR previousStop; // 前回の停止位置
 
-	int r; // 乱数
+	//  === 乱数 ===
+	int r;
 	int m;
-	int time;
+	int a;
 
 	float targetDistance; // 理想の間合い
 	float expandThreshold; // ここまで広がったら詰め直す
@@ -41,6 +42,7 @@ private:
 	float dist; // プレイヤーと CPU の水平距離
 	float playerMoveDir; // 現在のPlayerの座標と前の座標の差分
 	float followThreshold; // CPUが離れてから追う動作に切り替えるための基準値
+	float time;
 
 	bool opponent;
 	bool punch;
@@ -50,6 +52,7 @@ private:
 	bool NowAnim;
 	bool NowDice;
 	bool NowMovement;
+	bool NowAttack;
 
 	enum Brain {
 		CLOSE_COMBAT, // 近距離

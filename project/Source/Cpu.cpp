@@ -27,13 +27,14 @@ CPU::CPU(bool _iscpu)
 
 	r = 0;
 	m = 0;
-	time = 0;
+	a = 0;
 
 	dx = 0.0f;
 	dist = 0.0f;
 	targetDistance = 10.0f;
 	expandThreshold = 200.0f;
 	followThreshold = 500.0f;
+	time = 0;
 
 	isCpu = _iscpu;
 	reachedTarget = false;
@@ -41,6 +42,7 @@ CPU::CPU(bool _iscpu)
 	NowAnim = false;
 	NowDice = false;
 	NowMovement = false;
+	NowAttack = false;
 
 	brain = MID_COMBAT;
 }
@@ -94,7 +96,7 @@ void CPU::Update()
 	ImGui::Begin("CPU");
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("movement", &m);
-	ImGui::InputInt("time", &time);
+	ImGui::InputFloat("time", &time);
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
 	ImGui::InputFloat("dx", &dx);
@@ -239,20 +241,21 @@ void CPU::UpdateMidCombat()
 	UpdateDice();
 	if (r > 50) {
 		NowMovement = true;
+
 		if (m > 50) {
 			state = S_PROTECT; isGuarding = true; NowMovement = false;
-			
+
 			time += 1;
-			if (time == 30) { NowDice = false; time = 0; }
+			if (time == 50) { NowDice = false; time = 0; }
 		}
 		else {}
 	}
 	else {
 		// === 攻撃系 ===
 		state = S_PUNCH1; canReduceHp = true; isMoveing = true;
-		
+
 		time += 1;
-		if (time == 30) { NowDice = false; time = 0; }
+		if (time == 50) { NowDice = false; time = 0.0; }
 	}
 }
 
@@ -263,8 +266,9 @@ void CPU::UpdateLongCombat()
 
 void CPU::UpdateDice()
 {
-	if (!NowDice) { r = rand() % 100; NowDice = true; } // 0～99 の乱数を作る
+	if (!NowDice) { r = rand() % 100; NowDice = true;} // 0～99 の乱数を作る
 	if (NowMovement) { m = rand() % 100; NowMovement = false; }
+	if (NowAttack) { a = rand() % 100; NowAttack = false; }
 	
 	if (NowAnim) {
 		// === 乱数で思考パターン別による行動 ===
