@@ -35,6 +35,7 @@ CPU::CPU(bool _iscpu)
 	expandThreshold = 200.0f;
 	followThreshold = 500.0f;
 	time = 0;
+	CPUpos = 0;
 
 	isCpu = _iscpu;
 	reachedTarget = false;
@@ -43,6 +44,7 @@ CPU::CPU(bool _iscpu)
 	NowDice = false;
 	NowMovement = false;
 	NowAttack = false;
+	actionFinished = false;
 
 	brain = MID_COMBAT;
 }
@@ -91,11 +93,21 @@ void CPU::Update()
 		break;
 	}
 
+	// 左右移動
+	if (VSize(inputDir) > 0) {
+		if (VSize(inputDir) >= 1.0f) {
+			inputDir = VNorm(inputDir);
+		}
+		CPUvelocity = inputDir * speed;
+		transform.position += CPUvelocity;
+	}
+
 	// EffectiveRange();
 
 	ImGui::Begin("CPU");
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("movement", &m);
+	ImGui::InputInt("attack", &a);
 	ImGui::InputFloat("time", &time);
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
@@ -240,22 +252,30 @@ void CPU::UpdateMidCombat()
 {
 	UpdateDice();
 	if (r > 50) {
-		NowMovement = true;
+		NowMovement = true; // m もリセット
+		CPUpos = mypos.x;
 
 		if (m > 50) {
-			state = S_PROTECT; isGuarding = true; NowMovement = false;
-
-			time += 1;
-			if (time == 50) { NowDice = false; time = 0; }
+			inputDir.x = -10.0f;
+			isMoveing = true;
+			NowMovement = false;
 		}
-		else {}
+		else {
+			inputDir.x = 10.0f;
+			isMoveing = true;
+			NowMovement = false;
+		}
+
+		float moved = fabs(mypos.x - CPUpos);
+		if (moved >= 10.0f) {
+			isMoveing = false;
+		}
 	}
 	else {
+		NowAttack = true; // a もリセット
+
 		// === 攻撃系 ===
 		state = S_PUNCH1; canReduceHp = true; isMoveing = true;
-
-		time += 1;
-		if (time == 50) { NowDice = false; time = 0.0; }
 	}
 }
 
@@ -266,13 +286,11 @@ void CPU::UpdateLongCombat()
 
 void CPU::UpdateDice()
 {
-	if (!NowDice) { r = rand() % 100; NowDice = true;} // 0～99 の乱数を作る
-	if (NowMovement) { m = rand() % 100; NowMovement = false; }
-	if (NowAttack) { a = rand() % 100; NowAttack = false; }
+	// ===== 新しい行動を決める =====
+	if (!isMoveing) { NowDice = false; }
 	
-	if (NowAnim) {
-		// === 乱数で思考パターン別による行動 ===
-		bool animFinish = anim->IsFinish();
-		if (animFinish) { UpdateDice(); }
-	}
+	// if (time == 30) { } // 0～99 の乱数を作る
+	if (!NowDice) { r = rand() % 100; NowDice = true; }
+	if (NowMovement) { m = rand() % 100; }
+	if (NowAttack) { a = rand() % 100; NowAttack = false; }
 }

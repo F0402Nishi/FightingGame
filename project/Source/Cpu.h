@@ -30,6 +30,7 @@ private:
 	VECTOR mypos; // 自分の位置
 	VECTOR playerpos; // Playerの位置
 	VECTOR previousStop; // 前回の停止位置
+	VECTOR CPUvelocity;
 
 	//  === 乱数 ===
 	int r;
@@ -43,6 +44,7 @@ private:
 	float playerMoveDir; // 現在のPlayerの座標と前の座標の差分
 	float followThreshold; // CPUが離れてから追う動作に切り替えるための基準値
 	float time;
+	float CPUpos;
 
 	bool opponent;
 	bool punch;
@@ -53,6 +55,7 @@ private:
 	bool NowDice;
 	bool NowMovement;
 	bool NowAttack;
+	bool actionFinished;
 
 	enum Brain {
 		CLOSE_COMBAT, // 近距離
