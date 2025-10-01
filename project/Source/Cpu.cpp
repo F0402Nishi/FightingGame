@@ -1,20 +1,27 @@
-#include "Cpu.h"
+ï»¿#include "Cpu.h"
 #include "Player.h"
+#include "Character.h"
 #include "../ImGui/imgui.h"
 
-// === CPU‚Ì“®ì ===
-// 1. Player‚Æ‚Ì‹——£‚É‚æ‚éƒpƒ^[ƒ“ (Brain)
-// 500.0fˆÈãFˆÚ“® 90% (‘OiF90%AŒãiF10%)
-//			@ UŒ‚ 10% (ãPF%A’†PF%A‹­PF%AãKF%A’†KF%A‹­KF%AƒK[ƒhF%)
-// 500.0f–¢–210.0ˆÈãFˆÚ“® 50% (‘OiF50%AŒãiF50%)
-//						UŒ‚ 50% (ãPF%A’†PF%A‹­PF%AãKF%A’†KF%A‹­KF%AƒK[ƒhF%)
-// 210.0ˆÈ“àFˆÚ“® 20% (‘OiF20%AŒãiF80%)
-//			@UŒ‚ 80% (ãPF%A’†PF%A‹­PF%AãKF%A’†KF%A‹­KF%AƒK[ƒhF%)
+// === CPUã®å‹•ä½œ ===
+// 1. Playerã¨ã®è·é›¢ã«ã‚ˆã‚‹ãƒ‘ã‚¿ãƒ¼ãƒ³ (Brain)
+// 500.0fä»¥ä¸Šï¼šç§»å‹• 75% (å‰é€²ï¼š90%ã€å¾Œé€²ï¼š10%)
+//			ã€€ æ”»æ’ƒ 15% (å¼±Pï¼š5%ã€ä¸­Pï¼š30%ã€å¼·Pï¼š30%ã€å¼±Kï¼š5%ã€ä¸­Kï¼š20%ã€å¼·Kï¼š10%)
+//			ã€€ ã‚¬ãƒ¼ãƒ‰ 10%
+// 500.0fæœªæº€210.0ä»¥ä¸Šï¼šç§»å‹• 45% (å‰é€²ï¼š50%ã€å¾Œé€²ï¼š50%)
+//						æ”»æ’ƒ 45% (å¼±Pï¼š11%ã€ä¸­Pï¼š28%ã€å¼·Pï¼š17%ã€å¼±Kï¼š11%ã€ä¸­Kï¼š22%ã€å¼·Kï¼š11%)
+//						ã‚¬ãƒ¼ãƒ‰ 10%
+// 210.0ä»¥å†…ï¼šç§»å‹• 20% (å‰é€²ï¼š20%ã€å¾Œé€²ï¼š80%)
+//			ã€€æ”»æ’ƒ 70% (å¼±Pï¼š15%ã€ä¸­Pï¼š25%ã€å¼·Pï¼š15%ã€å¼±Kï¼š10%ã€ä¸­Kï¼š20%ã€å¼·Kï¼š15%)
+//			ã€€ã‚¬ãƒ¼ãƒ‰ 10%
 
-// === Ÿ‚ÌCPU‚Ìs“®‚ğ‚¢‚Ân‚ß‚é‚© ===
-// ‘O’ñğŒ.UŒ‚’†‚Í‹­§“I‚É‘¼‚Ìs“®‚ÉØ‚è‘Ö‚¦‚È‚¢iƒLƒƒƒ“ƒZƒ‹‰Â”\‹Z‚È‚ç•Êˆ—j
-// 1.s“®‚²‚Æ‚É ‘±ƒtƒŒ[ƒ€” ‚ğ‚½‚¹‚é
-// 2.s“®Ä”»’è‚Ì ŠÔŠu‚ğƒ‰ƒ“ƒ_ƒ€‰» ‚·‚é
+// === æ¬¡ã®CPUã®è¡Œå‹•ã‚’ã„ã¤å§‹ã‚ã‚‹ã‹ ===
+// å‰ææ¡ä»¶.æ”»æ’ƒä¸­ã¯å¼·åˆ¶çš„ã«ä»–ã®è¡Œå‹•ã«åˆ‡ã‚Šæ›¿ãˆãªã„ï¼ˆã‚­ãƒ£ãƒ³ã‚»ãƒ«å¯èƒ½æŠ€ãªã‚‰åˆ¥å‡¦ç†ï¼‰
+// 1.è¡Œå‹•ã”ã¨ã« æŒç¶šãƒ•ãƒ¬ãƒ¼ãƒ æ•° ã‚’æŒãŸã›ã‚‹
+// 2.è¡Œå‹•å†åˆ¤å®šã® é–“éš”ã‚’ãƒ©ãƒ³ãƒ€ãƒ åŒ– ã™ã‚‹
+
+// === ãƒ¡ãƒ¢ ===
+// æ”»æ’ƒã¯ã€ç¨®é¡ãŒå¤šãã¦æ‰“ã¤ã®ãŒå¤§å¤‰ãªã®ã§ã€é…åˆ—ã§å‡¦ç†ã™ã‚‹
 
 CPU::CPU(bool _iscpu)
 {
@@ -28,6 +35,7 @@ CPU::CPU(bool _iscpu)
 	r = 0;
 	m = 0;
 	a = 0;
+	sum = 0;
 
 	dx = 0.0f;
 	dist = 0.0f;
@@ -44,9 +52,13 @@ CPU::CPU(bool _iscpu)
 	NowDice = false;
 	NowMovement = false;
 	NowAttack = false;
+	Nowpos = false;
 	actionFinished = false;
 
 	brain = MID_COMBAT;
+
+	// === ç¢ºç‡ï¼ˆåˆè¨ˆ100ï¼‰===
+	attackCount = sizeof(Mid_attack) / sizeof(int);
 }
 
 CPU::~CPU()
@@ -63,24 +75,27 @@ void CPU::Update()
 	if (!isCpu) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isCpu) return;
 
-	// === À•Wæ“¾ ===
+	// === åº§æ¨™å–å¾— ===
 	mypos = transform.position;
 	playerpos = player->GetTransform().position;
 
-	// === ‹——£‚É‚æ‚éCPU‚Ìvlƒpƒ^[ƒ“‚ÌŒˆ’è ===
-	float ds = fabs(playerpos.x - mypos.x);
-	if (ds < 210.0f) {
-		brain = CLOSE_COMBAT;
-	}
-	else if (ds >= 210.0f && 500.0f >= ds)
-	{
-		brain = MID_COMBAT;
-	}
-	else if (ds > 500.0f) {
-		brain = LONG_COMBAT;
+	// === è·é›¢ã«ã‚ˆã‚‹CPUã®æ€è€ƒãƒ‘ã‚¿ãƒ¼ãƒ³ã®æ±ºå®š ===
+	if (!isMoveing) {
+		float ds = fabs(playerpos.x - mypos.x);
+		if (ds < 210.0f) {
+			brain = CLOSE_COMBAT;
+		}
+		else if (ds >= 210.0f && 500.0f >= ds)
+		{
+			brain = MID_COMBAT;
+		}
+		else if (ds > 500.0f) {
+			brain = LONG_COMBAT;
+		}
 	}
 
-	// === CPU‚Ìvlƒpƒ^[ƒ“•Ê‚É‚æ‚éŠÖ”‚ÉˆÚ“® ===
+
+	// === CPUã®æ€è€ƒãƒ‘ã‚¿ãƒ¼ãƒ³åˆ¥ã«ã‚ˆã‚‹é–¢æ•°ã«ç§»å‹• ===
 	switch (brain) {
 	case CLOSE_COMBAT:
 		UpdateCloseCombat();
@@ -93,7 +108,7 @@ void CPU::Update()
 		break;
 	}
 
-	// ¶‰EˆÚ“®
+	// å·¦å³ç§»å‹•
 	if (VSize(inputDir) > 0) {
 		if (VSize(inputDir) >= 1.0f) {
 			inputDir = VNorm(inputDir);
@@ -103,8 +118,10 @@ void CPU::Update()
 	}
 
 	// EffectiveRange();
+	time += 1.0f;
 
 	ImGui::Begin("CPU");
+	ImGui::Text("brain: %d", (int)brain);
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("attack", &a);
@@ -114,7 +131,9 @@ void CPU::Update()
 	ImGui::InputFloat("dx", &dx);
 	ImGui::InputFloat("dist", &dist);
 	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
-	// ImGui::Text("MyPositionF%d", (int) & mypos);
+	ImGui::InputFloat("float moved", &moved);
+	ImGui::InputFloat("float CPUpos", &CPUpos);
+	// ImGui::Text("MyPositionï¼š%d", (int) & mypos);
 	// ImGui::InputInt("Type", &opponentType);
 	ImGui::End();
 }
@@ -129,18 +148,18 @@ void CPU::Draw()
 void CPU::EffectiveRange()
 {
 
-	// === —Dæ“x ===
-	// 1. Player‚Ì’Ç”ö (‰E‚É‚¢‚Á‚½‚çA—£‚ê‚éB¶‚É‚¢‚Á‚½‚çA’Ç‚¤)
-	// 2. Player‚ÆCPU‚Ì‹——£‚Å’Ç”ö‚Ì”½“] (CPU‚ªÃ~‚µ‚½ˆÊ’u‚©‚ç500.0f‚É‚È‚Á‚½‚çA—£‚ê‚Ä‚½‚Ì‚ğ’Ç‚¤‚É•ÏX)
-	// 3. Player‚ÆCPU‚Ì‹——£‚ÅÃ~ (200.0f‚É‚È‚Á‚½‚çAˆÚ“®‚ğ‚â‚ß‚Ä~‚Ü‚é)
+	// === å„ªå…ˆåº¦ ===
+	// 1. Playerã®è¿½å°¾ (å³ã«ã„ã£ãŸã‚‰ã€é›¢ã‚Œã‚‹ã€‚å·¦ã«ã„ã£ãŸã‚‰ã€è¿½ã†)
+	// 2. Playerã¨CPUã®è·é›¢ã§è¿½å°¾ã®åè»¢ (CPUãŒé™æ­¢ã—ãŸä½ç½®ã‹ã‚‰500.0fã«ãªã£ãŸã‚‰ã€é›¢ã‚Œã¦ãŸã®ã‚’è¿½ã†ã«å¤‰æ›´)
+	// 3. Playerã¨CPUã®è·é›¢ã§é™æ­¢ (200.0fã«ãªã£ãŸã‚‰ã€ç§»å‹•ã‚’ã‚„ã‚ã¦æ­¢ã¾ã‚‹)
 
-	// === Å—Dæ‚Ìˆ— ===
-	// 3 ¨ 2 ¨ 1
+	// === æœ€å„ªå…ˆã®å‡¦ç† ===
+	// 3 â†’ 2 â†’ 1
 
 	dx = playerpos.x - mypos.x;
 	dist = fabsf(dx);
 
-	// === CPU‚Ì‹““® ===
+	// === CPUã®æŒ™å‹• ===
 	if (!reachedTarget) {
 		if (dist < targetDistance + expandThreshold) { // 3
 			previousStop = mypos;
@@ -150,7 +169,7 @@ void CPU::EffectiveRange()
 		}
 	}
 
-	// === Player ‚ªˆÚ“®‚µ‚½‚Æ‚«‚Ì’Ç] ===	
+	// === Player ãŒç§»å‹•ã—ãŸã¨ãã®è¿½å¾“ ===	
 	if (!isFollowing) {
 		mypos.x += speed; 
 		
@@ -164,26 +183,26 @@ void CPU::EffectiveRange()
 	transform.position = mypos;
 
 #if 0
-	// === Player ‚ÌˆÚ“®•ûŒü‚ğ”»’è ===
-	// static float prevPlayerX = playerpos.x; // ‘O‚ÌƒtƒŒ[ƒ€‚Ì Player ‚Ì X À•W
-	// playerMoveDir = playerpos.x - prevPlayerX; // >0:‰E‚É“®‚¢‚½, <0:¶‚É“®‚¢‚½
+	// === Player ã®ç§»å‹•æ–¹å‘ã‚’åˆ¤å®š ===
+	// static float prevPlayerX = playerpos.x; // å‰ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã® Player ã® X åº§æ¨™
+	// playerMoveDir = playerpos.x - prevPlayerX; // >0:å³ã«å‹•ã„ãŸ, <0:å·¦ã«å‹•ã„ãŸ
 	// prevPlayerX = playerpos.x;
 
 	if (playerMoveDir > 0) {
-		// Player ‚ª‰E‚ÉˆÚ“® ¨ CPU ‚à‰E‚É‰º‚ª‚é
+		// Player ãŒå³ã«ç§»å‹• â†’ CPU ã‚‚å³ã«ä¸‹ãŒã‚‹
 		mypos.x += speed + 1.0f;
 	}
 
 	if (playerMoveDir < 0) {
-		// Player ‚ª¶‚ÉˆÚ“® ¨ CPU ‚à¶‚É‹l‚ß‚é
+		// Player ãŒå·¦ã«ç§»å‹• â†’ CPU ã‚‚å·¦ã«è©°ã‚ã‚‹
 		mypos.x -= speed + 1.0f;
 	}
 
 	if (!reachedTarget)
 	{
-		// Player ‚ªˆÚ“®‚µ‚½‚Æ‚«‚Ì’Ç]
+		// Player ãŒç§»å‹•ã—ãŸã¨ãã®è¿½å¾“
 		if (playerMoveDir > 0) { //  && dx < -targetDistance
-			// Player ‚ª‰E‚ÉˆÚ“® ¨ CPU ‚à‰E‚É‰º‚ª‚é
+			// Player ãŒå³ã«ç§»å‹• â†’ CPU ã‚‚å³ã«ä¸‹ãŒã‚‹
 			mypos.x += speed + 1.0f;
 
 		}
@@ -208,32 +227,32 @@ void CPU::EffectiveRange()
 	
 	if (!reachedTarget) {
 		if (dist > targetDistance + expandThreshold) {
-			// ‘Šè‚Ì•û‚ÖˆÚ“®
+			// ç›¸æ‰‹ã®æ–¹ã¸ç§»å‹•
 			mypos.x -= speed;
 		}
 		else if (dist < targetDistance) {
-			// ‘Šè‚©‚ç—£‚ê‚é
+			// ç›¸æ‰‹ã‹ã‚‰é›¢ã‚Œã‚‹
 			mypos.x += speed;
 		}
 		else {
-			// ‹——£‚ª‹–—e”ÍˆÍ“à‚È‚çŠî–{“I‚É~‚Ü‚é
-			// ‚½‚¾‚µƒvƒŒƒCƒ„[‚ª‘å‚«‚­“®‚¢‚½‚Æ‚«‚Ì‚İ’Ç]
+			// è·é›¢ãŒè¨±å®¹ç¯„å›²å†…ãªã‚‰åŸºæœ¬çš„ã«æ­¢ã¾ã‚‹
+			// ãŸã ã—ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒå¤§ããå‹•ã„ãŸã¨ãã®ã¿è¿½å¾“
 			reachedTarget = true;
 		}
 	}
 
-	// ’Ç”öŠJn”»’è
+	// è¿½å°¾é–‹å§‹åˆ¤å®š
 	if (!isFollowing && dist > followThreshold)
 	{
-		// isFollowing = true; // Player ‚ª‰“‚·‚¬‚é ¨ ’Ç”öŠJn
-		// Player ‚É‹ß‚Ã‚­itargetDistance + expandThreshold ‚Ü‚Åj
+		// isFollowing = true; // Player ãŒé ã™ãã‚‹ â†’ è¿½å°¾é–‹å§‹
+		// Player ã«è¿‘ã¥ãï¼ˆtargetDistance + expandThreshold ã¾ã§ï¼‰
 		if (dist > targetDistance + expandThreshold)
 		{
 			mypos.x += -speed;
 		}
 		else
 		{
-			isFollowing = false; // –Ú•W‹——£‚Ü‚Å‹l‚ß‚½‚ç’Ç”öI—¹
+			isFollowing = false; // ç›®æ¨™è·é›¢ã¾ã§è©°ã‚ãŸã‚‰è¿½å°¾çµ‚äº†
 		}
 		if (fabsf(playerpos.x - prevPlayerX) > expandThreshold)
 		{
@@ -246,51 +265,164 @@ void CPU::EffectiveRange()
 void CPU::UpdateCloseCombat()
 {
 	UpdateDice();
+
+	if (r < 20) { // 0ï½19 â†’ ç§»å‹• 20%
+		if (!Nowpos) { CPUpos = mypos.x; }
+		// NowMovement = true; // m ã‚‚ãƒªã‚»ãƒƒãƒˆ
+		isMoveing = true;
+
+		if (m < 20) {
+			inputDir.x = -10.0f;
+			Nowpos = true;
+			moved = fabs(mypos.x - CPUpos);
+			if (moved >= 10.0f) {
+				isMoveing = false;
+				Nowpos = false;
+			}
+		}
+		else {
+			inputDir.x = 10.0f;
+			NowMovement = false;
+			Nowpos = true;
+			moved = fabs(mypos.x - CPUpos);
+			if (moved >= 10.0f) {
+				isMoveing = false;
+				Nowpos = false;
+			}
+		}
+
+	}
+	else if (r < 90) { // 20ï½89 â†’ æ”»æ’ƒ 70%
+		// NowAttack = true; // a ã‚‚ãƒªã‚»ãƒƒãƒˆ
+
+		// === æ”»æ’ƒç³» ===
+		for (int i = 0; i < attackCount; i++) {
+			sum += Close_attack[i];
+			if (a < sum) {
+				state = attackStates[i];
+				canReduceHp = true;
+				isMoveing = true;
+				sum = 0;
+				break;
+			}
+		}
+	}
+	else { // 90ã€œ99 â†’ ã‚¬ãƒ¼ãƒ‰ï¼ˆ10%ï¼‰
+		state = S_PROTECT;
+		isGuarding = true;
+		isMoveing = true;
+	}
 }
 
 void CPU::UpdateMidCombat()
 {
 	UpdateDice();
-	if (r > 50) {
-		NowMovement = true; // m ‚àƒŠƒZƒbƒg
-		CPUpos = mypos.x;
+	
+	if (r < 45) { // 0ã€œ44 â†’ ç§»å‹• 45%
+		if (!Nowpos) { CPUpos = mypos.x; }
+		// NowMovement = true; // m ã‚‚ãƒªã‚»ãƒƒãƒˆ
+		isMoveing = true;
 
-		if (m > 50) {
+		if (m < 50) {
 			inputDir.x = -10.0f;
-			isMoveing = true;
-			NowMovement = false;
+			Nowpos = true;
+			moved = fabs(mypos.x - CPUpos);
+			if (moved >= 10.0f) {
+				isMoveing = false;
+				Nowpos = false;
+			}
 		}
 		else {
 			inputDir.x = 10.0f;
-			isMoveing = true;
 			NowMovement = false;
+			Nowpos = true;
+			moved = fabs(mypos.x - CPUpos);
+			if (moved >= 10.0f) {
+				isMoveing = false;
+				Nowpos = false;
+			}
 		}
 
-		float moved = fabs(mypos.x - CPUpos);
-		if (moved >= 10.0f) {
-			isMoveing = false;
+	}
+	else if (r < 90){ // 45ã€œ89 â†’ æ”»æ’ƒ 45%
+		// NowAttack = true; // a ã‚‚ãƒªã‚»ãƒƒãƒˆ
+
+		// === æ”»æ’ƒç³» ===
+		for (int i = 0; i < attackCount; i++) {
+			sum += Mid_attack[i];
+			if (a < sum) {
+				state = attackStates[i];
+				canReduceHp = true;
+				isMoveing = true;
+				sum = 0;
+				break;
+			}
 		}
 	}
-	else {
-		NowAttack = true; // a ‚àƒŠƒZƒbƒg
-
-		// === UŒ‚Œn ===
-		state = S_PUNCH1; canReduceHp = true; isMoveing = true;
+	else { // 90ã€œ99 â†’ ã‚¬ãƒ¼ãƒ‰ï¼ˆ10%ï¼‰
+		state = S_PROTECT;
+		isGuarding = true;
+		isMoveing = true;
 	}
 }
 
 void CPU::UpdateLongCombat()
 {
 	UpdateDice();
+
+	if (r < 75) { // 0ï½74 â†’ ç§»å‹• 75%
+		if (!Nowpos) { CPUpos = mypos.x; }
+		isMoveing = true;
+
+		if (m < 10) {
+			inputDir.x = 10.0f;
+			Nowpos = true;
+		}
+		else {
+			inputDir.x = -10.0f;
+			Nowpos = true;
+		}
+
+		moved = fabs(mypos.x - CPUpos);
+		if (moved >= 10.0f) {
+			isMoveing = false;
+			Nowpos = false;
+		}
+	}
+	else if (r < 85) { // 75ï½84 â†’ æ”»æ’ƒ 10%
+
+		// === æ”»æ’ƒç³» ===
+		for (int i = 0; i < attackCount; i++) {
+			sum += Long_attack[i];
+			if (a < sum) {
+				state = attackStates[i];
+				canReduceHp = true;
+				isMoveing = true;
+				sum = 0;
+				break;
+			}
+		}
+	}
+	else { // 85ï½94 â†’ ã‚¬ãƒ¼ãƒ‰ 10%
+		state = S_PROTECT;
+		isGuarding = true;
+		isMoveing = true;
+	}
 }
 
 void CPU::UpdateDice()
 {
-	// ===== V‚µ‚¢s“®‚ğŒˆ‚ß‚é =====
-	if (!isMoveing) { NowDice = false; }
+	// ===== æ–°ã—ã„è¡Œå‹•ã‚’æ±ºã‚ã‚‹ =====
+	if (!isMoveing && time > 50.0f) { 
+		NowDice = false; 
+		NowAttack = false; 
+		time = 0;
+	}
 	
-	// if (time == 30) { } // 0`99 ‚Ì—”‚ğì‚é
+	// if (time == 30) { } // 0ï½99 ã®ä¹±æ•°ã‚’ä½œã‚‹
 	if (!NowDice) { r = rand() % 100; NowDice = true; }
-	if (NowMovement) { m = rand() % 100; }
-	if (NowAttack) { a = rand() % 100; NowAttack = false; }
+	if (!NowMovement) { m = rand() % 100; NowMovement = true; }
+	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
+		
+
 }

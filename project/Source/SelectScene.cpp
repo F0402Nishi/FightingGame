@@ -109,7 +109,7 @@ void SelectScene::KeyMovement()
 			break;
 		case 1:
 			gameType = YInit;
-			// SceneManager::ChangeScene("PLAY");
+			SceneManager::ChangeScene("PLAY");
 			break;
 		case 2:
 			gameType = YInit;
@@ -117,7 +117,7 @@ void SelectScene::KeyMovement()
 			break;
 		case 3:
 			gameType = YInit;
-			SceneManager::ChangeScene("PLAY");
+			// SceneManager::ChangeScene("PLAY");
 			break;
 		}
 	}

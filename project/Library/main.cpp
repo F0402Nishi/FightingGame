@@ -18,6 +18,8 @@
 #include "../Source/Screen.h"
 #include "../ImGui/imgui_impl_dxlib.hpp"
 
+#include <ctime>
+
 #define CoGVersion (4.1)
 
 // プログラムは WinMain から始まります
@@ -38,6 +40,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetAlwaysRunFlag(TRUE);
 	SetUseZBuffer3D(TRUE);
 	SetWriteZBuffer3D(TRUE);
+
+	// ← ここで乱数初期化
+	srand((unsigned int)time(NULL));  // 乱数の初期化（1回だけ）
 
 	SetHookWinProc([](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT /*CALLBACK*/
 	{

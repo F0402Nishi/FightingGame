@@ -326,6 +326,7 @@ void Character::UpdateProtect()
 	PlayAttack("data/Character/Player/Guard_Idle.mv1", false);
 
 	if (anim->IsFinish()) {
+		isMoveing = false;
 		isGuarding = false;
 		canReduceHp = false;
 		state = S_STOP;

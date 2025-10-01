@@ -36,6 +36,8 @@ private:
 	int r;
 	int m;
 	int a;
+	int sum;
+	int attackCount;
 
 	float targetDistance; // 理想の間合い
 	float expandThreshold; // ここまで広がったら詰め直す
@@ -45,6 +47,7 @@ private:
 	float followThreshold; // CPUが離れてから追う動作に切り替えるための基準値
 	float time;
 	float CPUpos;
+	float moved;
 
 	bool opponent;
 	bool punch;
@@ -55,7 +58,22 @@ private:
 	bool NowDice;
 	bool NowMovement;
 	bool NowAttack;
+	bool Nowpos;
 	bool actionFinished;
+
+	State attackStates[7] = {
+		S_PUNCH1, // 弱P
+		S_PUNCH2, // 中P
+		S_PUNCH3, // 強P
+		S_KICK1,  // 弱K
+		S_KICK2,  // 中K
+		S_KICK3,  // 強K
+		S_PROTECT // ガード
+	};
+
+	int Close_attack[6] = { 15, 25, 15, 10, 20, 15 };
+	int Mid_attack[6] = { 11, 28, 17, 11, 22, 11 };
+	int Long_attack[6] = { 5, 30, 30, 5, 20, 10 };
 
 	enum Brain {
 		CLOSE_COMBAT, // 近距離
