@@ -18,6 +18,14 @@ public:
 	virtual bool GetisPlayey() const override { return isPlayer; }
 	virtual bool GetisCpu() const override { return false; }
 
+
+private:
+	VECTOR velocity;
+	bool isPlayer;
+
+};
+
+#if false "参考のために保留"
 	// std::string GetHit() { return hitPart; }
 	// bool GetisPlayer() const { return isPlayer; }
 	// bool GetisPunching() const { return isPunching; }
@@ -27,12 +35,7 @@ public:
 	// std::vector<SphereCollder> hitSpheres;
 	// int GetHp() const { return Hp; }
 	// int GetMaxHp() const { return MaxHp; }
-
-private:
-	VECTOR velocity;
-	bool isPlayer;
-
-#if false "参考のために保留"
+	
 	// Field* field;
 	// Player* opponent;
 	// Animator* anim;
@@ -122,4 +125,3 @@ private:
 	void ResolvePlayerCollision();
 	void BoneCollision();
 #endif // falsse
-};

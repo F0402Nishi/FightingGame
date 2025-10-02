@@ -72,7 +72,7 @@ void CPU::Update()
 	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
 	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 
-	if (!isCpu) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+	// if (!isCpu) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isCpu) return;
 
 	// === 座標取得 ===
@@ -120,22 +120,26 @@ void CPU::Update()
 	// EffectiveRange();
 	time += 1.0f;
 
+#if 0
 	ImGui::Begin("CPU");
 	ImGui::Text("brain: %d", (int)brain);
+	ImGui::Text("state: %d", (int)state);
+	// ImGui::InputInt("damage", &damage);
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("attack", &a);
 	ImGui::InputFloat("time", &time);
-	ImGui::InputFloat("position.x", &transform.position.x);
-	ImGui::InputFloat("position.y", &transform.position.y);
-	ImGui::InputFloat("dx", &dx);
-	ImGui::InputFloat("dist", &dist);
-	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
+	// ImGui::InputFloat("position.x", &transform.position.x);
+	// ImGui::InputFloat("position.y", &transform.position.y);
+	// ImGui::InputFloat("dx", &dx);
+	// ImGui::InputFloat("dist", &dist);
+	// ImGui::InputFloat("playerMoveDir", &playerMoveDir);
 	ImGui::InputFloat("float moved", &moved);
 	ImGui::InputFloat("float CPUpos", &CPUpos);
 	// ImGui::Text("MyPosition：%d", (int) & mypos);
 	// ImGui::InputInt("Type", &opponentType);
 	ImGui::End();
+#endif // 0
 }
 
 void CPU::Draw()
@@ -299,8 +303,10 @@ void CPU::UpdateCloseCombat()
 		for (int i = 0; i < attackCount; i++) {
 			sum += Close_attack[i];
 			if (a < sum) {
-				state = attackStates[i];
-				canReduceHp = true;
+				if (state != attackStates[i]) {
+					state = attackStates[i];
+					canReduceHp = true;
+				}
 				isMoveing = true;
 				sum = 0;
 				break;
@@ -413,8 +419,9 @@ void CPU::UpdateLongCombat()
 void CPU::UpdateDice()
 {
 	// ===== 新しい行動を決める =====
-	if (!isMoveing && time > 50.0f) { 
-		NowDice = false; 
+	if (!isMoveing && time > 100.0f) { 
+		NowDice = false;
+		NowMovement = false;
 		NowAttack = false; 
 		time = 0;
 	}

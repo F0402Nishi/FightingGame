@@ -81,7 +81,7 @@ void SelectScene::Draw()
 
 	// if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
 	if (OpponentSelection) {
-		DrawExtendString(930, 300, 2, 2, "TRINING", GetColor(192, 192, 192));
+		DrawExtendString(930, 300, 2, 2, "TRINING", GetColor(255, 255, 255));
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
 		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(192, 192, 192));
 	}
@@ -117,7 +117,7 @@ void SelectScene::KeyMovement()
 			break;
 		case 3:
 			gameType = YInit;
-			// SceneManager::ChangeScene("PLAY");
+			SceneManager::ChangeScene("PLAY");
 			break;
 		}
 	}

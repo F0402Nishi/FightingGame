@@ -26,7 +26,7 @@ public:
 	std::string GetHit() { return hitPart; }
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
-	bool GetisPunching() const { return isPunching; }
+	// bool GetisPunching() const { return isPunching; }
 	// bool GetisPlayer() const { return isPlayer; }
 
 protected:
@@ -56,6 +56,8 @@ protected:
 	float frame; // 今のフレーム取得
 	float total; // 総フレーム数
 	float ratio; // 0～1 の割合
+	float deltaTime; // 前フレームから現在フレームまでの経過時間
+	float idleTimer;
 
 	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる
@@ -64,6 +66,7 @@ protected:
 	bool isPunching; // パンチ中かの判定
 	bool canCancel; // 攻撃キャンセル可能かの判定中
 	bool isGuarding; // ガード中かの判定
+	bool isAltIdle;
 
 	// Playerの骨制御
 	int headBone;
@@ -111,7 +114,7 @@ protected:
 	};
 
 	State state;
-	void UpdateStop();
+	void UpdateStop(float deltaTime);
 	void UpdatePunch1();
 	void UpdatePunch2();
 	void UpdatePunch3();

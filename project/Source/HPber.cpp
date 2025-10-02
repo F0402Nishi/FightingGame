@@ -66,10 +66,13 @@ void HPber::Update()
         displayHp -= std::max(1, (displayHp - currenthp) / 10); // èôÅXÇ…å∏ÇÈ
     }
 
+#if 0
     ImGui::Begin("HPbar");
+    ImGui::Text("hp = %d", character->GetHp());
     ImGui::InputInt("currenthp", &currenthp);
-    ImGui::InputInt("graphHÅF", &graphH);
+    ImGui::InputInt("graphH", &graphH);
     ImGui::End();
+#endif // 0
 }
 
 void HPber::Draw()
@@ -82,7 +85,6 @@ void HPber::Draw()
     float hpRatio = static_cast<float>(displayHp) / static_cast<float>(maxhp);
     int barW = static_cast<int>(graphW * hpRatio);
     int scaleBarW = static_cast<int>(barW * IMAGE_SCALE);
-    int scaleBarZ = static_cast<int>(barW * IMAGE_SCALE);
 
     int drawW = static_cast<int>(graphW * IMAGE_SCALE);
     int drawH = static_cast<int>(graphH * IMAGE_SCALE);

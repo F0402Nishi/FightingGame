@@ -5,61 +5,16 @@
 #include "HitCheck.h"
 #include "HPber.h"
 
-// #define PLAYER_SPEED 2.0f
-// #define PLAYER_JUMP 25.0f
-// #define PLAYER_HP 1000
-
 Player::Player(bool _isPlayer)
 {
 	isPlayer = _isPlayer;
 	isJumping = false;
-	// isPunching = false;
-	// state = S_STOP;
-	// colIndex = 0;
-	// isMoveing = false;
-	// isGuarding = false;
-	// canReduceHp = false;
-	// Hp = PLAYER_HP;
-	// MaxHp = PLAYER_HP;
 
 	if (!isPlayer) {
 		transform.position = VGet(200.0f, 14.0f, 150.0f);
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
 
-#if 0 
-	transform.scale = VGet(2, 2, 2);
-	anim = new Animator(hModel);
-	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
-
-
-	// Playerの骨を取得して、番号をつけてる
-	headBone = MV1SearchFrame(hModel, "Head");
-	bodyBone = MV1SearchFrame(hModel, "UpperChest");
-	left_UpperArmBone = MV1SearchFrame(hModel, "Left_UpperArm");
-	left_LowerArmBone = MV1SearchFrame(hModel, "Left_LowerArm");
-	left_HandBone = MV1SearchFrame(hModel, "Left_Hand");
-	right_UpperArmBone = MV1SearchFrame(hModel, "Right_UpperArm");
-	right_LowerArmBone = MV1SearchFrame(hModel, "Right_LowerArm");
-	right_HandBone = MV1SearchFrame(hModel, "Right_Hand");
-	left_UpperLegBone = MV1SearchFrame(hModel, "Left_UpperLeg");
-	left_LowerLegBone = MV1SearchFrame(hModel, "Left_LowerLeg");
-	left_FootBone = MV1SearchFrame(hModel, "Left_Foot");
-	right_UpperLegBone = MV1SearchFrame(hModel, "Right_UpperLeg");
-	right_LowerLegBone = MV1SearchFrame(hModel, "Right_LowerLeg");
-	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
-
-
-	// アニメーションの制御実験
-	int mB = MV1SearchFrame(hModel, "UpperChest");
-	int mc = MV1SearchFrame(hModel, "Neck");
-	int md = MV1SearchFrame(hModel, "Head");
-	MV1SetFrameUserLocalMatrix(hModel, mB, MGetIdent());
-	MV1SetFrameUserLocalMatrix(hModel, mc, MGetIdent());
-	MV1SetFrameUserLocalMatrix(hModel, md, MGetIdent());
-	hips_Bone = MV1SearchFrame(hModel, "Hips");
-	hips_WorldPos = MV1GetFramePosition(hModel, hips_Bone);
-#endif
 }
 
 Player::~Player()
@@ -139,18 +94,70 @@ void Player::Update()
 	}
 
 	ImGui::Begin("PLAYER");
-	ImGui::InputFloat("position.x", &transform.position.x);
-	ImGui::InputFloat("position.y", &transform.position.y);
+	ImGui::Text("state: %d", (int)state);
+	ImGui::InputFloat("IdleTimer", &idleTimer);
+	ImGui::Checkbox("Punching", &isPunching);
+	// ImGui::InputFloat("position.x", &transform.position.x);
+	// ImGui::InputFloat("position.y", &transform.position.y);
 	// ImGui::Text("push.x: %.2f", hit.x);
 	// ImGui::Text("push.y: %.2f", hit.y);
-	ImGui::InputFloat("frame", &frame);
-	ImGui::InputFloat("totalframe", &total);
-	ImGui::InputFloat("ratioframe", &ratio);
-	ImGui::Text("state: %d", (int)state);
+	// ImGui::InputFloat("frame", &frame);
+	// ImGui::InputFloat("totalframe", &total);
+	// ImGui::InputFloat("ratioframe", &ratio);
 	// ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
 
-#if false 
+}
+
+void Player::Draw()
+{
+	Character::Draw();
+
+}
+
+#if false "Player::Player()"  
+	transform.scale = VGet(2, 2, 2);
+	anim = new Animator(hModel);
+	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
+
+	// isPunching = false;
+	// state = S_STOP;
+	// colIndex = 0;
+	// isMoveing = false;
+	// isGuarding = false;
+	// canReduceHp = false;
+	// Hp = PLAYER_HP;
+	// MaxHp = PLAYER_HP;
+
+	// Playerの骨を取得して、番号をつけてる
+	headBone = MV1SearchFrame(hModel, "Head");
+	bodyBone = MV1SearchFrame(hModel, "UpperChest");
+	left_UpperArmBone = MV1SearchFrame(hModel, "Left_UpperArm");
+	left_LowerArmBone = MV1SearchFrame(hModel, "Left_LowerArm");
+	left_HandBone = MV1SearchFrame(hModel, "Left_Hand");
+	right_UpperArmBone = MV1SearchFrame(hModel, "Right_UpperArm");
+	right_LowerArmBone = MV1SearchFrame(hModel, "Right_LowerArm");
+	right_HandBone = MV1SearchFrame(hModel, "Right_Hand");
+	left_UpperLegBone = MV1SearchFrame(hModel, "Left_UpperLeg");
+	left_LowerLegBone = MV1SearchFrame(hModel, "Left_LowerLeg");
+	left_FootBone = MV1SearchFrame(hModel, "Left_Foot");
+	right_UpperLegBone = MV1SearchFrame(hModel, "Right_UpperLeg");
+	right_LowerLegBone = MV1SearchFrame(hModel, "Right_LowerLeg");
+	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
+
+
+	// アニメーションの制御実験
+	int mB = MV1SearchFrame(hModel, "UpperChest");
+	int mc = MV1SearchFrame(hModel, "Neck");
+	int md = MV1SearchFrame(hModel, "Head");
+	MV1SetFrameUserLocalMatrix(hModel, mB, MGetIdent());
+	MV1SetFrameUserLocalMatrix(hModel, mc, MGetIdent());
+	MV1SetFrameUserLocalMatrix(hModel, md, MGetIdent());
+	hips_Bone = MV1SearchFrame(hModel, "Hips");
+	hips_WorldPos = MV1GetFramePosition(hModel, hips_Bone);
+#endif
+
+#if false "Player::Update()" 
 	
 	anim->Update();
 	
@@ -219,13 +226,8 @@ void Player::Update()
 		}
 	}
 #endif
-}
 
-void Player::Draw()
-{
-	Character::Draw();
-
-#if 0
+#if 0 "Player::Draw()"
 	basePos = transform.position;
 	for (const SphereCollder& col : hitSpheres) {
 		worldCenter = col.GetWorldCenter(basePos);
@@ -253,7 +255,6 @@ void Player::Draw()
 	DrawFillBox(200, 100, 200 + DrawValue, 116, color);
 	DrawLineBox(200, 100, 200 + DrawValue, 116, GetColor(0, 0, 0));
 #endif // 0
-}
 
 #if false "参考のために保留"
 void Player::SetHitSpheres()

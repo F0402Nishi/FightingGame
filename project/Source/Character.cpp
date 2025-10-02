@@ -37,10 +37,16 @@ Character::Character()
 
 	state = S_STOP;
 	colIndex = 0;
+	deltaTime = 1.0f / 60.0f;
+	idleTimer = 0.0f;
+
 	canReduceHp = false;
-	isMoveing = false;
-	isGuarding = false;
 	canCancel = false;
+	isAltIdle = false;
+	isMoveing = false;
+	isPunching = false;
+	isGuarding = false;
+
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
 	speed = PLAYER_SPEED;
@@ -76,7 +82,7 @@ void Character::Always()
 
 	switch (state) {
 	case S_STOP:
-		UpdateStop();
+		UpdateStop(deltaTime);
 		break;
 	case S_PUNCH1:
 		UpdatePunch1();
@@ -168,12 +174,28 @@ void Character::SetOpponent(Character* other)
 	opponent = other;
 }
 
-void Character::UpdateStop()
+void Character::UpdateStop(float deltaTime)
 {
-	// PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
-	anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
-	
 	inputDir = VGet(0, 0, 0);
+	idleTimer += deltaTime;
+	
+	if (!isAltIdle) {
+		anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
+		// PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
+
+		if (idleTimer > 10.0f) {
+			anim->Play("data/Character/Player/Taunt.mv1", false);
+			isAltIdle = true;
+			idleTimer = 0.0f;
+
+		}
+	}
+
+	if (anim->IsFinish() && isAltIdle) {
+		isAltIdle = false;
+		idleTimer = 0.0f;
+		return;
+	}
 }
 
 void Character::UpdatePunch1()
@@ -187,12 +209,11 @@ void Character::UpdatePunch1()
 	if (opponent != nullptr) {
 		if (frame >= Punch1Data.hitStartFrame && frame <= Punch1Data.hitEndFrame) {
 			colIndex = 4;
-			damage = 10;
+			damage = 20;
+			isPunching = true;
 
 			// 相手がガード中かどうか判定
 			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
-
-			std::cout << "[Punch1] First hit at frame: " << frame << std::endl;
 		}
 
 		// if (frame >= Punch1Data.cancelStartFrame && frame <= Punch1Data.cancelEndFrame) { canCancel = true; }
@@ -260,7 +281,7 @@ void Character::UpdateKick1()
 	if (opponent != nullptr) {
 		if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
 			colIndex = 13;
-			damage = 10;
+			damage = 20;
 
 			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
 		}
@@ -365,6 +386,7 @@ void Character::InReturn()
 {
 	if (anim->IsFinish()) {
 		isMoveing = false;
+		isPunching = false;
 		canReduceHp = false;
 		state = S_STOP;
 		return;
@@ -378,6 +400,8 @@ void Character::UpdateJump()
 
 void Character::UpdateDamage(int dmg)
 {
+	if (isPunching) { anim->Play("data/Character/Player/Hit_F.mv1", false); }
+
 	Hp -= dmg;
 }
 
@@ -406,7 +430,7 @@ void Character::ResolvePlayerCollision()
 	// 距離ベクトルと長さ
 	VECTOR diff = center2 - center;
 	float dist = VSize(diff);
-	float minDist = E_collder->radius;
+	float minDist = E_collder->radius * 0.7f; // 半径に係数をかける(もっと近づける)
 
 	// 重なっている（当たり判定）
 	if (dist < minDist && dist > 0.0001f)
