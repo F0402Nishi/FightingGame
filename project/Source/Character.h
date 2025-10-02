@@ -8,6 +8,11 @@
 
 class HPber;
 
+enum class AttackType {
+	Punch,
+	Kick
+};
+
 class Character : public Object3D
 {
 public:
@@ -16,6 +21,7 @@ public:
 	void Always();
 	void SetHitSpheres();
 	void SetOpponent(Character* other);
+	void SetAlive(bool alive);
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
@@ -35,6 +41,8 @@ protected:
 	Field* field;
 
 	std::string hitPart;
+
+	AttackType attacktype;
 
 	VECTOR inputDir; // 初期位置
 	// VECTOR velocity;
@@ -67,6 +75,8 @@ protected:
 	bool canCancel; // 攻撃キャンセル可能かの判定中
 	bool isGuarding; // ガード中かの判定
 	bool isAltIdle;
+	bool isHitPlaying;
+	bool isAlive; // HP > 0 の時だけ true
 
 	// Playerの骨制御
 	int headBone;
@@ -125,7 +135,7 @@ protected:
 	void PlayAttack(const std::string& animFile, bool loop);
 	void InReturn();
 	void UpdateJump();
-	void UpdateDamage(int dmg);
+	void UpdateDamage(int dmg, AttackType type);
 	void CollisionDetection();
 	void ResolvePlayerCollision();
 	void BoneCollision();

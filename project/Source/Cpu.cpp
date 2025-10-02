@@ -121,6 +121,7 @@ void CPU::Update()
 	time += 1.0f;
 
 #if 0
+#endif // 0
 	ImGui::Begin("CPU");
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("state: %d", (int)state);
@@ -134,12 +135,11 @@ void CPU::Update()
 	// ImGui::InputFloat("dx", &dx);
 	// ImGui::InputFloat("dist", &dist);
 	// ImGui::InputFloat("playerMoveDir", &playerMoveDir);
-	ImGui::InputFloat("float moved", &moved);
-	ImGui::InputFloat("float CPUpos", &CPUpos);
+	// ImGui::InputFloat("float moved", &moved);
+	// ImGui::InputFloat("float CPUpos", &CPUpos);
 	// ImGui::Text("MyPosition：%d", (int) & mypos);
 	// ImGui::InputInt("Type", &opponentType);
 	ImGui::End();
-#endif // 0
 }
 
 void CPU::Draw()
@@ -276,10 +276,10 @@ void CPU::UpdateCloseCombat()
 		isMoveing = true;
 
 		if (m < 20) {
-			inputDir.x = -10.0f;
+			inputDir.x = -1.0f;
 			Nowpos = true;
 			moved = fabs(mypos.x - CPUpos);
-			if (moved >= 10.0f) {
+			if (moved >= 1.0f) {
 				isMoveing = false;
 				Nowpos = false;
 			}
@@ -330,10 +330,10 @@ void CPU::UpdateMidCombat()
 		isMoveing = true;
 
 		if (m < 50) {
-			inputDir.x = -10.0f;
+			inputDir.x = -5.0f;
 			Nowpos = true;
 			moved = fabs(mypos.x - CPUpos);
-			if (moved >= 10.0f) {
+			if (moved >= 5.0f) {
 				isMoveing = false;
 				Nowpos = false;
 			}
@@ -418,6 +418,16 @@ void CPU::UpdateLongCombat()
 
 void CPU::UpdateDice()
 {
+	// === HPが0以下なら行動を止める ===
+	if (!isAlive) {
+		speed = 0;
+		time = 0;
+		r = 0;
+		m = 0;
+		a = 0;
+		return;
+	}
+
 	// ===== 新しい行動を決める =====
 	if (!isMoveing && time > 100.0f) { 
 		NowDice = false;

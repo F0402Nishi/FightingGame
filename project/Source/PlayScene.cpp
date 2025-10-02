@@ -1,5 +1,6 @@
 #include "PlayScene.h"
 #include <DxLib.h>
+#include <assert.h>
 #include "../ImGui/imgui.h"
 #include "SelectScene.h"
 #include "Character.h"
@@ -15,6 +16,7 @@ static float posz = -400.0f;
 
 PlayScene::PlayScene()
 {
+	// SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
 	opponentType = SelectScene::gameType;
 
 	p1 = new Player(true);
@@ -41,7 +43,11 @@ PlayScene::PlayScene()
 	p1->SetHitSpheres();
 	p2->SetHitSpheres();
 
+	WinImage = LoadGraph("data/2D/WIN.png");
+	assert(WinImage >= 0);
+
 	PlayerKeyInput = false;
+	result = false;
 }
 
 PlayScene::~PlayScene()
@@ -51,6 +57,15 @@ PlayScene::~PlayScene()
 void PlayScene::Update()
 {
 	UpdateCamera();
+
+	// 両方のHPを確認
+	if (p1->GetHp() <= 0 || p2->GetHp() <= 0)
+	{
+		// 両方の操作を停止
+		p1->SetAlive(false);
+		p2->SetAlive(false);
+		result = true;
+	}
 
 	if (CheckHitKey(KEY_INPUT_T)) {
 		SceneManager::ChangeScene("TITLE");
@@ -73,6 +88,18 @@ void PlayScene::Update()
 void PlayScene::Draw()
 {
 	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
+
+	if (result) {
+		int screenW, screenH;
+		GetDrawScreenSize(&screenW, &screenH); // 現在の画面の幅と高さを取得
+
+		// DrawRotaGraph(screenW / 2, screenH / 2, 3.0f, 0.0f, WinImage, TRUE);
+
+		DrawString(0, 0, "左上", GetColor(255, 255, 255));
+		DrawString(screenW - 100, 0, "右上", GetColor(255, 255, 255));
+		DrawString(0, screenH - 20, "左下", GetColor(255, 255, 255));
+		DrawString(screenW - 100, screenH - 20, "右下", GetColor(255, 255, 255));
+	}
 
 #if false
 

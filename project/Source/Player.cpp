@@ -4,6 +4,7 @@
 #include "Stage.h"
 #include "HitCheck.h"
 #include "HPber.h"
+#include "Cpu.h"
 
 Player::Player(bool _isPlayer)
 {
@@ -33,6 +34,10 @@ void Player::Update()
 
 	if (!isPlayer) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isPlayer) return;
+
+	if (!isAlive) {
+		return;
+	}
 
 	if (state == S_STOP) {
 		if (CheckHitKey(KEY_INPUT_A)) {

@@ -6,6 +6,7 @@
 // #include "Field.h"
 
 class HPber;
+class CPU;
 
 class Player : public Character
 {
@@ -18,8 +19,9 @@ public:
 	virtual bool GetisPlayey() const override { return isPlayer; }
 	virtual bool GetisCpu() const override { return false; }
 
-
 private:
+	CPU* cpu;
+
 	VECTOR velocity;
 	bool isPlayer;
 

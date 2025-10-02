@@ -7,7 +7,7 @@
 
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
-#define PLAYER_HP 1000
+#define PLAYER_HP 10
 
 struct AttackData {
 	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
@@ -46,6 +46,8 @@ Character::Character()
 	isMoveing = false;
 	isPunching = false;
 	isGuarding = false;
+	isHitPlaying = false;
+	isAlive = true;
 
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
@@ -79,6 +81,11 @@ void Character::Always()
 
 	BoneCollision();
 	ResolvePlayerCollision();
+
+	if (isHitPlaying) {
+		if (anim->IsFinish()) { isHitPlaying = false; }
+		else { return; }
+	}
 
 	switch (state) {
 	case S_STOP:
@@ -178,10 +185,12 @@ void Character::UpdateStop(float deltaTime)
 {
 	inputDir = VGet(0, 0, 0);
 	idleTimer += deltaTime;
-	
-	if (!isAltIdle) {
+
+	if (!isAltIdle && !isHitPlaying) {
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
 		// PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
+
+		if (!isAlive) return;
 
 		if (idleTimer > 10.0f) {
 			anim->Play("data/Character/Player/Taunt.mv1", false);
@@ -210,10 +219,12 @@ void Character::UpdatePunch1()
 		if (frame >= Punch1Data.hitStartFrame && frame <= Punch1Data.hitEndFrame) {
 			colIndex = 4;
 			damage = 20;
-			isPunching = true;
+			attacktype = AttackType::Punch;
 
 			// 相手がガード中かどうか判定
 			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			
+			CollisionDetection();
 		}
 
 		// if (frame >= Punch1Data.cancelStartFrame && frame <= Punch1Data.cancelEndFrame) { canCancel = true; }
@@ -222,7 +233,6 @@ void Character::UpdatePunch1()
 
 
 	InReturn();
-	CollisionDetection();
 }
 
 void Character::UpdatePunch2()
@@ -236,8 +246,11 @@ void Character::UpdatePunch2()
 		if (frame >= Punch2Data.hitStartFrame && frame <= Punch2Data.hitEndFrame) {
 			colIndex = 7;
 			damage = 50;
+			attacktype = AttackType::Punch;
 
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			
+			CollisionDetection();
 		}
 
 		// if (frame >= Punch2Data.cancelStartFrame && frame <= Punch2Data.cancelEndFrame) { canCancel = true; }
@@ -245,7 +258,6 @@ void Character::UpdatePunch2()
 	}
 
 	InReturn();
-	CollisionDetection();
 }
 
 void Character::UpdatePunch3()
@@ -259,8 +271,11 @@ void Character::UpdatePunch3()
 		if (frame >= Punch3Data.hitStartFrame && frame <= Punch3Data.hitEndFrame) {
 			colIndex = 4;
 			damage = 70;
+			attacktype = AttackType::Punch;
 
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			
+			CollisionDetection();
 		}
 
 		// if (frame >= Punch3Data.cancelStartFrame && frame <= Punch3Data.cancelEndFrame) { canCancel = true; }
@@ -268,7 +283,6 @@ void Character::UpdatePunch3()
 	}
 
 	InReturn();
-	CollisionDetection();
 }
 
 void Character::UpdateKick1()
@@ -282,8 +296,11 @@ void Character::UpdateKick1()
 		if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
 			colIndex = 13;
 			damage = 20;
+			attacktype = AttackType::Kick;
 
 			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			
+			CollisionDetection();
 		}
 
 		// if (frame >= Kick1Data.cancelStartFrame && frame <= Kick1Data.cancelEndFrame) { canCancel = true; }
@@ -291,7 +308,6 @@ void Character::UpdateKick1()
 	}
 
 	InReturn();
-	CollisionDetection();
 }
 
 void Character::UpdateKick2()
@@ -305,8 +321,11 @@ void Character::UpdateKick2()
 		if (frame >= Kick2Data.hitStartFrame && frame <= Kick2Data.hitEndFrame) {
 			colIndex = 10;
 			damage = 50;
+			attacktype = AttackType::Kick;
 
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			
+			CollisionDetection();
 		}
 
 		// if (frame >= Kick2Data.cancelStartFrame && frame <= Kick2Data.cancelEndFrame) { canCancel = true; }
@@ -315,7 +334,6 @@ void Character::UpdateKick2()
 	}
 
 	InReturn();
-	CollisionDetection();
 }
 
 void Character::UpdateKick3()
@@ -329,8 +347,11 @@ void Character::UpdateKick3()
 		if (frame >= Kick3Data.hitStartFrame && frame <= Kick3Data.hitEndFrame) {
 			colIndex = 13;
 			damage = 70;
+			attacktype = AttackType::Kick;
 
 			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			
+			CollisionDetection();
 		}
 
 		// if (frame >= Kick3Data.cancelStartFrame && frame <= Kick3Data.cancelEndFrame) { canCancel = true; }
@@ -339,7 +360,6 @@ void Character::UpdateKick3()
 	}
 
 	InReturn();
-	CollisionDetection();
 }
 
 void Character::UpdateProtect()
@@ -398,11 +418,32 @@ void Character::UpdateJump()
 	transform.position.y += velocityY;
 }
 
-void Character::UpdateDamage(int dmg)
+void Character::UpdateDamage(int dmg, AttackType type)
 {
-	if (isPunching) { anim->Play("data/Character/Player/Hit_F.mv1", false); }
-
 	Hp -= dmg;
+
+	if (!isHitPlaying) { 
+		switch (type) {
+		case AttackType::Punch:
+			if (!isGuarding) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
+			else { anim->Play("data/Character/Player/Hit_F.mv1", false); }
+			break;
+		case AttackType::Kick:
+			anim->Play("data/Character/Player/Hit_B.mv1", false);
+			break;
+		}
+		isHitPlaying = true;
+	}
+}
+
+void Character::SetAlive(bool alive)
+{
+	isAlive = alive;
+
+	if (!isAlive) {
+		state = S_STOP;
+		inputDir = VGet(0, 0, 0);
+	}
 }
 
 void Character::CollisionDetection()
@@ -412,7 +453,7 @@ void Character::CollisionDetection()
 		attackRadius = hitSpheres[colIndex].radius;
 		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
 		if (!hitPart.empty() && canReduceHp) {
-			opponent->UpdateDamage(damage);
+			opponent->UpdateDamage(damage, attacktype);
 			canReduceHp = false;
 		}
 	}
