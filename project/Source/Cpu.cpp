@@ -75,6 +75,16 @@ void CPU::Update()
 	// if (!isCpu) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 	if (!isCpu) return;
 
+	// === HPが0以下なら行動を止める ===
+	if (!isAlive) {
+		speed = 0;
+		time = 0;
+		r = 0;
+		m = 0;
+		a = 0;
+		return;
+	}
+
 	// === 座標取得 ===
 	mypos = transform.position;
 	playerpos = player->GetTransform().position;
@@ -418,16 +428,6 @@ void CPU::UpdateLongCombat()
 
 void CPU::UpdateDice()
 {
-	// === HPが0以下なら行動を止める ===
-	if (!isAlive) {
-		speed = 0;
-		time = 0;
-		r = 0;
-		m = 0;
-		a = 0;
-		return;
-	}
-
 	// ===== 新しい行動を決める =====
 	if (!isMoveing && time > 100.0f) { 
 		NowDice = false;

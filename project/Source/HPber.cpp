@@ -22,12 +22,16 @@ HPber::HPber()
     assert(HPImage >= 0);
     HPImageLeft = LoadGraph("data/2D/HP_FrontImage_Left.png");
     assert(HPImageLeft >= 0);
+    WinImage = LoadGraph("data/2D/WIN.png");
+    assert(WinImage >= 0);
 
     character = nullptr;
 
     currenthp = 0;
     maxhp = 0;
     displayHp = 0;
+
+    angle = 0.0f;
 }
 
 bool HPber::Init(Character* target)
@@ -66,12 +70,17 @@ void HPber::Update()
         displayHp -= std::max(1, (displayHp - currenthp) / 10); // èôÅXÇ…å∏ÇÈ
     }
 
-#if 0
+    if (currenthp == 0) {
+        angle += 0.05f;
+        if (angle > DX_PI * 2) { angle -= DX_PI * 2; }
+    }
+
     ImGui::Begin("HPbar");
     ImGui::Text("hp = %d", character->GetHp());
     ImGui::InputInt("currenthp", &currenthp);
     ImGui::InputInt("graphH", &graphH);
     ImGui::End();
+#if 0
 #endif // 0
 }
 
@@ -88,7 +97,6 @@ void HPber::Draw()
 
     int drawW = static_cast<int>(graphW * IMAGE_SCALE);
     int drawH = static_cast<int>(graphH * IMAGE_SCALE);
-
     
     if (isRightCpu) {
         DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE); // îwåiÇ∆HPÇçáÇÌÇπÇÈÇΩÇﬂÇ…Xç¿ïWÇí≤êÆ
@@ -106,5 +114,9 @@ void HPber::Draw()
             DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE);
             DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, HPIMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
         }
+    }
+
+    if (currenthp == 0) {
+        DrawRotaGraph(500.0f, 300.0f, 3.5f, angle, WinImage, TRUE);
     }
 }

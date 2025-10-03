@@ -24,8 +24,6 @@ private:
 
 	int Hpbar;
 	int opponentType;
-	int WinImage;
 
 	bool PlayerKeyInput;
-	bool result;
 };

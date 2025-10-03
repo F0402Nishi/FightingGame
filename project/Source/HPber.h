@@ -26,9 +26,15 @@ private:
 	int graphW;
 	int graphH;
 	int displayHp;
+	int WinImage;
+	int blackoutAlpha; // 透明度（0=透明, 255=真っ黒）
+
 	
+	float angle; // 回転角度を保持する変数
+
 	bool isLeftPlayer;
 	bool isRightCpu;
+	bool blackoutActive; // フェードアウトを有効にする
 
 #if false
 	int HPbarCount = 4;
