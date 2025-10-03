@@ -6,15 +6,16 @@
 
 class Character;
 
-class HPber : public Object3D
+class UI2D : public Object3D
 {
 public:
-	HPber();
+	UI2D();
 	bool Init(Character* target);
 	void Update() override;
 	void Draw() override;
 	void SetHp(int hp);
 	void SetMaxHp(int hp);
+	void HPbar();
 
 private:
 	Character* character;
@@ -27,14 +28,15 @@ private:
 	int graphH;
 	int displayHp;
 	int WinImage;
-	int blackoutAlpha; // 透明度（0=透明, 255=真っ黒）
+	int blueY;  // 画面上端からスタート
+	int blueSpeed; // 降下速度
+	int fullTank;
+	int recoveryDelayTimer; // ダメージ後の待機時間カウント
 
-	
 	float angle; // 回転角度を保持する変数
 
 	bool isLeftPlayer;
 	bool isRightCpu;
-	bool blackoutActive; // フェードアウトを有効にする
 
 #if false
 	int HPbarCount = 4;

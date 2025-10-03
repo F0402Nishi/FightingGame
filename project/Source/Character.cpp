@@ -3,11 +3,11 @@
 #include "../ImGui/imgui.h"
 #include "Stage.h"
 #include "HitCheck.h"
-#include "HPber.h"
+#include "2DUI.h"
 
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
-#define PLAYER_HP 10
+#define PLAYER_HP 1000
 
 struct AttackData {
 	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
@@ -436,9 +436,10 @@ void Character::UpdateDamage(int dmg, AttackType type)
 	}
 }
 
-void Character::SetAlive(bool alive)
+void Character::SetWinner(bool val, bool ali)
 {
-	isAlive = alive;
+	isWinner = val;
+	isAlive = ali;
 
 	if (!isAlive) {
 		state = S_STOP;

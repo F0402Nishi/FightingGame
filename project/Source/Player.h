@@ -5,7 +5,7 @@
 #include <vector>
 // #include "Field.h"
 
-class HPber;
+class UI2D;
 class CPU;
 
 class Player : public Character

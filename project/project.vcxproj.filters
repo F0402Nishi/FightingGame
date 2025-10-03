@@ -71,9 +71,6 @@
     <ClCompile Include="Source\HitCheck.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\HPber.cpp">
-      <Filter>PlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Character.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
@@ -86,7 +83,12 @@
     <ClCompile Include="Source\MiniWindow.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Fade.cpp" />
+    <ClCompile Include="Source\Fade.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\2DUI.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -172,9 +174,6 @@
     <ClInclude Include="Source\HitCheck.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
-    <ClInclude Include="Source\HPber.h">
-      <Filter>PlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Character.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
@@ -188,6 +187,9 @@
       <Filter>PlayScene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Fade.h">
+      <Filter>PlayScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\2DUI.h">
       <Filter>PlayScene</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,7 @@
 #include "Cpu.h"
 #include "Stage.h"
 #include "Field.h"
-#include "HPber.h"
+#include "2DUI.h"
 
 static float posx = 000.0f;
 static float posy = 200.0f;
@@ -15,7 +15,6 @@ static float posz = -400.0f;
 
 PlayScene::PlayScene()
 {
-	// SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
 	opponentType = SelectScene::gameType;
 
 	p1 = new Player(true);
@@ -32,8 +31,8 @@ PlayScene::PlayScene()
 
 	new Stage();
 	new Field();
-	h1 = new HPber();
-	h2 = new HPber();
+	h1 = new UI2D();
+	h2 = new UI2D();
 
 	h1->Init(p1);
 	h2->Init(p2);
@@ -53,12 +52,16 @@ void PlayScene::Update()
 {
 	UpdateCamera();
 
-	// 両方のHPを確認
-	if (p1->GetHp() <= 0 || p2->GetHp() <= 0)
-	{
-		// 両方の操作を停止
-		p1->SetAlive(false);
-		p2->SetAlive(false);
+	// === 両方のHPを確認 ===
+	if (p1->GetHp() <= 0 && p2->GetHp() > 0) {
+		// プレイヤー死亡、CPU生存
+		p1->SetWinner(false, false);
+		p2->SetWinner(false, false);
+	}
+	else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
+		// CPU死亡、プレイヤー生存
+		p1->SetWinner(true, false);
+		p2->SetWinner(true, false);
 	}
 
 	if (CheckHitKey(KEY_INPUT_T)) {

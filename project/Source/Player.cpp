@@ -3,8 +3,8 @@
 #include "../ImGui/imgui.h"
 #include "Stage.h"
 #include "HitCheck.h"
-#include "HPber.h"
 #include "Cpu.h"
+#include "2DUI.h"
 
 Player::Player(bool _isPlayer)
 {

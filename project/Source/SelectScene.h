@@ -1,5 +1,6 @@
 #pragma once
 #include "../Library/SceneBase.h"
+#include "Fade.h"
 
 /// <summary>
 /// セレクトシーン
@@ -20,6 +21,8 @@ public:
 	bool GetMiniWindow() const { return isWindowOpen; }
 
 private:
+	Fade* fade;
+
 	int OperationImage;
 	int CommandImage;
 	int BattleImage;
@@ -42,4 +45,5 @@ private:
 	bool InputPossible;
 	bool OpponentSelection;
 	bool isWindowOpen;
+	bool changeScene;
 };

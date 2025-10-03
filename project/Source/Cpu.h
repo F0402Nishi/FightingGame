@@ -21,7 +21,7 @@ public:
 	
 	
 	virtual bool GetisPlayey() const override { return false; }
-	virtual bool GetisCpu() const override { return true; }
+	virtual bool GetisCpu() const override { return isCpu; }
 
 private:
 	Player* player;

@@ -3,7 +3,7 @@
 Fade::Fade()
 {
 	alpha = 0;
-	fadeSpped = 5;
+	fadeSpped = 7;
 
 	fadingIn = false;
 	fadingOut = false;

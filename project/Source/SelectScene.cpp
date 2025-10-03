@@ -24,11 +24,12 @@ SelectScene::SelectScene()
 
 	operation = false;
 	SelectKeyInput = false;
-	isSetting = false;
 	atInit = true;
 	InputPossible = true;
 	OpponentSelection = false;
+	isSetting = false;
 	isWindowOpen = false;
+	changeScene = false;
 	
 	COMMAND_X = -850;
 	COMMAND_Y = -200;
@@ -49,6 +50,7 @@ SelectScene::SelectScene()
 	UpdateKey();
 
 	new MiniWindow(this);
+	fade = new Fade();
 }
 
 SelectScene::~SelectScene()
@@ -58,6 +60,7 @@ SelectScene::~SelectScene()
 void SelectScene::Update()
 {
 	KeyMovement();
+	fade->Update();
 
 	if (CheckHitKey(KEY_INPUT_TAB) && !isSetting) {
 		SceneManager::ChangeScene("TITLE");
@@ -85,6 +88,8 @@ void SelectScene::Draw()
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
 		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(192, 192, 192));
 	}
+
+	fade->Draw();
 }
 
 void SelectScene::KeyMovement()
@@ -109,19 +114,25 @@ void SelectScene::KeyMovement()
 			break;
 		case 1:
 			gameType = YInit;
-			SceneManager::ChangeScene("PLAY");
+			fade->FadeOut();
+			changeScene = true;
 			break;
 		case 2:
 			gameType = YInit;
-			SceneManager::ChangeScene("PLAY");
+			fade->FadeOut();
+			changeScene = true;
 			break;
 		case 3:
 			gameType = YInit;
-			SceneManager::ChangeScene("PLAY");
+			// fade->FadeOut();
+			changeScene = true;
 			break;
 		}
 	}
 	if (keyCounter[KEY_INPUT_RETURN] == 0 && atInit) { SelectKeyInput = false; }
+
+	// === フェードアウト完了したらシーン切り替え ===
+	if (changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("PLAY"); }
 
 	if (InputPossible) {
 		if (keyCounter[KEY_INPUT_RIGHT] == 1 || keyCounter[KEY_INPUT_LEFT] == 1) {
