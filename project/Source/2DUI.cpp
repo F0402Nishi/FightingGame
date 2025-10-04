@@ -25,6 +25,8 @@ UI2D::UI2D()
     WinImage = LoadGraph("data/2D/WIN.png");
     assert(WinImage >= 0);
 
+    Battle::None;
+
     character = nullptr;
 
     currenthp = 0;
@@ -33,7 +35,11 @@ UI2D::UI2D()
     blueY = -720;
     blueSpeed = 20;
     fullTank = 0;
-    recoveryDelayTimer = 0;
+    recoveryTimer = 0;
+    recoveryHp = 0;
+    recoveryFrame = 180;
+    battleTime = 0;
+    battleFrame = 0;
 
     angle = 0.0f;
 }
@@ -53,18 +59,15 @@ bool UI2D::Init(Character* target)
     else { return false; }
 }
 
-void UI2D::SetHp(int hp)
-{
-    currenthp = std::max(0, std::min(hp, maxhp));
-}
-
-void UI2D::SetMaxHp(int hp)
-{
-    maxhp = std::max(1, hp);
-}
-
 void UI2D::Update()
 {
+    // === Battleの状態の管理 ===
+
+    if (battle != Battle::None) {
+        battleTime++;
+        if (battleTime > battleFrame) { battle = Battle::None; }
+    }
+
     // === HPbarの処理 ===
 
     if (character) {
@@ -73,7 +76,10 @@ void UI2D::Update()
         SetMaxHp(character->GetMaxHp());
 
         if (currenthp < fullTank) {
-            recoveryDelayTimer = 180;
+            recoveryTimer = 180;
+            int damageHp = fullTank - currenthp;
+            recoveryHp += damageHp;
+            recoveryTimer = recoveryFrame;
         }
     }
 
@@ -84,15 +90,17 @@ void UI2D::Update()
     // --- トレーニングモードの回復処理 ---
 
     if (!isRightCpu) {
-        if (recoveryDelayTimer > 0) { recoveryDelayTimer--; }
+        if (recoveryTimer > 0) { recoveryTimer--; }
         else {
-            int damageHp = fullTank - currenthp;
-            if (currenthp < maxhp) {
-                currenthp += damageHp; // 回復量
-                displayHp += currenthp;
-                currenthp = std::min(currenthp, maxhp);
-                SetHp(currenthp);
-            }
+            // 一気に全回復
+            currenthp = maxhp;
+            character->SetHp(maxhp);
+
+            // 表示用HPも即追従させたいならこっち
+            displayHp = maxhp;
+
+            // もう一度ダメージを受けた時に備えてタイマーをリセットしたいなら
+            recoveryTimer = recoveryHp;
         }
     }
 
@@ -100,12 +108,33 @@ void UI2D::Update()
     ImGui::Text("hp = %d", character->GetHp());
     ImGui::InputInt("currenthp", &currenthp);
     ImGui::InputInt("graphH", &graphH);
-    ImGui::InputInt("recoveryDelayTimer", &recoveryDelayTimer);
+    ImGui::InputInt("recoveryDelayTimer", &recoveryTimer);
     ImGui::End();
 }
 
 void UI2D::Draw()
 {
+    // === バトル開始の文字表示 ===
+
+    int color = GetColor(255, 255, 255);
+    const char* text = "";
+    switch (Battle::None) {
+    case Battle::Ready:
+        text = "READY";
+        break;
+    case Battle::Fight:
+        text = "FIGHT";
+        break;
+    case Battle::Win:
+        text = "YOU WIN";
+        color = GetColor(190, 0, 63);
+        break;
+    case Battle::Lose:
+        text = "YOU LOSE";
+        color = GetColor(0, 0, 190);
+        break;
+    }
+
     HPbar();
 
     // === Resultの処理 ===
@@ -116,6 +145,16 @@ void UI2D::Draw()
     else if (!character->GetWinner() && character->GetHp() <= 0) { // 負け
         DrawExtendString(500, 100, 5, 5, "YOU LOSE", GetColor(0, 0, 190));
     }
+}
+
+void UI2D::SetHp(int hp)
+{
+    currenthp = std::max(0, std::min(hp, maxhp));
+}
+
+void UI2D::SetMaxHp(int hp)
+{
+    maxhp = std::max(1, hp);
 }
 
 void UI2D::HPbar()
@@ -149,4 +188,11 @@ void UI2D::HPbar()
             DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, HPIMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
         }
     }
+}
+
+void UI2D::SetMessage(Battle newBattle, int BattleFrame)
+{
+    battle = newBattle;
+    battleFrame = BattleFrame;
+    battleTime = 0;
 }

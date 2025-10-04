@@ -33,6 +33,8 @@ public:
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
 	bool GetWinner() const { return isWinner; }
+
+	void SetHp(int value) { Hp = value; }
 	// bool GetisPunching() const { return isPunching; }
 	// bool GetisPlayer() const { return isPlayer; }
 
