@@ -5,13 +5,16 @@
 // #include "Player.h"
 
 class Character;
+class MiniWindow;
 
 enum class Battle {
 	None,
+	Training,
 	Ready,
 	Fight,
 	Win,
 	Lose,
+	Draw,
 };
 
 class UI2D : public Object3D
@@ -19,17 +22,22 @@ class UI2D : public Object3D
 public:
 
 	UI2D();
-	bool Init(Character* target);
+	bool Init(Character* target, int Type);
 	void Update() override;
 	void Draw() override;
 	void SetHp(int hp);
 	void SetMaxHp(int hp);
 	void HPbar();
 	void SetMessage(Battle newBattle, int BattleFrame);
+	void SetMenu(bool _menu);
+
+	bool IsBattleFinish() const { return (battle == Battle::None); }
+	bool IsMenuOpen() const { return MenuOpen; }
 
 
 private:
 	Character* character;
+	MiniWindow* miniwindow;
 
 	Battle battle; // 今表示しているメッセージ
 
@@ -51,11 +59,13 @@ private:
 	int recoveryFrame; // ダメージ後何フレーム待つか
 	int battleTime; // 表示してからの経過フレーム数 
 	int battleFrame; // 何フレーム表示するか
+	int gameType;
 
 	float angle; // 回転角度を保持する変数
 
 	bool isLeftPlayer;
 	bool isRightCpu;
+	bool MenuOpen;
 
 #if false
 	int HPbarCount = 4;

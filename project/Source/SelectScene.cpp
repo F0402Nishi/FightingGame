@@ -28,7 +28,6 @@ SelectScene::SelectScene()
 	InputPossible = true;
 	OpponentSelection = false;
 	isSetting = false;
-	isWindowOpen = false;
 	changeScene = false;
 	
 	COMMAND_X = -850;
@@ -40,16 +39,11 @@ SelectScene::SelectScene()
 	Ykey = COMMAND_Y;
 
 	YInit = 0;
-	YPosition[0] = 200;
-	YPosition[1] = 75;
-	YPosition[2] = -85;
-	YPosition[3] = -250;
-
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
 
-	new MiniWindow(this);
+	miniwindow = new MiniWindow();
 	fade = new Fade();
 }
 
@@ -62,7 +56,7 @@ void SelectScene::Update()
 	KeyMovement();
 	fade->Update();
 
-	if (CheckHitKey(KEY_INPUT_TAB) && !isSetting) {
+	if (keyCounter[KEY_INPUT_TAB] == 1 && !isSetting) {
 		SceneManager::ChangeScene("TITLE");
 	}
 }
@@ -70,41 +64,50 @@ void SelectScene::Update()
 void SelectScene::Draw()
 {
 	SetBackgroundColor(0, 0, 0); //※背景の色変更に使用
-	// DrawBox(0, 0, 640, 240, GetColor(0, 0, 255), TRUE); // 上半分を青で塗りつぶし
-	// DrawBox(0, 240, 640, 480, GetColor(255, 0, 0), TRUE); // 下半分を赤で塗りつぶし
 	
 	DrawRotaGraph3D(0, 0, 0, 2.8f, 0, SelectBackImage, TRUE);
 	DrawRotaGraph3D(-600, -200, 0, 1.5f, 0, CommandImage, TRUE);
 	DrawRotaGraph3D(600, 200, 0, 1.5f, 0, BattleImage, TRUE);
 	DrawRotaGraph3D(Xkey, Ykey, 0, 1.0f, 0, SelectionArrowImage, TRUE);
 
+	// === タイトルシーンに移動 ===
 	DrawExtendString(30, 30, 2, 2, "[Tab] 戻る", GetColor(255, 255, 255));
-	// DrawString(0, 0, "SELECT SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
-	// DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(255, 255, 255));
 
-	// if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
+	// === ゲームタイプの種類 ===
 	if (OpponentSelection) {
-		DrawExtendString(930, 300, 2, 2, "TRINING", GetColor(255, 255, 255));
+		DrawExtendString(930, 300, 2, 2, "TRAINING", GetColor(255, 255, 255));
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
 		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(192, 192, 192));
 	}
 
 	fade->Draw();
+	miniwindow->Draw();
+
+	// DrawBox(0, 0, 640, 240, GetColor(0, 0, 255), TRUE); // 上半分を青で塗りつぶし
+	// DrawBox(0, 240, 640, 480, GetColor(255, 0, 0), TRUE); // 下半分を赤で塗りつぶし
+
+	// DrawString(0, 0, "SELECT SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
+	// DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(255, 255, 255));
+
+	// if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
 }
 
 void SelectScene::KeyMovement()
 {
 	UpdateKey();
 
+	// === コマンド表示用 ===
 	if (atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
 		operation = !operation;
-		isWindowOpen = !isWindowOpen;
 		isSetting = !isSetting;
 		InputPossible = !InputPossible;
+
+		miniwindow->Toggle();
+
 		SelectKeyInput = true;
 	}
-	//if (!atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
-	//}
+
+	// === ゲームタイプ選択用 ===
 	if (!atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
 		switch (YInit) {
 		case 0:
@@ -134,6 +137,7 @@ void SelectScene::KeyMovement()
 	// === フェードアウト完了したらシーン切り替え ===
 	if (changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("PLAY"); }
 
+	// === 矢印移動(左右) ===
 	if (InputPossible) {
 		if (keyCounter[KEY_INPUT_RIGHT] == 1 || keyCounter[KEY_INPUT_LEFT] == 1) {
 			if (atInit) { // 初期位置にいたなら → 移動先へ
@@ -149,6 +153,7 @@ void SelectScene::KeyMovement()
 		}
 	}
 
+	// === 矢印移動(上下) ===
 	if (OpponentSelection) {
 		if (keyCounter[KEY_INPUT_DOWN] == 1) {
 			YInit++; // 次の段階へ
@@ -160,16 +165,5 @@ void SelectScene::KeyMovement()
 			if (YInit < 0) { YInit = 3; } // 最初より前なら最後に戻る
 			Ykey = YPosition[YInit];
 		}
-	}
-}
-
-void SelectScene::UpdateKey()
-{
-	char keys[256]; // 今のキー状態
-	GetHitKeyStateAll(keys); // 今のキー状態を取得
-
-	for (int i = 0; i < 256; i++) {
-		if (keys[i] != 0) { keyCounter[i]++; }
-		else { keyCounter[i] = 0; }
 	}
 }

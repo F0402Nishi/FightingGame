@@ -1,6 +1,7 @@
 #pragma once
 #include "../Library/SceneBase.h"
 #include "Fade.h"
+#include "MiniWindow.h"
 
 /// <summary>
 /// セレクトシーン
@@ -15,13 +16,13 @@ public:
 	void Update() override;
 	void Draw() override;
 	void KeyMovement();
-	void UpdateKey();
 
 	static int gameType;
-	bool GetMiniWindow() const { return isWindowOpen; }
+	// bool GetMiniWindow() const { return isWindowOpen; }
 
 private:
 	Fade* fade;
+	MiniWindow* miniwindow;
 
 	int OperationImage;
 	int CommandImage;
@@ -35,8 +36,7 @@ private:
 	int BATTLE_X;
 	int BATTLE_Y;
 	int YInit;
-	int YPosition[4];
-	int keyCounter[256];
+	int YPosition[4] = {200, 75, -85, -250};
 
 	bool operation;
 	bool SelectKeyInput;
@@ -44,6 +44,6 @@ private:
 	bool atInit;
 	bool InputPossible;
 	bool OpponentSelection;
-	bool isWindowOpen;
+	// bool isWindowOpen;
 	bool changeScene;
 };

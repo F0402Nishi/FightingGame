@@ -21,7 +21,7 @@ public:
 	void Always();
 	void SetHitSpheres();
 	void SetOpponent(Character* other);
-	void SetWinner(bool val, bool ali);
+	void SetAlive(bool ali);
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
@@ -32,7 +32,6 @@ public:
 	std::string GetHit() { return hitPart; }
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
-	bool GetWinner() const { return isWinner; }
 
 	void SetHp(int value) { Hp = value; }
 	// bool GetisPunching() const { return isPunching; }
@@ -80,7 +79,6 @@ protected:
 	bool isAltIdle;
 	bool isHitPlaying;
 	bool isAlive; // HP > 0 ‚Ì‚¾‚¯ true
-	bool isWinner;
 
 	// Player‚Ìœ§Œä
 	int headBone;

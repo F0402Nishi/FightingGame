@@ -257,7 +257,7 @@ void Player::Draw()
 	// アニメーションバーの描画
 	DrawFillBox(200, 100, 200 + DrawValue, 116, color);
 	DrawLineBox(200, 100, 200 + DrawValue, 116, GetColor(0, 0, 0));
-#endif // 0
+#endif
 
 #if false "参考のために保留"
 void Player::SetHitSpheres()

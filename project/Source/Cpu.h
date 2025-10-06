@@ -20,8 +20,8 @@ public:
 	void EffectiveRange();
 	
 	
-	virtual bool GetisPlayey() const override { return false; }
 	virtual bool GetisCpu() const override { return isCpu; }
+	virtual bool GetisPlayey() const override { return false; }
 
 private:
 	Player* player;

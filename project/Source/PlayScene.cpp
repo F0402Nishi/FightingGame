@@ -15,6 +15,7 @@ static float posz = -400.0f;
 
 PlayScene::PlayScene()
 {
+	// SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
 	opponentType = SelectScene::gameType;
 
 	p1 = new Player(true);
@@ -34,14 +35,33 @@ PlayScene::PlayScene()
 	h1 = new UI2D();
 	h2 = new UI2D();
 
-	h1->Init(p1);
-	h2->Init(p2);
+	h1->Init(p1, opponentType);
+	h2->Init(p2, opponentType);
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
 	p1->SetHitSpheres();
 	p2->SetHitSpheres();
+	p1->SetAlive(false);
+	p2->SetAlive(false);
 
-	PlayerKeyInput = false;
+	ui2d = new UI2D();
+
+	PlayNow = false;
+	isMenu = false;
+
+	memset(keyCounter, 0, sizeof(keyCounter));
+	UpdateKey();
+
+	// === スタート時 READY 表示 ===
+	if (opponentType == 1) { 
+		h1->SetMessage(Battle::Training, 120);
+		battlePhase = 2;
+	}
+	else {
+		h1->SetMessage(Battle::Ready, 120); // 2秒
+		h2->SetMessage(Battle::Ready, 120);
+		battlePhase = 1;
+	}
 }
 
 PlayScene::~PlayScene()
@@ -51,28 +71,80 @@ PlayScene::~PlayScene()
 void PlayScene::Update()
 {
 	UpdateCamera();
+	UpdateKey();
+
+	// === READY が終わったら FIGHT ===
+	if (battlePhase == 1 && h1->IsBattleFinish()) {
+		h1->SetMessage(Battle::Fight, 60); // 1秒
+		h2->SetMessage(Battle::Fight, 60);
+		PlayNow = true;
+		battlePhase = 2;
+	}
+
+	// === FIGHT が終わったらバトル開始 ===
+	if (battlePhase == 2 && h1->IsBattleFinish()) {
+		p1->SetAlive(true); // 入力解放
+		p2->SetAlive(true);
+		if (PlayNow) {battlePhase = 3;}  // バトル中
+	}
 
 	// === 両方のHPを確認 ===
-	if (p1->GetHp() <= 0 && p2->GetHp() > 0) {
-		// プレイヤー死亡、CPU生存
-		p1->SetWinner(false, false);
-		p2->SetWinner(false, false);
-	}
-	else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
-		// CPU死亡、プレイヤー生存
-		p1->SetWinner(true, false);
-		p2->SetWinner(true, false);
+	if (battlePhase == 3) {
+		if (p1->GetHp() <= 0 && p2->GetHp() > 0) {
+			// プレイヤー死亡、CPU生存
+			p1->SetAlive(false);
+			p2->SetAlive(false);
+
+			h1->SetMessage(Battle::Lose, 180);
+			battlePhase = 4;
+		}
+		else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
+			// CPU死亡、プレイヤー生存
+			p1->SetAlive(false);
+			p2->SetAlive(false);
+
+			h1->SetMessage(Battle::Win, 180);
+			battlePhase = 4;
+		}
+		else if (p1->GetHp() <= 0 && p2->GetHp() <= 0) {
+			// 両方 HP0 → 引き分け
+			p1->SetAlive(false);
+			p2->SetAlive(false);
+
+			h1->SetMessage(Battle::Draw, 180);
+			battlePhase = 4;
+		}
 	}
 
+	// === デバッグ用：強制遷移 ===
 	if (CheckHitKey(KEY_INPUT_T)) {
 		SceneManager::ChangeScene("TITLE");
 	}
 	if (CheckHitKey(KEY_INPUT_R)) {
 		SceneManager::ChangeScene("SELECT");
 	}
+	if (keyCounter[KEY_INPUT_TAB] == 1 && !isMenu) {
+		isMenu = !isMenu;
+		ui2d->SetMenu(!ui2d->IsMenuOpen());
+	}
+	if (keyCounter[KEY_INPUT_TAB] == 0 && isMenu) {
+		isMenu = false;
+	}
 
+	ImGui::Begin("Menu");
+	// ImGui::Checkbox("isWindowOpen", &isWindowOpen);
+	// ImGui::InputFloat("zoomZ", &zoomZ);
+	//ImGui::InputInt("Type", &opponentType);
+	ImGui::End();
 
 #if false
+
+	// === 勝敗メッセージ終了後 ===
+	if (battlePhase == 4 && h1->IsBattleFinish()) {
+		// シーン遷移する or 次ラウンドへ
+		SceneManager::ChangeScene("RESULT");
+	}
+
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
 		PlayerKeyInput = true;
 	}

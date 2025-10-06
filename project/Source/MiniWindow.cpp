@@ -28,9 +28,9 @@ const char* KeyList[] = {
 	"H"
 };
 
-MiniWindow::MiniWindow(SelectScene* scene)
+MiniWindow::MiniWindow()
 {
-	selectScene = scene;
+	// selectScene = scene;
 
 	scrollOffset = 0;
 	itemHeight = 100;
@@ -52,7 +52,7 @@ MiniWindow::~MiniWindow()
 
 void MiniWindow::Update()
 {
-	windowOpen = selectScene->GetMiniWindow();
+	// windowOpen = selectScene->GetMiniWindow();
 
 	if (!windowOpen) { return; }
 

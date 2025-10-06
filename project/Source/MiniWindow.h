@@ -3,17 +3,21 @@
 #include "Object3D.h"
 
 class SelectScene;
+class PlayScene;
 
 class MiniWindow : public Object3D
 {
 public:
-	MiniWindow(SelectScene* scene);
+	MiniWindow();
 	~MiniWindow();
 	void Update() override;
 	void Draw() override;
 
+	void Toggle() { windowOpen = !windowOpen; }
+
 private:
 	SelectScene* selectScene;
+	PlayScene* playScene;
 
 	int scrollOffset;
 	int commandCount; // コマンドリストの項目数

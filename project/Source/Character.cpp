@@ -7,7 +7,7 @@
 
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
-#define PLAYER_HP 1000
+#define PLAYER_HP 10
 
 struct AttackData {
 	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
@@ -436,9 +436,8 @@ void Character::UpdateDamage(int dmg, AttackType type)
 	}
 }
 
-void Character::SetWinner(bool val, bool ali)
+void Character::SetAlive(bool ali)
 {
-	isWinner = val;
 	isAlive = ali;
 
 	if (!isAlive) {

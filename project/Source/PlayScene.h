@@ -16,7 +16,7 @@ public:
 	void Draw() override;
 	void UpdateCamera();
 
-	int GetType() const { return opponentType; }
+	// int GetType() const { return opponentType; }
 
 private:
 	Character* p1;
@@ -24,10 +24,14 @@ private:
 	CPU* cpu;
 	UI2D* h1;
 	UI2D* h2;
+	UI2D* ui2d;
 	Fade* fade;
 
-	int Hpbar;
+	int battlePhase; // 0=準備, 1=Ready表示中, 2=Fight表示中, 3=バトル中, 4=勝敗表示中
 	int opponentType;
+	// int Hpbar;
 
-	bool PlayerKeyInput;
+	bool PlayNow; // 勝敗を表示したい時用
+	bool isMenu;
+	bool isWind;
 };

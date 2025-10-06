@@ -7,6 +7,7 @@
 #include "2DUI.h"
 #include "Character.h"
 #include "Player.h"
+#include "MiniWindow.h"
 
 #define IMAGE_SCALE 1.0f
 #define IMAGE_POSITION_LEFT_X 5.0f
@@ -25,7 +26,9 @@ UI2D::UI2D()
     WinImage = LoadGraph("data/2D/WIN.png");
     assert(WinImage >= 0);
 
-    Battle::None;
+    miniwindow = new MiniWindow();
+
+    battle = Battle::None;
 
     character = nullptr;
 
@@ -42,11 +45,16 @@ UI2D::UI2D()
     battleFrame = 0;
 
     angle = 0.0f;
+
+    isLeftPlayer = false;
+    isRightCpu = false;
+    MenuOpen = false;
 }
 
-bool UI2D::Init(Character* target)
+bool UI2D::Init(Character* target, int Type)
 {
     character = target;
+    gameType = Type;
 
     if (character) {
         currenthp = character->GetHp();
@@ -75,7 +83,8 @@ void UI2D::Update()
         SetHp(character->GetHp());
         SetMaxHp(character->GetMaxHp());
 
-        if (currenthp < fullTank) {
+        // === トレーニングモードの回復処理.1 ===
+        if (!isRightCpu && gameType == 1 && currenthp < fullTank) {
             recoveryTimer = 180;
             int damageHp = fullTank - currenthp;
             recoveryHp += damageHp;
@@ -87,9 +96,9 @@ void UI2D::Update()
         displayHp -= std::max(1, (displayHp - currenthp) / 10); // 徐々に減る
     }
 
-    // --- トレーニングモードの回復処理 ---
+    // --- トレーニングモードの回復処理.2 ---
 
-    if (!isRightCpu) {
+    if (!isRightCpu && gameType == 1) {
         if (recoveryTimer > 0) { recoveryTimer--; }
         else {
             // 一気に全回復
@@ -105,46 +114,67 @@ void UI2D::Update()
     }
 
     ImGui::Begin("HPbar");
+    ImGui::Checkbox("isRightCpu", &isRightCpu);
+    ImGui::Checkbox("isLeftPlayer", &isLeftPlayer);
     ImGui::Text("hp = %d", character->GetHp());
     ImGui::InputInt("currenthp", &currenthp);
     ImGui::InputInt("graphH", &graphH);
-    ImGui::InputInt("recoveryDelayTimer", &recoveryTimer);
+    ImGui::InputInt("recoveryTimer", &recoveryTimer);
     ImGui::End();
 }
 
 void UI2D::Draw()
 {
-    // === バトル開始の文字表示 ===
+    // === バトル開始の文字表示 & Resultの処理 ===
 
-    int color = GetColor(255, 255, 255);
-    const char* text = "";
-    switch (Battle::None) {
+    const char* battleFontText = "";
+    float battleFontSize = 15.0f;
+    int battleFontColor = GetColor(255, 255, 255);
+
+    switch (battle) {
+    case Battle::Training:
+        battleFontText = "TRAINING";
+        battleFontColor = GetColor(255, 255, 255);
+        DrawExtendString(100, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor); // 文字を大きめに中央に描画
+        break;
     case Battle::Ready:
-        text = "READY";
+        battleFontText = "READY";
+        battleFontColor = GetColor(255, 255, 255);
+        DrawExtendString(300, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor); // 文字を大きめに中央に描画
         break;
     case Battle::Fight:
-        text = "FIGHT";
+        battleFontText = "FIGHT";
+        battleFontColor = GetColor(255, 255, 255);
+        DrawExtendString(300, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor);
         break;
     case Battle::Win:
-        text = "YOU WIN";
-        color = GetColor(190, 0, 63);
+        battleFontText = "YOU WIN";
+        battleFontColor = GetColor(190, 0, 63);
+        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
         break;
     case Battle::Lose:
-        text = "YOU LOSE";
-        color = GetColor(0, 0, 190);
+        battleFontText = "YOU LOSE";
+        battleFontColor = GetColor(0, 0, 190);
+        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
+        break;
+    case Battle::Draw:
+        battleFontText = "Draw";
+        battleFontColor = GetColor(0, 255, 0);;
+        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
         break;
     }
+
+
+    // === HPbar用の関数を呼び出し ===
 
     HPbar();
 
-    // === Resultの処理 ===
-
-    if (character->GetWinner()) { // 勝ち
-        DrawExtendString(500, 100, 5, 5, "YOU WIN", GetColor(190, 0, 63));
-    }
-    else if (!character->GetWinner() && character->GetHp() <= 0) { // 負け
-        DrawExtendString(500, 100, 5, 5, "YOU LOSE", GetColor(0, 0, 190));
-    }
+    //if (character->GetWinner()) { // 勝ち
+    //    DrawExtendString(500, 100, 5, 5, "YOU WIN", GetColor(190, 0, 63));
+    //}
+    //else if (!character->GetWinner() && character->GetHp() <= 0) { // 負け
+    //    DrawExtendString(500, 100, 5, 5, "YOU LOSE", GetColor(0, 0, 190));
+    //}
 }
 
 void UI2D::SetHp(int hp)
@@ -195,4 +225,10 @@ void UI2D::SetMessage(Battle newBattle, int BattleFrame)
     battle = newBattle;
     battleFrame = BattleFrame;
     battleTime = 0;
+}
+
+void UI2D::SetMenu(bool _menu)
+{
+    MenuOpen = _menu;
+    if (MenuOpen) { miniwindow->Toggle(); }
 }
