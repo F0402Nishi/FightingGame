@@ -14,6 +14,8 @@ enum class Battle {
 	Fight,
 	Win,
 	Lose,
+	P1Win,
+	P2Win,
 	Draw,
 };
 
@@ -37,7 +39,6 @@ public:
 	void SetMenu(bool _menu);
 
 	bool IsBattleFinish() const { return (battle == Battle::None); }
-	bool IsMenuOpen() const { return MenuOpen; }
 
 
 private:

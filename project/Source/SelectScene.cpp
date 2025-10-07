@@ -65,6 +65,7 @@ void SelectScene::Draw()
 {
 	SetBackgroundColor(0, 0, 0); //¦”wŒi‚ÌF•ÏX‚ÉŽg—p
 	
+	// DrawRotaGraph3D(0, 0, 0, 1.1f, 0, SelectBackImage, TRUE);
 	DrawRotaGraph3D(0, 0, 0, 2.8f, 0, SelectBackImage, TRUE);
 	DrawRotaGraph3D(-600, -200, 0, 1.5f, 0, CommandImage, TRUE);
 	DrawRotaGraph3D(600, 200, 0, 1.5f, 0, BattleImage, TRUE);
@@ -102,7 +103,7 @@ void SelectScene::KeyMovement()
 		isSetting = !isSetting;
 		InputPossible = !InputPossible;
 
-		miniwindow->Toggle();
+		miniwindow->ToggleCommand();
 
 		SelectKeyInput = true;
 	}

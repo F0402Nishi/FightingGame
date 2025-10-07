@@ -61,6 +61,7 @@ void TitleScene::Draw()
 {
 	// SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
 
+	// DrawRotaGraph3D(0, 0, 0, 1.1f, 0, TitleBackImage, TRUE);
 	DrawRotaGraph3D(0, 0, 0, 3.2f, 0, TitleBackImage, TRUE);
 	DrawRotaGraph3D(220, 130, 0, 3, 0, MechImage, TRUE);
 	DrawRotaGraph3D(0, -100, 0, 3, 0, BrawlersImage, TRUE);

@@ -12,8 +12,10 @@ public:
 	~MiniWindow();
 	void Update() override;
 	void Draw() override;
+	void CommandWindow();
 
-	void Toggle() { windowOpen = !windowOpen; }
+	void ToggleCommand() { commandwindowOpen = !commandwindowOpen; }
+	void ToggleMenu() { menuwindowOpen = !menuwindowOpen; }
 
 private:
 	SelectScene* selectScene;
@@ -24,10 +26,12 @@ private:
 	int itemHeight; // 1項目の高さ
 	int windowHeight; // 枠の高さから余白を引く
 	int KeyCount; // コマンドキーリストの項目数
+	int optionBack;
 
-	bool windowOpen;
+	bool commandwindowOpen;
 	bool windowUpKeyInput;
 	bool windowDownKeyInput;
 	bool listStat;
 	bool listLast;
+	bool menuwindowOpen;
 };

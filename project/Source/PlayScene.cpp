@@ -49,6 +49,7 @@ PlayScene::PlayScene()
 
 	PlayNow = false;
 	isMenu = false;
+	isWind = false;
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -71,51 +72,10 @@ PlayScene::~PlayScene()
 
 void PlayScene::Update()
 {
-	UpdateCamera();
 	UpdateKey();
+	UpdateCamera();
+	UpdateBattleFont();
 
-	// === READY が終わったら FIGHT ===
-	if (battlePhase == 1 && h1->IsBattleFinish()) {
-		h1->SetMessage(Battle::Fight, 60); // 1秒
-		h2->SetMessage(Battle::Fight, 60);
-		PlayNow = true;
-		battlePhase = 2;
-	}
-
-	// === FIGHT が終わったらバトル開始 ===
-	if (battlePhase == 2 && h1->IsBattleFinish()) {
-		p1->SetAlive(true); // 入力解放
-		p2->SetAlive(true);
-		if (PlayNow) {battlePhase = 3;}  // バトル中
-	}
-
-	// === 両方のHPを確認 ===
-	if (battlePhase == 3) {
-		if (p1->GetHp() <= 0 && p2->GetHp() > 0) {
-			// プレイヤー死亡、CPU生存
-			p1->SetAlive(false);
-			p2->SetAlive(false);
-
-			h1->SetMessage(Battle::Lose, 180);
-			battlePhase = 4;
-		}
-		else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
-			// CPU死亡、プレイヤー生存
-			p1->SetAlive(false);
-			p2->SetAlive(false);
-
-			h1->SetMessage(Battle::Win, 180);
-			battlePhase = 4;
-		}
-		else if (p1->GetHp() <= 0 && p2->GetHp() <= 0) {
-			// 両方 HP0 → 引き分け
-			p1->SetAlive(false);
-			p2->SetAlive(false);
-
-			h1->SetMessage(Battle::Draw, 180);
-			battlePhase = 4;
-		}
-	}
 
 	// === デバッグ用：強制遷移 ===
 	if (CheckHitKey(KEY_INPUT_T)) {
@@ -124,12 +84,14 @@ void PlayScene::Update()
 	if (CheckHitKey(KEY_INPUT_R)) {
 		SceneManager::ChangeScene("SELECT");
 	}
-	if (keyCounter[KEY_INPUT_TAB] == 1 && !isMenu) {
-		isMenu = !isMenu;
-		ui2d->SetMenu(!ui2d->IsMenuOpen());
-	}
-	if (keyCounter[KEY_INPUT_TAB] == 0 && isMenu) {
-		isMenu = false;
+	if (isWind) {
+		if (keyCounter[KEY_INPUT_TAB] == 1 && !isMenu) {
+			isMenu = !isMenu;
+			ui2d->SetMenu(isMenu);
+		}
+		if (keyCounter[KEY_INPUT_TAB] == 0 && isMenu) {
+			isMenu = false;
+		}
 	}
 
 #if false
@@ -204,4 +166,54 @@ void PlayScene::UpdateCamera()
 	//ImGui::InputInt("Type", &opponentType);
 	ImGui::End();
 #endif // 0
+}
+
+void PlayScene::UpdateBattleFont()
+{
+	// === READY が終わったら FIGHT ===
+	if (battlePhase == 1 && h1->IsBattleFinish()) {
+		h1->SetMessage(Battle::Fight, 60); // 1秒
+		h2->SetMessage(Battle::Fight, 60);
+		PlayNow = true;
+		battlePhase = 2;
+	}
+
+	// === FIGHT が終わったらバトル開始 ===
+	if (battlePhase == 2 && h1->IsBattleFinish()) {
+		p1->SetAlive(true); // 入力解放
+		p2->SetAlive(true);
+		if (opponentType == 1) { isWind = true; }
+		else { isWind = false; }
+		if (PlayNow) { battlePhase = 3; }  // バトル中
+	}
+
+	// === 両方のHPを確認 ===
+	if (battlePhase == 3) {
+		if (p1->GetHp() <= 0 && p2->GetHp() > 0) {
+			// プレイヤー死亡、CPU生存
+			p1->SetAlive(false);
+			p2->SetAlive(false);
+
+			if (opponentType == 2) { h1->SetMessage(Battle::Lose, 180); }
+			else if (opponentType == 3) { h2->SetMessage(Battle::P2Win, 180); }
+			battlePhase = 4;
+		}
+		else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
+			// CPU死亡、プレイヤー生存
+			p1->SetAlive(false);
+			p2->SetAlive(false);
+
+			if (opponentType == 2) { h1->SetMessage(Battle::Win, 180); }
+			else if (opponentType == 3) { h2->SetMessage(Battle::P1Win, 180); }
+			battlePhase = 4;
+		}
+		else if (p1->GetHp() <= 0 && p2->GetHp() <= 0) {
+			// 両方 HP0 → 引き分け
+			p1->SetAlive(false);
+			p2->SetAlive(false);
+
+			h1->SetMessage(Battle::Draw, 180);
+			battlePhase = 4;
+		}
+	}
 }

@@ -15,6 +15,7 @@ public:
 	void Update() override;
 	void Draw() override;
 	void UpdateCamera();
+	void UpdateBattleFont();
 
 	// int GetType() const { return opponentType; }
 
