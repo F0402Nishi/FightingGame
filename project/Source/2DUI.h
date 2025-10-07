@@ -17,12 +17,17 @@ enum class Battle {
 	Draw,
 };
 
+enum class UIType {
+	HP, // HPバー表示用
+	MENU, // メニュー表示用
+};
+
 class UI2D : public Object3D
 {
 public:
 
 	UI2D();
-	bool Init(Character* target, int Type);
+	bool Init(Character* target, int Type, UIType _type);
 	void Update() override;
 	void Draw() override;
 	void SetHp(int hp);
@@ -40,6 +45,7 @@ private:
 	MiniWindow* miniwindow;
 
 	Battle battle; // 今表示しているメッセージ
+	UIType uitype;
 
 	int HPbackImage = -1;
 	int HPImage = -1;

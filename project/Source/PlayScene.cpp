@@ -34,9 +34,11 @@ PlayScene::PlayScene()
 	new Field();
 	h1 = new UI2D();
 	h2 = new UI2D();
+	ui2d = new UI2D();
 
-	h1->Init(p1, opponentType);
-	h2->Init(p2, opponentType);
+	h1->Init(p1, opponentType, UIType::HP);
+	h2->Init(p2, opponentType, UIType::HP);
+	ui2d->Init(nullptr, opponentType, UIType::MENU);
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
 	p1->SetHitSpheres();
@@ -44,7 +46,6 @@ PlayScene::PlayScene()
 	p1->SetAlive(false);
 	p2->SetAlive(false);
 
-	ui2d = new UI2D();
 
 	PlayNow = false;
 	isMenu = false;
@@ -131,12 +132,6 @@ void PlayScene::Update()
 		isMenu = false;
 	}
 
-	ImGui::Begin("Menu");
-	// ImGui::Checkbox("isWindowOpen", &isWindowOpen);
-	// ImGui::InputFloat("zoomZ", &zoomZ);
-	//ImGui::InputInt("Type", &opponentType);
-	ImGui::End();
-
 #if false
 
 	// === 勝敗メッセージ終了後 ===
@@ -144,6 +139,12 @@ void PlayScene::Update()
 		// シーン遷移する or 次ラウンドへ
 		SceneManager::ChangeScene("RESULT");
 	}
+
+	ImGui::Begin("Menu");
+	// ImGui::Checkbox("isWindowOpen", &isWindowOpen);
+	// ImGui::InputFloat("zoomZ", &zoomZ);
+	//ImGui::InputInt("Type", &opponentType);
+	ImGui::End();
 
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
 		PlayerKeyInput = true;

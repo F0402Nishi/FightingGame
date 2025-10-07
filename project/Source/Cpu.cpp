@@ -77,7 +77,6 @@ void CPU::Update()
 
 	// === HPが0以下なら行動を止める ===
 	if (!isAlive) {
-		speed = 0;
 		time = 0;
 		r = 0;
 		m = 0;
@@ -133,8 +132,9 @@ void CPU::Update()
 #if 0
 #endif // 0
 	ImGui::Begin("CPU");
-	ImGui::Checkbox("isCpu", &isCpu);
+	// ImGui::Checkbox("isCpu", &isCpu);
 	ImGui::Checkbox("isMoving", &isMoveing);
+	ImGui::Checkbox("isAlive", &isAlive);
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("state: %d", (int)state);
 	// ImGui::InputInt("damage", &damage);
@@ -142,6 +142,7 @@ void CPU::Update()
 	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("attack", &a);
 	ImGui::InputFloat("time", &time);
+	ImGui::InputInt("speed", &speed);
 	// ImGui::InputFloat("position.x", &transform.position.x);
 	// ImGui::InputFloat("position.y", &transform.position.y);
 	// ImGui::InputFloat("dx", &dx);
@@ -169,30 +170,28 @@ void CPU::UpdateCloseCombat()
 		if (!Nowpos) { CPUpos = mypos.x; }
 		// NowMovement = true; // m もリセット
 		isMoveing = true;
+		NowAttack = true;
 
 		if (m < 20) {
 			inputDir.x = -1.0f;
 			Nowpos = true;
-			moved = fabs(mypos.x - CPUpos);
-			if (moved >= 1.0f) {
-				isMoveing = false;
-				Nowpos = false;
-			}
 		}
 		else {
 			inputDir.x = 10.0f;
 			NowMovement = false;
 			Nowpos = true;
-			moved = fabs(mypos.x - CPUpos);
-			if (moved >= 10.0f) {
-				isMoveing = false;
-				Nowpos = false;
-			}
+		}
+
+		moved = fabs(mypos.x - CPUpos);
+		if (moved >= 10.0f) {
+			isMoveing = false;
+			Nowpos = false;
 		}
 
 	}
 	else if (r < 90) { // 20～89 → 攻撃 70%
 		// NowAttack = true; // a もリセット
+		NowMovement = true;
 
 		// === 攻撃系 ===
 		for (int i = 0; i < attackCount; i++) {
@@ -223,6 +222,7 @@ void CPU::UpdateMidCombat()
 		if (!Nowpos) { CPUpos = mypos.x; }
 		// NowMovement = true; // m もリセット
 		isMoveing = true;
+		NowAttack = true;
 
 		if (m < 50) {
 			inputDir.x = -5.0f;
@@ -247,6 +247,7 @@ void CPU::UpdateMidCombat()
 	}
 	else if (r < 90){ // 45〜89 → 攻撃 45%
 		// NowAttack = true; // a もリセット
+		NowMovement = true;
 
 		// === 攻撃系 ===
 		for (int i = 0; i < attackCount; i++) {
@@ -274,6 +275,7 @@ void CPU::UpdateLongCombat()
 	if (r < 75) { // 0～74 → 移動 75%
 		if (!Nowpos) { CPUpos = mypos.x; }
 		isMoveing = true;
+		NowAttack = true;
 
 		if (m < 10) {
 			inputDir.x = 10.0f;
@@ -291,6 +293,7 @@ void CPU::UpdateLongCombat()
 		}
 	}
 	else if (r < 85) { // 75～84 → 攻撃 10%
+		NowMovement = true;
 
 		// === 攻撃系 ===
 		for (int i = 0; i < attackCount; i++) {
