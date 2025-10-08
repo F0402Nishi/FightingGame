@@ -27,6 +27,8 @@ private:
 	int windowHeight; // 枠の高さから余白を引く
 	int KeyCount; // コマンドキーリストの項目数
 	int optionBack;
+	int optionArrow;
+	int arrowX;
 
 	bool commandwindowOpen;
 	bool windowUpKeyInput;

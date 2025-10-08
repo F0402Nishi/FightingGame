@@ -34,11 +34,14 @@ MiniWindow::MiniWindow()
 
 	optionBack = LoadGraph("data/2D/BackGround.png");
 	assert(optionBack >= 0);
+	optionArrow = LoadGraph("data/2D/optionArrow01.png");
+	assert(optionArrow >= 0);
 
 
 	scrollOffset = 0;
 	itemHeight = 100;
 	windowHeight = 650 - 100; // 文字開始 y = 100 なので調整
+	arrowX = 450;
 
 	commandCount = sizeof(commandList) / sizeof(commandList[0]);
 	KeyCount = sizeof(KeyList) / sizeof(KeyList[0]);
@@ -87,10 +90,11 @@ void MiniWindow::Draw()
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(255, 255, 255), FALSE); // 枠線（白）
 		DrawGraph(mx, my, optionBack, TRUE);
+		DrawRotaGraph(arrowX, 200, 1.0f, 0, optionArrow, TRUE);
 		DrawExtendString(10, 10, 2, 2, "TRAINING OPTION", GetColor(255, 255, 255));
-		DrawExtendString(500, 100, 5, 5, "コマンド", GetColor(255, 255, 255));
-		DrawExtendString(500, 300, 5, 5, "セレクト", GetColor(255, 255, 255));
-		DrawExtendString(500, 500, 5, 5, "タイトル", GetColor(255, 255, 255));
+		DrawExtendString(500, 150, 5, 5, "コマンド", GetColor(255, 255, 255));
+		DrawExtendString(500, 350, 5, 5, "セレクト", GetColor(255, 255, 255));
+		DrawExtendString(500, 550, 5, 5, "タイトル", GetColor(255, 255, 255));
 	}
 
 	if (commandwindowOpen) { CommandWindow();}
