@@ -21,6 +21,8 @@ public:
 	// === Scene専用のKeyCode ===
 	int keyCounter[256];
 
+	bool changeScene;
+
 	void UpdateKey() {
 		char keys[256]; // 今のキー状態
 		GetHitKeyStateAll(keys); // 今のキー状態を取得

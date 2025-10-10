@@ -5,7 +5,6 @@
 // #include "Player.h"
 
 class Character;
-class MiniWindow;
 
 enum class Battle {
 	None,
@@ -29,21 +28,18 @@ class UI2D : public Object3D
 public:
 
 	UI2D();
-	bool Init(Character* target, int Type, UIType _type);
+	bool Init(Character* target, int Type);
 	void Update() override;
 	void Draw() override;
 	void SetHp(int hp);
 	void SetMaxHp(int hp);
 	void HPbar();
 	void SetMessage(Battle newBattle, int BattleFrame);
-	void SetMenu(bool _menu);
 
 	bool IsBattleFinish() const { return (battle == Battle::None); }
 
-
 private:
 	Character* character;
-	MiniWindow* miniwindow;
 
 	Battle battle; // 今表示しているメッセージ
 	UIType uitype;
@@ -72,7 +68,6 @@ private:
 
 	bool isLeftPlayer;
 	bool isRightCpu;
-	bool MenuOpen;
 
 #if false
 	int HPbarCount = 4;

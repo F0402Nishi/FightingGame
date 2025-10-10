@@ -34,11 +34,11 @@ PlayScene::PlayScene()
 	new Field();
 	h1 = new UI2D();
 	h2 = new UI2D();
-	ui2d = new UI2D();
+	miniwindow = new MiniWindow();
+	fade = new Fade();
 
-	h1->Init(p1, opponentType, UIType::HP);
-	h2->Init(p2, opponentType, UIType::HP);
-	ui2d->Init(nullptr, opponentType, UIType::MENU);
+	h1->Init(p1, opponentType);
+	h2->Init(p2, opponentType);
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
 	p1->SetHitSpheres();
@@ -50,6 +50,8 @@ PlayScene::PlayScene()
 	PlayNow = false;
 	isMenu = false;
 	isWind = false;
+	openwind = false;
+	changeScene = false;
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -75,7 +77,8 @@ void PlayScene::Update()
 	UpdateKey();
 	UpdateCamera();
 	UpdateBattleFont();
-
+	MenuKey();
+	fade->Update();
 
 	// === デバッグ用：強制遷移 ===
 	if (CheckHitKey(KEY_INPUT_T)) {
@@ -84,30 +87,14 @@ void PlayScene::Update()
 	if (CheckHitKey(KEY_INPUT_R)) {
 		SceneManager::ChangeScene("SELECT");
 	}
-	if (isWind) {
-		if (keyCounter[KEY_INPUT_TAB] == 1 && !isMenu) {
-			isMenu = !isMenu;
-			ui2d->SetMenu(isMenu);
-		}
-		if (keyCounter[KEY_INPUT_TAB] == 0 && isMenu) {
-			isMenu = false;
-		}
-	}
 
-#if false
-
-	// === 勝敗メッセージ終了後 ===
-	if (battlePhase == 4 && h1->IsBattleFinish()) {
-		// シーン遷移する or 次ラウンドへ
-		SceneManager::ChangeScene("RESULT");
-	}
-
-	ImGui::Begin("Menu");
-	// ImGui::Checkbox("isWindowOpen", &isWindowOpen);
-	// ImGui::InputFloat("zoomZ", &zoomZ);
+	//ImGui::Begin("Menu");
+	//ImGui::Checkbox("changeScene", &changeScene);
+	//ImGui::Checkbox("isWind", &isWind);
+	//ImGui::Text("alpha = %d", fade->alpha);
 	//ImGui::InputInt("Type", &opponentType);
-	ImGui::End();
-
+	//ImGui::End();
+#if false
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
 		PlayerKeyInput = true;
 	}
@@ -120,6 +107,9 @@ void PlayScene::Update()
 void PlayScene::Draw()
 {
 	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
+	
+	miniwindow->Draw();
+	fade->Draw();
 
 #if false
 	int screenW, screenH;
@@ -214,6 +204,58 @@ void PlayScene::UpdateBattleFont()
 
 			h1->SetMessage(Battle::Draw, 180);
 			battlePhase = 4;
+		}
+	}
+
+	// === 勝敗メッセージ終了後 ===
+	if (battlePhase == 4 && h1->IsBattleFinish()) {
+		// シーン遷移する or 次ラウンドへ
+		miniwindow->ToggleReslut(true);
+	}
+}
+
+void PlayScene::MenuKey()
+{
+	if (isWind && !miniwindow->IsCommandNow()) {
+		if (keyCounter[KEY_INPUT_TAB] == 1 && !isMenu) {
+			isMenu = !isMenu;
+			openwind = !openwind;
+			miniwindow->ToggleMenu();
+		}
+		if (keyCounter[KEY_INPUT_TAB] == 0 && isMenu) {
+			isMenu = false;
+		}
+	}
+
+	// === 矢印移動(上下) ===
+	if (openwind) {
+		if (!miniwindow->IsCommandNow()) {
+			if (keyCounter[KEY_INPUT_DOWN] == 1) {
+				miniwindow->MoveArrow(1); // 下移動
+			}
+			if (keyCounter[KEY_INPUT_UP] == 1) {
+				miniwindow->MoveArrow(-1); // 上移動
+			}
+		}
+
+		if (keyCounter[KEY_INPUT_RETURN] == 1) {
+			int option = miniwindow->GetMenuOption();
+
+			switch (option) {
+			case 0: // コマンド表示
+				miniwindow->ToggleCommand();
+				break;
+			case 1:
+				fade->FadeOut();
+				changeScene = true;
+				SceneManager::ChangeScene("SELECT");
+				break;
+			case 2:
+				fade->FadeOut();
+				changeScene = true;
+				SceneManager::ChangeScene("TITLE");
+				break;
+			}
 		}
 	}
 }

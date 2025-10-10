@@ -13,8 +13,8 @@ public:
 	bool IsFadeInEnd() const { return alpha <= 0; }
 	bool IsFadeOutEnd() const { return alpha >= 255; }
 
-private:
 	int alpha;
+private:
 	int fadeSpped;
 
 	bool fadingIn;

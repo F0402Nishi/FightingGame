@@ -26,8 +26,6 @@ UI2D::UI2D()
     WinImage = LoadGraph("data/2D/WIN.png");
     assert(WinImage >= 0);
 
-    miniwindow = new MiniWindow();
-
     battle = Battle::None;
     uitype = UIType::HP;
 
@@ -49,31 +47,22 @@ UI2D::UI2D()
 
     isLeftPlayer = false;
     isRightCpu = false;
-    MenuOpen = false;
 }
 
-bool UI2D::Init(Character* target, int Type, UIType _type)
+bool UI2D::Init(Character* target, int Type)
 {
     character = target;
     gameType = Type;
-    uitype = _type;
 
-    if (uitype == UIType::HP) {
-        if (character) {
-            currenthp = character->GetHp();
-            maxhp = character->GetMaxHp();
-            displayHp = currenthp;
-            isLeftPlayer = character->GetisPlayey();
-            isRightCpu = character->GetisCpu();
-            return true;
-        }
-        else { return false; }
-    }
-    else if (uitype == UIType::MENU) {
+    if (character) {
+        currenthp = character->GetHp();
+        maxhp = character->GetMaxHp();
+        displayHp = currenthp;
+        isLeftPlayer = character->GetisPlayey();
+        isRightCpu = character->GetisCpu();
         return true;
     }
-
-    return false;
+    else { return false; }
 }
 
 void UI2D::Update()
@@ -87,7 +76,7 @@ void UI2D::Update()
 
     // === HPbarの処理 ===
 
-    if (character && uitype == UIType::HP) {
+    if (character) {
         fullTank = currenthp;
         SetHp(character->GetHp());
         SetMaxHp(character->GetMaxHp());
@@ -107,7 +96,7 @@ void UI2D::Update()
 
     // --- トレーニングモードの回復処理.2 ---
 
-    if (!isRightCpu && gameType == 1 && character) {
+    if (!isRightCpu && gameType == 1) {
         if (recoveryTimer > 0) { recoveryTimer--; }
         else {
             // 一気に全回復
@@ -122,14 +111,14 @@ void UI2D::Update()
         }
     }
 
-    ImGui::Begin("HPbar");
-    ImGui::Checkbox("isRightCpu", &isRightCpu);
-    ImGui::Checkbox("isLeftPlayer", &isLeftPlayer);
-    // ImGui::Text("hp = %d", character->GetHp());
-    ImGui::InputInt("currenthp", &currenthp);
-    ImGui::InputInt("graphH", &graphH);
-    ImGui::InputInt("recoveryTimer", &recoveryTimer);
-    ImGui::End();
+    //ImGui::Begin("HPbar");
+    //ImGui::Checkbox("isRightCpu", &isRightCpu);
+    //ImGui::Checkbox("isLeftPlayer", &isLeftPlayer);
+    //ImGui::Text("hp = %d", character->GetHp());
+    //ImGui::InputInt("currenthp", &currenthp);
+    //ImGui::InputInt("graphH", &graphH);
+    //ImGui::InputInt("recoveryTimer", &recoveryTimer);
+    //ImGui::End();
 }
 
 void UI2D::Draw()
@@ -187,7 +176,7 @@ void UI2D::Draw()
     // === HPbar用の関数を呼び出し ===
     // キャラクターが存在するUIだけHPバーを描画
 
-    if (uitype == UIType::HP) { HPbar(); }
+    HPbar();
 
     //if (character->GetWinner()) { // 勝ち
     //    DrawExtendString(500, 100, 5, 5, "YOU WIN", GetColor(190, 0, 63));
@@ -245,10 +234,4 @@ void UI2D::SetMessage(Battle newBattle, int BattleFrame)
     battle = newBattle;
     battleFrame = BattleFrame;
     battleTime = 0;
-}
-
-void UI2D::SetMenu(bool _menu)
-{
-    MenuOpen = _menu;
-    if (MenuOpen) { miniwindow->ToggleMenu(); }
 }

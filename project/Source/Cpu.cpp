@@ -130,29 +130,28 @@ void CPU::Update()
 	time += 1.0f;
 
 #if 0
-#endif // 0
 	ImGui::Begin("CPU");
-	// ImGui::Checkbox("isCpu", &isCpu);
+	ImGui::Checkbox("isCpu", &isCpu);
 	ImGui::Checkbox("isMoving", &isMoveing);
 	ImGui::Checkbox("isAlive", &isAlive);
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("state: %d", (int)state);
-	// ImGui::InputInt("damage", &damage);
+	ImGui::InputInt("damage", &damage);
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("attack", &a);
 	ImGui::InputFloat("time", &time);
 	ImGui::InputInt("speed", &speed);
-	// ImGui::InputFloat("position.x", &transform.position.x);
-	// ImGui::InputFloat("position.y", &transform.position.y);
-	// ImGui::InputFloat("dx", &dx);
-	// ImGui::InputFloat("dist", &dist);
-	// ImGui::InputFloat("playerMoveDir", &playerMoveDir);
-	// ImGui::InputFloat("float moved", &moved);
-	// ImGui::InputFloat("float CPUpos", &CPUpos);
-	// ImGui::Text("MyPosition：%d", (int) & mypos);
-	// ImGui::InputInt("Type", &opponentType);
+	ImGui::InputFloat("position.x", &transform.position.x);
+	ImGui::InputFloat("position.y", &transform.position.y);
+	ImGui::InputFloat("dx", &dx);
+	ImGui::InputFloat("dist", &dist);
+	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
+	ImGui::InputFloat("float moved", &moved);
+	ImGui::InputFloat("float CPUpos", &CPUpos);
+	ImGui::Text("MyPosition：%d", (int) & mypos);
 	ImGui::End();
+#endif // 0
 }
 
 void CPU::Draw()

@@ -18,6 +18,8 @@ TitleScene::TitleScene()
 	TitleBackImage = LoadGraph("data/2D/Title_Back.png");
 	assert(TitleBackImage >= 0);
 
+	memset(keyCounter, 0, sizeof(keyCounter));
+	UpdateKey();
 
 #if false "ステージ試作"
 	ofstream f("data/test.txt"); //ファイルを開く
@@ -48,12 +50,21 @@ TitleScene::~TitleScene()
 
 void TitleScene::Update()
 {
-	if (CheckHitKey(KEY_INPUT_RETURN)) {
+	UpdateKey();
+
+	if (keyCounter[KEY_INPUT_RETURN] == 1) {
 		SceneManager::ChangeScene("SELECT");
 	}
-	if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+	if (keyCounter[KEY_INPUT_ESCAPE] == 1) {
 		SceneManager::Exit();
 	}
+
+	//if (CheckHitKey(KEY_INPUT_RETURN)) {
+	//	SceneManager::ChangeScene("SELECT");
+	//}
+	//if (CheckHitKey(KEY_INPUT_ESCAPE)) {
+	//	SceneManager::Exit();
+	//}
 }
 
 

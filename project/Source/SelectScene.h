@@ -45,5 +45,4 @@ private:
 	bool InputPossible;
 	bool OpponentSelection;
 	// bool isWindowOpen;
-	bool changeScene;
 };

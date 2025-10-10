@@ -13,9 +13,14 @@ public:
 	void Update() override;
 	void Draw() override;
 	void CommandWindow();
+	void MoveArrow(int _arrow);
+
+	int GetMenuOption() const;
 
 	void ToggleCommand() { commandwindowOpen = !commandwindowOpen; }
 	void ToggleMenu() { menuwindowOpen = !menuwindowOpen; }
+	void ToggleReslut(int _result) { resultwindowOpen = _result; }
+	bool IsCommandNow() { return commandwindowOpen; }
 
 private:
 	SelectScene* selectScene;
@@ -29,6 +34,7 @@ private:
 	int optionBack;
 	int optionArrow;
 	int arrowX;
+	int arrowY;
 
 	bool commandwindowOpen;
 	bool windowUpKeyInput;
@@ -36,4 +42,5 @@ private:
 	bool listStat;
 	bool listLast;
 	bool menuwindowOpen;
+	bool resultwindowOpen;
 };

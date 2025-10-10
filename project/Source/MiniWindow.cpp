@@ -42,11 +42,14 @@ MiniWindow::MiniWindow()
 	itemHeight = 100;
 	windowHeight = 650 - 100; // 文字開始 y = 100 なので調整
 	arrowX = 450;
+	arrowY = 200;
 
 	commandCount = sizeof(commandList) / sizeof(commandList[0]);
 	KeyCount = sizeof(KeyList) / sizeof(KeyList[0]);
 
 	commandwindowOpen = false;
+	menuwindowOpen = false;
+	resultwindowOpen = false;
 	windowUpKeyInput = false;
 	windowDownKeyInput = false;
 	listLast = false;
@@ -85,19 +88,25 @@ void MiniWindow::Update()
 
 void MiniWindow::Draw()
 {
+	if (commandwindowOpen) { CommandWindow();}
+
 	if (menuwindowOpen) {
 		int mx = 0, my = 0.5, mw = 1280, mh = 720;
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(255, 255, 255), FALSE); // 枠線（白）
 		DrawGraph(mx, my, optionBack, TRUE);
-		DrawRotaGraph(arrowX, 200, 1.0f, 0, optionArrow, TRUE);
+		DrawRotaGraph(arrowX, arrowY, 1.0f, 0, optionArrow, TRUE);
 		DrawExtendString(10, 10, 2, 2, "TRAINING OPTION", GetColor(255, 255, 255));
 		DrawExtendString(500, 150, 5, 5, "コマンド", GetColor(255, 255, 255));
 		DrawExtendString(500, 350, 5, 5, "セレクト", GetColor(255, 255, 255));
 		DrawExtendString(500, 550, 5, 5, "タイトル", GetColor(255, 255, 255));
 	}
 
-	if (commandwindowOpen) { CommandWindow();}
+	if (resultwindowOpen) {
+		int rx = 500, ry = 200, rw = 300, rh = 300;
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(255, 255, 255), FALSE); // 枠線（白）
+	}
 }
 
 void MiniWindow::CommandWindow()
@@ -130,4 +139,43 @@ void MiniWindow::CommandWindow()
 
 	// ---- クリッピング解除（画面全体に戻す）----
 	SetDrawArea(0, 0, 1920, 1080);
+}
+
+void MiniWindow::MoveArrow(int _arrow)
+{
+	if (commandwindowOpen) return; // コマンド表示中なら動かさない！
+
+	const int step = 200;
+	const int MenuFont[3] = { 200,400,600 };
+
+	// === 現在の index を求める ===
+	int menufontIndex = 0;
+	for (int i = 0; i < 3; i++) {
+		if (arrowY == MenuFont[i]) {
+			menufontIndex = i;
+			break;
+		}
+	}
+
+	// === dir に応じてインデックスを移動 ===
+	menufontIndex += _arrow;
+
+	// === 範囲を循環させる ===
+	if (menufontIndex < 0) menufontIndex = 2;
+	if (menufontIndex > 2) menufontIndex = 0;
+
+	// === 新しい位置に設定 ===
+	arrowY = MenuFont[menufontIndex];
+}
+
+int MiniWindow::GetMenuOption() const
+{
+	switch (arrowY) {
+	case 200:
+		return 0;
+	case 400:
+		return 1;
+	case 600:
+		return 2;
+	}
 }

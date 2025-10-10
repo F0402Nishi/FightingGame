@@ -96,10 +96,10 @@ void Player::Update()
 		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
 	}
 
-	ImGui::Begin("PLAYER");
-	ImGui::Text("state: %d", (int)state);
-	ImGui::InputFloat("IdleTimer", &idleTimer);
-	ImGui::Checkbox("Punching", &isPunching);
+	//ImGui::Begin("PLAYER");
+	//ImGui::Text("state: %d", (int)state);
+	//ImGui::InputFloat("IdleTimer", &idleTimer);
+	//ImGui::Checkbox("Punching", &isPunching);
 	// ImGui::InputFloat("position.x", &transform.position.x);
 	// ImGui::InputFloat("position.y", &transform.position.y);
 	// ImGui::Text("push.x: %.2f", hit.x);
@@ -108,7 +108,7 @@ void Player::Update()
 	// ImGui::InputFloat("totalframe", &total);
 	// ImGui::InputFloat("ratioframe", &ratio);
 	// ImGui::Text("HP: %d", (int)Hp);
-	ImGui::End();
+	//ImGui::End();
 
 }
 
