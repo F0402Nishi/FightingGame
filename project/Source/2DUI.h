@@ -21,7 +21,7 @@ enum class Battle {
 
 enum class UIType {
 	HP, // HPバー表示用
-	MENU, // メニュー表示用
+	B_Font, // メニュー表示用
 };
 
 class UI2D : public Object3D
@@ -29,7 +29,7 @@ class UI2D : public Object3D
 public:
 
 	UI2D();
-	bool Init(Character* target, int Type);
+	bool Init(Character* target, int Type, UIType _uitype);
 	void Update() override;
 	void Draw() override;
 	void SetHp(int hp);

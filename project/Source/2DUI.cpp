@@ -49,20 +49,26 @@ UI2D::UI2D()
     isRightCpu = false;
 }
 
-bool UI2D::Init(Character* target, int Type)
+bool UI2D::Init(Character* target, int Type, UIType _uitype)
 {
     character = target;
     gameType = Type;
+    uitype = _uitype;
 
-    if (character) {
-        currenthp = character->GetHp();
-        maxhp = character->GetMaxHp();
-        displayHp = currenthp;
-        isLeftPlayer = character->GetisPlayey();
-        isRightCpu = character->GetisCpu();
-        return true;
+    if (uitype == UIType::HP) {
+        if (character) {
+            currenthp = character->GetHp();
+            maxhp = character->GetMaxHp();
+            displayHp = currenthp;
+            isLeftPlayer = character->GetisPlayey();
+            isRightCpu = character->GetisCpu();
+            return true;
+        }
+        else { return false; }
     }
-    else { return false; }
+    else if (uitype == UIType::B_Font) { return true; }
+
+    return false;
 }
 
 void UI2D::Update()
@@ -76,7 +82,7 @@ void UI2D::Update()
 
     // === HPbarの処理 ===
 
-    if (character) {
+    if (character && uitype == UIType::HP) {
         fullTank = currenthp;
         SetHp(character->GetHp());
         SetMaxHp(character->GetMaxHp());
@@ -96,7 +102,7 @@ void UI2D::Update()
 
     // --- トレーニングモードの回復処理.2 ---
 
-    if (!isRightCpu && gameType == 1) {
+    if (!isRightCpu && gameType == 1 && character) {
         if (recoveryTimer > 0) { recoveryTimer--; }
         else {
             // 一気に全回復
@@ -148,32 +154,32 @@ void UI2D::Draw()
     case Battle::KO:
         battleFontText = "K.O.";
         battleFontColor = GetColor(255, 255, 255);
-        DrawExtendString(500, 100, battleFontSize, battleFontSize, battleFontText, battleFontColor);
+        DrawExtendString(450, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor);
         break;
     case Battle::Win:
         battleFontText = "YOU WIN";
-        battleFontColor = GetColor(190, 0, 63);
-        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
+        // battleFontColor = GetColor(190, 0, 63);
+        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
         break;
     case Battle::Lose:
         battleFontText = "YOU LOSE";
-        battleFontColor = GetColor(0, 0, 190);
-        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
+        // battleFontColor = GetColor(0, 0, 190);
+        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
         break;
     case Battle::P1Win:
         battleFontText = "PLAYER1 WIN";
-        battleFontColor = GetColor(190, 0, 63);
-        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
+        // battleFontColor = GetColor(190, 0, 63);
+        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
         break;
     case Battle::P2Win:
         battleFontText = "PLAYER2 WIN";
-        battleFontColor = GetColor(190, 0, 63);
-        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
+        // battleFontColor = GetColor(190, 0, 63);
+        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
         break;
     case Battle::Draw:
         battleFontText = "Draw";
-        battleFontColor = GetColor(0, 255, 0);;
-        DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
+        // battleFontColor = GetColor(0, 255, 0);;
+        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
         break;
     }
 
@@ -181,7 +187,7 @@ void UI2D::Draw()
     // === HPbar用の関数を呼び出し ===
     // キャラクターが存在するUIだけHPバーを描画
 
-    HPbar();
+    if (uitype == UIType::HP) { HPbar(); }
 
     //if (character->GetWinner()) { // 勝ち
     //    DrawExtendString(500, 100, 5, 5, "YOU WIN", GetColor(190, 0, 63));

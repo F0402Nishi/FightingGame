@@ -11,8 +11,8 @@ SelectScene::SelectScene()
 {
 	SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
 
-	OperationImage = LoadGraph("data/2D/Ki-Bo-Do_4.png");
-	assert(OperationImage >= 0);
+	// OperationImage = LoadGraph("data/2D/Ki-Bo-Do_4.png");
+	// assert(OperationImage >= 0);
 	CommandImage = LoadGraph("data/2D/command.png");
 	assert(CommandImage >= 0);
 	BattleImage = LoadGraph("data/2D/battle.png");

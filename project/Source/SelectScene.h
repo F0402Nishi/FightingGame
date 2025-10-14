@@ -24,7 +24,7 @@ private:
 	Fade* fade;
 	MiniWindow* miniwindow;
 
-	int OperationImage;
+	// int OperationImage;
 	int CommandImage;
 	int BattleImage;
 	int SelectionArrowImage;

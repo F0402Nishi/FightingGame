@@ -27,6 +27,7 @@ private:
 	CPU* cpu;
 	UI2D* h1;
 	UI2D* h2;
+	UI2D* ui2d;
 	Fade* fade;
 	MiniWindow* miniwindow;
 

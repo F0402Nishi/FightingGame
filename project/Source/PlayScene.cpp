@@ -35,11 +35,13 @@ PlayScene::PlayScene()
 	new Field();
 	h1 = new UI2D();
 	h2 = new UI2D();
+	ui2d = new UI2D();
 	miniwindow = new MiniWindow();
 	fade = new Fade();
 
-	h1->Init(p1, opponentType);
-	h2->Init(p2, opponentType);
+	h1->Init(p1, opponentType, UIType::HP);
+	h2->Init(p2, opponentType, UIType::HP);
+	ui2d->Init(nullptr, opponentType, UIType::B_Font);
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
 	p1->SetHitSpheres();
@@ -59,12 +61,12 @@ PlayScene::PlayScene()
 
 	// === スタート時 READY 表示 ===
 	if (opponentType == 1) { 
-		h1->SetMessage(Battle::Training, 120);
+		ui2d->SetMessage(Battle::Training, 120);
 		battlePhase = 2;
 	}
 	else {
-		h1->SetMessage(Battle::Ready, 120); // 2秒
-		h2->SetMessage(Battle::Ready, 120);
+		ui2d->SetMessage(Battle::Ready, 120); // 2秒
+		// h2->SetMessage(Battle::Ready, 120);
 		battlePhase = 1;
 	}
 }
@@ -89,12 +91,13 @@ void PlayScene::Update()
 		SceneManager::ChangeScene("SELECT");
 	}
 
-	//ImGui::Begin("Menu");
+	ImGui::Begin("Menu");
 	//ImGui::Checkbox("changeScene", &changeScene);
 	//ImGui::Checkbox("isWind", &isWind);
 	//ImGui::Text("alpha = %d", fade->alpha);
+	ImGui::Text("IsBattleFinish = %d", h2->IsBattleFinish());
 	//ImGui::InputInt("Type", &opponentType);
-	//ImGui::End();
+	ImGui::End();
 #if false
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
 		PlayerKeyInput = true;
@@ -162,15 +165,15 @@ void PlayScene::UpdateCamera()
 void PlayScene::UpdateBattleFont()
 {
 	// === READY が終わったら FIGHT ===
-	if (battlePhase == 1 && h1->IsBattleFinish()) {
-		h1->SetMessage(Battle::Fight, 60); // 1秒
-		h2->SetMessage(Battle::Fight, 60);
+	if (battlePhase == 1 && ui2d->IsBattleFinish()) {
+		ui2d->SetMessage(Battle::Fight, 60); // 1秒
+		// h2->SetMessage(Battle::Fight, 60);
 		PlayNow = true;
 		battlePhase = 2;
 	}
 
 	// === FIGHT が終わったらバトル開始 ===
-	if (battlePhase == 2 && h1->IsBattleFinish()) {
+	if (battlePhase == 2 && ui2d->IsBattleFinish()) {
 		p1->SetAlive(true); // 入力解放
 		p2->SetAlive(true);
 		if (opponentType == 1) { isWind = true; }
@@ -185,8 +188,7 @@ void PlayScene::UpdateBattleFont()
 			p1->SetAlive(false);
 			p2->SetAlive(false);
 
-			if (opponentType == 2) { h1->SetMessage(Battle::Lose, 180); }
-			else if (opponentType == 3) { h2->SetMessage(Battle::P2Win, 180); }
+			ui2d->SetMessage(Battle::KO, 60);
 			battlePhase = 4;
 		}
 		else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
@@ -194,8 +196,7 @@ void PlayScene::UpdateBattleFont()
 			p1->SetAlive(false);
 			p2->SetAlive(false);
 
-			if (opponentType == 2) { h1->SetMessage(Battle::Win, 180); }
-			else if (opponentType == 3) { h1->SetMessage(Battle::P1Win, 180); }
+			ui2d->SetMessage(Battle::KO, 60);
 			battlePhase = 4;
 		}
 		else if (p1->GetHp() <= 0 && p2->GetHp() <= 0) {
@@ -203,13 +204,13 @@ void PlayScene::UpdateBattleFont()
 			p1->SetAlive(false);
 			p2->SetAlive(false);
 
-			h1->SetMessage(Battle::Draw, 180);
+			ui2d->SetMessage(Battle::KO, 60);
 			battlePhase = 4;
 		}
 	}
 
 	// === 勝敗メッセージ終了後 ===
-	if (battlePhase == 4 && h1->IsBattleFinish()) {
+	if (battlePhase == 4 && ui2d->IsBattleFinish()) {
 		// シーン遷移する or 次ラウンドへ
 		SceneManager::ChangeScene("RESULT");
 	}
