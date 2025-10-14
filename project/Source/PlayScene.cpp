@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include "../ImGui/imgui.h"
 #include "SelectScene.h"
+#include "ResultScene.h"
 #include "Character.h"
 #include "Player.h"
 #include "Cpu.h"
@@ -194,7 +195,7 @@ void PlayScene::UpdateBattleFont()
 			p2->SetAlive(false);
 
 			if (opponentType == 2) { h1->SetMessage(Battle::Win, 180); }
-			else if (opponentType == 3) { h2->SetMessage(Battle::P1Win, 180); }
+			else if (opponentType == 3) { h1->SetMessage(Battle::P1Win, 180); }
 			battlePhase = 4;
 		}
 		else if (p1->GetHp() <= 0 && p2->GetHp() <= 0) {
@@ -210,7 +211,7 @@ void PlayScene::UpdateBattleFont()
 	// === 勝敗メッセージ終了後 ===
 	if (battlePhase == 4 && h1->IsBattleFinish()) {
 		// シーン遷移する or 次ラウンドへ
-		miniwindow->ToggleReslut(true);
+		SceneManager::ChangeScene("RESULT");
 	}
 }
 

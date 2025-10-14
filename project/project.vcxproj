@@ -163,6 +163,7 @@
     <ClInclude Include="Source\MiniWindow.h" />
     <ClInclude Include="Source\Object3D.h" />
     <ClInclude Include="Source\Player.h" />
+    <ClInclude Include="Source\ResultScene.h" />
     <ClInclude Include="Source\Screen.h" />
     <ClInclude Include="Source\PlayScene.h" />
     <ClInclude Include="Source\SceneFactory.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="Source\Object3D.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\PlayScene.cpp" />
+    <ClCompile Include="Source\ResultScene.cpp" />
     <ClCompile Include="Source\SceneFactory.cpp" />
     <ClCompile Include="Source\SelectScene.cpp" />
     <ClCompile Include="Source\Stage.cpp" />

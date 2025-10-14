@@ -11,6 +11,7 @@ enum class Battle {
 	Training,
 	Ready,
 	Fight,
+	KO,
 	Win,
 	Lose,
 	P1Win,
