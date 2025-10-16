@@ -14,10 +14,14 @@ static float posx = 000.0f;
 static float posy = 200.0f;
 static float posz = -400.0f;
 
+PlayScene* PlayScene::instance = nullptr;
+Result PlayScene::lastResult = Result::None;
+
 PlayScene::PlayScene()
 {
 	// SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
 	opponentType = SelectScene::gameType;
+	instance = this;
 
 	p1 = new Player(true);
 
@@ -49,6 +53,7 @@ PlayScene::PlayScene()
 	p1->SetAlive(false);
 	p2->SetAlive(false);
 
+	resultType = Result::None;
 
 	PlayNow = false;
 	isMenu = false;
@@ -73,6 +78,7 @@ PlayScene::PlayScene()
 
 PlayScene::~PlayScene()
 {
+	if (instance == this) instance = nullptr;
 }
 
 void PlayScene::Update()
@@ -91,6 +97,7 @@ void PlayScene::Update()
 		SceneManager::ChangeScene("SELECT");
 	}
 
+#if false
 	ImGui::Begin("Menu");
 	//ImGui::Checkbox("changeScene", &changeScene);
 	//ImGui::Checkbox("isWind", &isWind);
@@ -98,7 +105,6 @@ void PlayScene::Update()
 	ImGui::Text("IsBattleFinish = %d", h2->IsBattleFinish());
 	//ImGui::InputInt("Type", &opponentType);
 	ImGui::End();
-#if false
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
 		PlayerKeyInput = true;
 	}
@@ -188,6 +194,9 @@ void PlayScene::UpdateBattleFont()
 			p1->SetAlive(false);
 			p2->SetAlive(false);
 
+			if (opponentType == 2) { resultType = Result::Lose; }
+			else if (opponentType == 3) { resultType = Result::P2Win; }
+			PlayScene::lastResult = resultType;
 			ui2d->SetMessage(Battle::KO, 60);
 			battlePhase = 4;
 		}
@@ -196,6 +205,9 @@ void PlayScene::UpdateBattleFont()
 			p1->SetAlive(false);
 			p2->SetAlive(false);
 
+			if (opponentType == 2) { resultType = Result::Win; }
+			else if (opponentType == 3) { resultType = Result::P1Win; }
+			PlayScene::lastResult = resultType;
 			ui2d->SetMessage(Battle::KO, 60);
 			battlePhase = 4;
 		}
@@ -204,6 +216,8 @@ void PlayScene::UpdateBattleFont()
 			p1->SetAlive(false);
 			p2->SetAlive(false);
 
+			resultType = Result::Draw;
+			PlayScene::lastResult = resultType;
 			ui2d->SetMessage(Battle::KO, 60);
 			battlePhase = 4;
 		}

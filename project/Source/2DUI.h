@@ -12,11 +12,6 @@ enum class Battle {
 	Ready,
 	Fight,
 	KO,
-	Win,
-	Lose,
-	P1Win,
-	P2Win,
-	Draw,
 };
 
 enum class UIType {

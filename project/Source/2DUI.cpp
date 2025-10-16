@@ -156,31 +156,6 @@ void UI2D::Draw()
         battleFontColor = GetColor(255, 255, 255);
         DrawExtendString(450, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor);
         break;
-    case Battle::Win:
-        battleFontText = "YOU WIN";
-        // battleFontColor = GetColor(190, 0, 63);
-        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
-        break;
-    case Battle::Lose:
-        battleFontText = "YOU LOSE";
-        // battleFontColor = GetColor(0, 0, 190);
-        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
-        break;
-    case Battle::P1Win:
-        battleFontText = "PLAYER1 WIN";
-        // battleFontColor = GetColor(190, 0, 63);
-        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
-        break;
-    case Battle::P2Win:
-        battleFontText = "PLAYER2 WIN";
-        // battleFontColor = GetColor(190, 0, 63);
-        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
-        break;
-    case Battle::Draw:
-        battleFontText = "Draw";
-        // battleFontColor = GetColor(0, 255, 0);;
-        // DrawExtendString(500, 100, 5, 5, battleFontText, battleFontColor);
-        break;
     }
 
 

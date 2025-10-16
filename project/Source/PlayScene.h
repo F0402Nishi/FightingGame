@@ -8,6 +8,15 @@ class CPU;
 class UI2D;
 class MiniWindow;
 
+enum class Result {
+	None,
+	Win,
+	Lose,
+	Draw,
+	P1Win,
+	P2Win,
+};
+
 class PlayScene : public SceneBase
 {
 public:
@@ -19,6 +28,9 @@ public:
 	void UpdateBattleFont();
 	void MenuKey();
 
+	static PlayScene* instance;
+	static Result lastResult;
+	Result GetResultType() const { return resultType; }
 	// int GetType() const { return opponentType; }
 
 private:
@@ -30,6 +42,7 @@ private:
 	UI2D* ui2d;
 	Fade* fade;
 	MiniWindow* miniwindow;
+	Result resultType;
 
 	int battlePhase; // 0=準備, 1=Ready表示中, 2=Fight表示中, 3=バトル中, 4=勝敗表示中
 	int opponentType;

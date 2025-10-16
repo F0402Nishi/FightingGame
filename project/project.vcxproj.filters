@@ -89,7 +89,9 @@
     <ClCompile Include="Source\2DUI.cpp">
       <Filter>PlayScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ResultScene.cpp" />
+    <ClCompile Include="Source\ResultScene.cpp">
+      <Filter>ResultScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
