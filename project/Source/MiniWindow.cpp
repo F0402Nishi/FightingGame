@@ -103,9 +103,12 @@ void MiniWindow::Draw()
 	}
 
 	if (resultwindowOpen) {
-		int rx = 500, ry = 200, rw = 300, rh = 300;
-		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
-		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(255, 255, 255), FALSE); // 枠線（白）
+		int rx = 400, ry = 370, rw = 500, rh = 300;
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(192, 192, 192), TRUE); // 背景（濃い灰色）
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(255, 255, 255), FALSE, 2); // 枠線（白）
+		DrawExtendString(550, 390, 3, 3, "再戦", GetColor(255, 255, 255));
+		DrawExtendString(550, 490, 3, 3, "セレクト", GetColor(255, 255, 255));
+		DrawExtendString(550, 590, 3, 3, "タイトル", GetColor(255, 255, 255));
 	}
 }
 

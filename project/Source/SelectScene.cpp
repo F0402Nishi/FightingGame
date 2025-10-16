@@ -1,4 +1,4 @@
-#include "SelectScene.h"
+ï»¿#include "SelectScene.h"
 #include <DxLib.h>
 #include <fstream>
 #include <assert.h>
@@ -19,7 +19,7 @@ SelectScene::SelectScene()
 	assert(BattleImage >= 0);
 	SelectionArrowImage = LoadGraph("data/2D/selectionArrow.png");
 	assert(SelectionArrowImage >= 0);
-	SelectBackImage = LoadGraph("data/2D/Select_Back.png");
+	SelectBackImage = LoadGraph("data/2D/Title_Back01.png");
 	assert(SelectBackImage >= 0);
 
 	operation = false;
@@ -63,18 +63,18 @@ void SelectScene::Update()
 
 void SelectScene::Draw()
 {
-	SetBackgroundColor(0, 0, 0); //¦”wŒi‚ÌF•ÏX‚Ég—p
+	SetBackgroundColor(0, 0, 0); //â€»èƒŒæ™¯ã®è‰²å¤‰æ›´ã«ä½¿ç”¨
 	
-	// DrawRotaGraph3D(0, 0, 0, 1.1f, 0, SelectBackImage, TRUE);
-	DrawRotaGraph3D(0, 0, 0, 2.8f, 0, SelectBackImage, TRUE);
+	DrawRotaGraph3D(0, 0, 0, 1.2f, 0, SelectBackImage, TRUE);
+	//DrawRotaGraph3D(0, 0, 0, 2.8f, 0, SelectBackImage, TRUE);
 	DrawRotaGraph3D(-600, -200, 0, 1.5f, 0, CommandImage, TRUE);
 	DrawRotaGraph3D(600, 200, 0, 1.5f, 0, BattleImage, TRUE);
 	DrawRotaGraph3D(Xkey, Ykey, 0, 1.0f, 0, SelectionArrowImage, TRUE);
 
-	// === ƒ^ƒCƒgƒ‹ƒV[ƒ“‚ÉˆÚ“® ===
-	DrawExtendString(30, 30, 2, 2, "[Tab] –ß‚é", GetColor(255, 255, 255));
+	// === ã‚¿ã‚¤ãƒˆãƒ«ã‚·ãƒ¼ãƒ³ã«ç§»å‹• ===
+	DrawExtendString(30, 30, 2, 2, "[Tab] æˆ»ã‚‹", GetColor(255, 255, 255));
 
-	// === ƒQ[ƒ€ƒ^ƒCƒv‚Ìí—Ş ===
+	// === ã‚²ãƒ¼ãƒ ã‚¿ã‚¤ãƒ—ã®ç¨®é¡ ===
 	if (OpponentSelection) {
 		DrawExtendString(930, 300, 2, 2, "TRAINING", GetColor(255, 255, 255));
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
@@ -84,10 +84,19 @@ void SelectScene::Draw()
 	fade->Draw();
 	miniwindow->Draw();
 
-	// DrawBox(0, 0, 640, 240, GetColor(0, 0, 255), TRUE); // ã”¼•ª‚ğÂ‚Å“h‚è‚Â‚Ô‚µ
-	// DrawBox(0, 240, 640, 480, GetColor(255, 0, 0), TRUE); // ‰º”¼•ª‚ğÔ‚Å“h‚è‚Â‚Ô‚µ
+	// === ã‚°ãƒ©ãƒ‡ãƒ¼ã‚·ãƒ§ãƒ³ä»˜ãèµ¤ãƒœãƒƒã‚¯ã‚¹ï¼ˆå¤–å´ã»ã©æ¿ƒã„ï¼‰ ===
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 15); // é€æ˜åº¦50%
+	//DrawBox(50, 530, 450, 430, GetColor(255, 0, 0), TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 30); // é€æ˜åº¦50%
+	//DrawBox(50, 530, 100, 430, GetColor(255, 0, 0), TRUE);
+	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//DrawBox(50, 530, 450, 430, GetColor(255, 255, 255), FALSE);
 
-	// DrawString(0, 0, "SELECT SCENE", GetColor(255, 255, 255));  //¦Scene‚ÌŠm”F‚Ég—p
+	// DrawBox(0, 0, 640, 240, GetColor(0, 0, 255), TRUE); // ä¸ŠåŠåˆ†ã‚’é’ã§å¡—ã‚Šã¤ã¶ã—
+	// DrawBox(0, 240, 640, 480, GetColor(255, 0, 0), TRUE); // ä¸‹åŠåˆ†ã‚’èµ¤ã§å¡—ã‚Šã¤ã¶ã—
+
+	// DrawString(0, 0, "SELECT SCENE", GetColor(255, 255, 255));  //â€»Sceneã®ç¢ºèªã«ä½¿ç”¨
 	// DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(255, 255, 255));
 
 	// if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
@@ -97,7 +106,7 @@ void SelectScene::KeyMovement()
 {
 	UpdateKey();
 
-	// === ƒRƒ}ƒ“ƒh•\¦—p ===
+	// === ã‚³ãƒãƒ³ãƒ‰è¡¨ç¤ºç”¨ ===
 	if (atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
 		operation = !operation;
 		isSetting = !isSetting;
@@ -108,7 +117,7 @@ void SelectScene::KeyMovement()
 		SelectKeyInput = true;
 	}
 
-	// === ƒQ[ƒ€ƒ^ƒCƒv‘I‘ğ—p ===
+	// === ã‚²ãƒ¼ãƒ ã‚¿ã‚¤ãƒ—é¸æŠç”¨ ===
 	if (!atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
 		switch (YInit) {
 		case 0:
@@ -135,18 +144,18 @@ void SelectScene::KeyMovement()
 	}
 	if (keyCounter[KEY_INPUT_RETURN] == 0 && atInit) { SelectKeyInput = false; }
 
-	// === ƒtƒF[ƒhƒAƒEƒgŠ®—¹‚µ‚½‚çƒV[ƒ“Ø‚è‘Ö‚¦ ===
+	// === ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆå®Œäº†ã—ãŸã‚‰ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆ ===
 	if (changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("PLAY"); }
 
-	// === –îˆóˆÚ“®(¶‰E) ===
+	// === çŸ¢å°ç§»å‹•(å·¦å³) ===
 	if (InputPossible) {
 		if (keyCounter[KEY_INPUT_RIGHT] == 1 || keyCounter[KEY_INPUT_LEFT] == 1) {
-			if (atInit) { // ‰ŠúˆÊ’u‚É‚¢‚½‚È‚ç ¨ ˆÚ“®æ‚Ö
+			if (atInit) { // åˆæœŸä½ç½®ã«ã„ãŸãªã‚‰ â†’ ç§»å‹•å…ˆã¸
 				Xkey = BATTLE_X;
 				Ykey = BATTLE_Y;
 				atInit = false;
 			}
-			else { // ˆÚ“®æ‚É‚¢‚½‚È‚ç ¨ ‰ŠúˆÊ’u‚Ö
+			else { // ç§»å‹•å…ˆã«ã„ãŸãªã‚‰ â†’ åˆæœŸä½ç½®ã¸
 				Xkey = COMMAND_X;
 				Ykey = COMMAND_Y;
 				atInit = true;
@@ -154,16 +163,16 @@ void SelectScene::KeyMovement()
 		}
 	}
 
-	// === –îˆóˆÚ“®(ã‰º) ===
+	// === çŸ¢å°ç§»å‹•(ä¸Šä¸‹) ===
 	if (OpponentSelection) {
 		if (keyCounter[KEY_INPUT_DOWN] == 1) {
-			YInit++; // Ÿ‚Ì’iŠK‚Ö
-			if (YInit > 3) { YInit = 0; } // 4‰ñ–Ú‚Å–ß‚é
+			YInit++; // æ¬¡ã®æ®µéšã¸
+			if (YInit > 3) { YInit = 0; } // 4å›ç›®ã§æˆ»ã‚‹
 			Ykey = YPosition[YInit];
 		}
 		if (keyCounter[KEY_INPUT_UP] == 1) {
-			YInit--; // ‘O‚Ì’iŠK‚Ö
-			if (YInit < 0) { YInit = 3; } // Å‰‚æ‚è‘O‚È‚çÅŒã‚É–ß‚é
+			YInit--; // å‰ã®æ®µéšã¸
+			if (YInit < 0) { YInit = 3; } // æœ€åˆã‚ˆã‚Šå‰ãªã‚‰æœ€å¾Œã«æˆ»ã‚‹
 			Ykey = YPosition[YInit];
 		}
 	}

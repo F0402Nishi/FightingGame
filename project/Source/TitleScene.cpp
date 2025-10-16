@@ -15,7 +15,7 @@ TitleScene::TitleScene()
 	assert(PoseLeftImage >= 0);
 	PoseRightImage = LoadGraph("data/2D/fightingPoseRight.png");
 	assert(PoseRightImage >= 0);
-	TitleBackImage = LoadGraph("data/2D/Title_Back.png");
+	TitleBackImage = LoadGraph("data/2D/Title_Back00.png");
 	assert(TitleBackImage >= 0);
 
 	memset(keyCounter, 0, sizeof(keyCounter));
@@ -72,8 +72,8 @@ void TitleScene::Draw()
 {
 	// SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
 
-	// DrawRotaGraph3D(0, 0, 0, 1.1f, 0, TitleBackImage, TRUE);
-	DrawRotaGraph3D(0, 0, 0, 3.2f, 0, TitleBackImage, TRUE);
+	DrawRotaGraph3D(0, 0, 0, 1.2f, 0, TitleBackImage, TRUE);
+	//DrawRotaGraph3D(0, 0, 0, 3.2f, 0, TitleBackImage, TRUE);
 	DrawRotaGraph3D(220, 130, 0, 3, 0, MechImage, TRUE);
 	DrawRotaGraph3D(0, -100, 0, 3, 0, BrawlersImage, TRUE);
 	DrawRotaGraph3D(-600, 90, 0, 0.7f, 0, PoseLeftImage, TRUE);
