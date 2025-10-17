@@ -18,6 +18,13 @@ ResultScene::ResultScene()
 	resultNumber = PlayScene::lastResult;
 
 	miniwindow = new MiniWindow();
+	miniwindow->SetLayout({ 415, 515, 615 });
+
+	fade = new Fade();
+
+	resultnumbers = 0;
+	sceneNumber = 0;
+	changeScene = false;
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -30,14 +37,53 @@ ResultScene::~ResultScene()
 void ResultScene::Update()
 {
 	UpdateKey();
+	fade->Update();
+	miniwindow->DrawResultBox(resultnumbers);
 
-	if (keyCounter[KEY_INPUT_TAB] == 1) {
-		SceneManager::ChangeScene("TITLE");
+	//if (keyCounter[KEY_INPUT_TAB] == 1) {
+	//	SceneManager::ChangeScene("TITLE");
+	//}
+
+	if (miniwindow->IsResultNow()) {
+		if (keyCounter[KEY_INPUT_DOWN] == 1) {
+			miniwindow->MoveBox(1); // 下移動
+		}
+		if (keyCounter[KEY_INPUT_UP] == 1) {
+			miniwindow->MoveBox(-1); // 上移動
+		}
+		if (keyCounter[KEY_INPUT_RETURN] == 1) {
+			int option = miniwindow->GetMenuOption();
+			// miniwindow->ToggleReslut(false);
+
+			switch (option) {
+			case 0:
+				sceneNumber = 1;
+				fade->FadeOut();
+				changeScene = true;
+				break;
+			case 1:
+				sceneNumber = 2;
+				fade->FadeOut();
+				changeScene = true;
+				break;
+			case 2:
+				sceneNumber = 3;
+				fade->FadeOut();
+				changeScene = true;
+				break;
+			}
+		}
 	}
 
-	ImGui::Begin("Result");
-	ImGui::Text("resultNumber = %d", (int)resultNumber);
-	ImGui::End();
+	if (sceneNumber == 1 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("PLAY"); }
+	if (sceneNumber == 2 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("SELECT"); }
+	if (sceneNumber == 3 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("TITLE"); }
+
+	//ImGui::Begin("Result");
+	//ImGui::Text("boxY = %d", miniwindow->boxY);
+	//ImGui::Text("resultNumber = %d", (int)resultNumber);
+	//ImGui::Text("resultnumbers = %d", (int)resultnumbers);
+	//ImGui::End();
 }
 
 void ResultScene::Draw()
@@ -46,6 +92,8 @@ void ResultScene::Draw()
 	DrawString(10, 10, "Result SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
 
 	UpdateResultFont();
+	fade->Draw();
+	miniwindow->Draw();
 }
 
 void ResultScene::UpdateResultFont()
@@ -63,17 +111,20 @@ void ResultScene::UpdateResultFont()
 		resultFontTextC = "CPU";
 		winx = -600;
 		losex = 600;
+		resultnumbers = 1;
 		break;
 	case Result::Lose:
 		resultFontTextC = "CPU";
 		resultFontTextP = "PLAYER";
 		winx = 600;
 		losex = -600;
+		resultnumbers = 2;
 		break;
 	case Result::Draw:
 		resultFontTextP = "PLAYER";
 		resultFontTextC = "CPU";
 		resultFontColor = GetColor(0, 255, 0);
+		resultnumbers = 3;
 		break;
 	case Result::P1Win:
 		resultFontTextP = "PLAYER1";

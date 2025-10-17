@@ -22,4 +22,6 @@ private:
 	int resultBackImage;
 	int winImage;
 	int loseImage;
+	int resultnumbers;
+	int sceneNumber;
 };

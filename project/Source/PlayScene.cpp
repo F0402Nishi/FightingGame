@@ -53,6 +53,9 @@ PlayScene::PlayScene()
 	p1->SetAlive(false);
 	p2->SetAlive(false);
 
+	// === BOXの中央値 = (上端 + 下端) / 2 ===
+	miniwindow->SetLayout({ 190, 390, 590 }); 
+
 	resultType = Result::None;
 
 	PlayNow = false;
@@ -74,6 +77,7 @@ PlayScene::PlayScene()
 		// h2->SetMessage(Battle::Ready, 120);
 		battlePhase = 1;
 	}
+
 }
 
 PlayScene::~PlayScene()
@@ -90,21 +94,23 @@ void PlayScene::Update()
 	fade->Update();
 
 	// === デバッグ用：強制遷移 ===
-	if (CheckHitKey(KEY_INPUT_T)) {
-		SceneManager::ChangeScene("TITLE");
-	}
-	if (CheckHitKey(KEY_INPUT_R)) {
-		SceneManager::ChangeScene("SELECT");
-	}
+	//if (CheckHitKey(KEY_INPUT_T)) {
+	//	SceneManager::ChangeScene("TITLE");
+	//}
+	//if (CheckHitKey(KEY_INPUT_R)) {
+	//	SceneManager::ChangeScene("SELECT");
+	//}
 
 #if false
 	ImGui::Begin("Menu");
+	ImGui::Text("arrowY = %d", miniwindow->arrowY);
+	ImGui::End();
 	//ImGui::Checkbox("changeScene", &changeScene);
 	//ImGui::Checkbox("isWind", &isWind);
-	//ImGui::Text("alpha = %d", fade->alpha);
-	ImGui::Text("IsBattleFinish = %d", h2->IsBattleFinish());
 	//ImGui::InputInt("Type", &opponentType);
-	ImGui::End();
+	//ImGui::Text("alpha = %d", fade->alpha);
+	//ImGui::Text("IsBattleFinish = %d", h2->IsBattleFinish());
+
 	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
 		PlayerKeyInput = true;
 	}
@@ -247,10 +253,10 @@ void PlayScene::MenuKey()
 	if (openwind) {
 		if (!miniwindow->IsCommandNow()) {
 			if (keyCounter[KEY_INPUT_DOWN] == 1) {
-				miniwindow->MoveArrow(1); // 下移動
+				miniwindow->MoveBox(1); // 下移動
 			}
 			if (keyCounter[KEY_INPUT_UP] == 1) {
-				miniwindow->MoveArrow(-1); // 上移動
+				miniwindow->MoveBox(-1); // 上移動
 			}
 		}
 

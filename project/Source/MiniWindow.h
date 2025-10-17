@@ -1,5 +1,6 @@
 #pragma once
 #include <DxLib.h>
+#include <vector>
 #include "Object3D.h"
 
 class SelectScene;
@@ -13,7 +14,9 @@ public:
 	void Update() override;
 	void Draw() override;
 	void CommandWindow();
-	void MoveArrow(int _arrow);
+	void SetLayout(const std::vector<int>& _postionY);
+	void MoveBox(int _box);
+	void DrawResultBox(int _rnumbers);
 
 	int GetMenuOption() const;
 
@@ -21,10 +24,13 @@ public:
 	void ToggleMenu() { menuwindowOpen = !menuwindowOpen; }
 	void ToggleReslut(int _result) { resultwindowOpen = _result; }
 	bool IsCommandNow() { return commandwindowOpen; }
+	bool IsResultNow() { return resultwindowOpen; }
 
 private:
 	SelectScene* selectScene;
 	PlayScene* playScene;
+
+	std::vector<int> Yposition;
 
 	int scrollOffset;
 	int commandCount; // コマンドリストの項目数
@@ -34,7 +40,8 @@ private:
 	int optionBack;
 	int optionArrow;
 	int arrowX;
-	int arrowY;
+	int boxY;
+	int r = 0, g = 80, b = 255;
 
 	bool commandwindowOpen;
 	bool windowUpKeyInput;

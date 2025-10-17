@@ -42,7 +42,7 @@ MiniWindow::MiniWindow()
 	itemHeight = 100;
 	windowHeight = 650 - 100; // 文字開始 y = 100 なので調整
 	arrowX = 450;
-	arrowY = 200;
+	boxY = 200;
 
 	commandCount = sizeof(commandList) / sizeof(commandList[0]);
 	KeyCount = sizeof(KeyList) / sizeof(KeyList[0]);
@@ -88,14 +88,18 @@ void MiniWindow::Update()
 
 void MiniWindow::Draw()
 {
-	if (commandwindowOpen) { CommandWindow();}
-
 	if (menuwindowOpen) {
 		int mx = 0, my = 0.5, mw = 1280, mh = 720;
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(255, 255, 255), FALSE); // 枠線（白）
 		DrawGraph(mx, my, optionBack, TRUE);
-		DrawRotaGraph(arrowX, arrowY, 1.0f, 0, optionArrow, TRUE);
+		// DrawRotaGraph(arrowX, arrowY, 1.0f, 0, optionArrow, TRUE);
+
+		int boxHeight = 120;
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 96);
+		DrawBox(300, boxY - boxHeight / 2, 1000, boxY + boxHeight / 2, GetColor(0, 80, 255), TRUE);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		
 		DrawExtendString(10, 10, 2, 2, "TRAINING OPTION", GetColor(255, 255, 255));
 		DrawExtendString(500, 150, 5, 5, "コマンド", GetColor(255, 255, 255));
 		DrawExtendString(500, 350, 5, 5, "セレクト", GetColor(255, 255, 255));
@@ -105,11 +109,23 @@ void MiniWindow::Draw()
 	if (resultwindowOpen) {
 		int rx = 400, ry = 370, rw = 500, rh = 300;
 		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(192, 192, 192), TRUE); // 背景（濃い灰色）
-		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(255, 255, 255), FALSE, 2); // 枠線（白）
-		DrawExtendString(550, 390, 3, 3, "再戦", GetColor(255, 255, 255));
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(255, 255, 255), FALSE); // 枠線（白）
+
+		int boxHeight = 70;
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 126);
+		DrawBox(420, boxY - boxHeight / 2, 880, boxY + boxHeight / 2, GetColor(r, g, b), TRUE);
+		// DrawBox(420, 380, 880, 450, GetColor(0, 80, 255), TRUE); // 再戦
+		// DrawBox(420, 480, 880, 550, GetColor(0, 80, 255), TRUE); // セレクト
+		// DrawBox(420, 580, 880, 650, GetColor(0, 80, 255), TRUE); // タイトル
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		// DrawBox(420, 380, 880, 450, GetColor(255, 255, 255), FALSE);
+
+		DrawExtendString(590, 390, 3, 3, "再戦", GetColor(255, 255, 255));
 		DrawExtendString(550, 490, 3, 3, "セレクト", GetColor(255, 255, 255));
 		DrawExtendString(550, 590, 3, 3, "タイトル", GetColor(255, 255, 255));
 	}
+
+	if (commandwindowOpen) { CommandWindow();}
 }
 
 void MiniWindow::CommandWindow()
@@ -144,41 +160,69 @@ void MiniWindow::CommandWindow()
 	SetDrawArea(0, 0, 1920, 1080);
 }
 
-void MiniWindow::MoveArrow(int _arrow)
+void MiniWindow::SetLayout(const std::vector<int>& _postionY)
 {
-	if (commandwindowOpen) return; // コマンド表示中なら動かさない！
+	Yposition = _postionY;
 
-	const int step = 200;
-	const int MenuFont[3] = { 200,400,600 };
+	// === 初期位置を最初のメニューに設定 ===
+	if (!Yposition.empty()) {
+		boxY = Yposition[0];
+	}
+}
+
+void MiniWindow::MoveBox(int _box)
+{
+	// === 配列が空なら動かせない ===
+	if (Yposition.empty()) return;
+
+	// === コマンド表示中なら動かさない！ ===
+	if (commandwindowOpen) return; 
+
+	// const int step = 200;
+	// const int MenuFont[3] = { 200,400,600 };
 
 	// === 現在の index を求める ===
-	int menufontIndex = 0;
-	for (int i = 0; i < 3; i++) {
-		if (arrowY == MenuFont[i]) {
-			menufontIndex = i;
+	int index = 0;
+	for (int i = 0; i < (int)Yposition.size(); i++) {
+		if (boxY == Yposition[i]) {
+			index = i;
 			break;
 		}
 	}
 
 	// === dir に応じてインデックスを移動 ===
-	menufontIndex += _arrow;
+	index += _box;
 
 	// === 範囲を循環させる ===
-	if (menufontIndex < 0) menufontIndex = 2;
-	if (menufontIndex > 2) menufontIndex = 0;
+	if (index < 0) index = (int)Yposition.size() - 1;
+	if (index >= (int)Yposition.size()) index = 0;
 
 	// === 新しい位置に設定 ===
-	arrowY = MenuFont[menufontIndex];
+	boxY = Yposition[index];
 }
 
 int MiniWindow::GetMenuOption() const
 {
-	switch (arrowY) {
-	case 200:
-		return 0;
-	case 400:
-		return 1;
-	case 600:
-		return 2;
+	for (int i = 0; i < (int)Yposition.size(); i++)
+	{
+		if (boxY == Yposition[i])  // 完全一致の場合
+			return i;
+	}
+
+	return -1; // 見つからなかった場合
+}
+
+void MiniWindow::DrawResultBox(int _rnumbers)
+{
+	switch (_rnumbers) {
+	case 1:
+		r = 190; g = 0; b = 63; // 赤系
+		break;
+	case 2:
+		r = 0; g = 100; b = 255; // 青系
+		break;
+	case 3:
+		r = 0; g = 255; b = 0;    // 緑
+		break;
 	}
 }
