@@ -25,6 +25,7 @@ ResultScene::ResultScene()
 	resultnumbers = 0;
 	sceneNumber = 0;
 	changeScene = false;
+	windowClose = false;
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -53,21 +54,23 @@ void ResultScene::Update()
 		}
 		if (keyCounter[KEY_INPUT_RETURN] == 1) {
 			int option = miniwindow->GetMenuOption();
-			// miniwindow->ToggleReslut(false);
 
 			switch (option) {
 			case 0:
 				sceneNumber = 1;
+				windowClose = true;
 				fade->FadeOut();
 				changeScene = true;
 				break;
 			case 1:
 				sceneNumber = 2;
+				windowClose = true;
 				fade->FadeOut();
 				changeScene = true;
 				break;
 			case 2:
 				sceneNumber = 3;
+				windowClose = true;
 				fade->FadeOut();
 				changeScene = true;
 				break;
@@ -75,15 +78,19 @@ void ResultScene::Update()
 		}
 	}
 
+	if (windowClose) { miniwindow->ToggleReslut(false); }
+
 	if (sceneNumber == 1 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("PLAY"); }
 	if (sceneNumber == 2 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("SELECT"); }
 	if (sceneNumber == 3 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("TITLE"); }
 
-	//ImGui::Begin("Result");
-	//ImGui::Text("boxY = %d", miniwindow->boxY);
-	//ImGui::Text("resultNumber = %d", (int)resultNumber);
-	//ImGui::Text("resultnumbers = %d", (int)resultnumbers);
-	//ImGui::End();
+	ImGui::Begin("Result");
+	ImGui::Checkbox("window", &windowClose);
+	ImGui::Checkbox("resultwindowOpen", &miniwindow->resultwindowOpen);
+	// ImGui::Text("boxY = %d", miniwindow->boxY);
+	// ImGui::Text("resultNumber = %d", (int)resultNumber);
+	// ImGui::Text("resultnumbers = %d", (int)resultnumbers);
+	ImGui::End();
 }
 
 void ResultScene::Draw()
@@ -146,5 +153,5 @@ void ResultScene::UpdateResultFont()
 	DrawRotaGraph3D(winx, 160, 0, 3.0f, 0, winImage, TRUE);
 	DrawRotaGraph3D(losex, 160, 0, 3.0f, 0, loseImage, TRUE);
 
-	miniwindow->ToggleReslut(true);
+	if (!windowClose) { miniwindow->ToggleReslut(true); }
 }

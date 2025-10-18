@@ -91,7 +91,6 @@ void PlayScene::Update()
 	UpdateCamera();
 	UpdateBattleFont();
 	MenuKey();
-	fade->Update();
 
 	// === デバッグ用：強制遷移 ===
 	//if (CheckHitKey(KEY_INPUT_T)) {
@@ -100,24 +99,15 @@ void PlayScene::Update()
 	//if (CheckHitKey(KEY_INPUT_R)) {
 	//	SceneManager::ChangeScene("SELECT");
 	//}
-
-#if false
-	ImGui::Begin("Menu");
-	ImGui::Text("arrowY = %d", miniwindow->arrowY);
-	ImGui::End();
-	//ImGui::Checkbox("changeScene", &changeScene);
-	//ImGui::Checkbox("isWind", &isWind);
+	
+	//ImGui::Begin("Menu");
+	//ImGui::Text("arrowY = %d", miniwindow->arrowY);
 	//ImGui::InputInt("Type", &opponentType);
 	//ImGui::Text("alpha = %d", fade->alpha);
 	//ImGui::Text("IsBattleFinish = %d", h2->IsBattleFinish());
-
-	if (CheckHitKey(KEY_INPUT_TAB) && PlayerKeyInput == false) {
-		PlayerKeyInput = true;
-	}
-	if (!CheckHitKey(KEY_INPUT_TAB)) {
-		PlayerKeyInput = false;
-	}
-#endif
+	//ImGui::Checkbox("changeScene", &changeScene);
+	//ImGui::Checkbox("isWind", &isWind);
+	//ImGui::End();
 }
 
 void PlayScene::Draw()
@@ -125,25 +115,13 @@ void PlayScene::Draw()
 	SetBackgroundColor(199, 199, 199); //※背景の色変更に使用
 	
 	miniwindow->Draw();
-	fade->Draw();
 
 #if false
-	int screenW, screenH;
-	GetDrawScreenSize(&screenW, &screenH); // 現在の画面の幅と高さを取得
-
-	//DrawString(0, 0, "左上", GetColor(255, 255, 255));
-	//DrawString(screenW - 100, 0, "右上", GetColor(255, 255, 255));
-	//DrawString(0, screenH - 20, "左下", GetColor(255, 255, 255));
-	//DrawString(screenW - 100, screenH - 20, "右下", GetColor(255, 255, 255));
-
-	DrawRotaGraph3D(200.0f, 430.0f, 0, 0.38f, 0, HPImage, TRUE);
-	
 	DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0)); //※ステージのx座標を確認に使用
 	DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0)); //※ステージのy座標を確認に使用
 	DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255)); //※ステージのy座標を確認に使用
 
 	DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
-	DrawString(100, 400, "Push [T]Key To Title", GetColor(255, 255, 255));
 #endif // false
 }
 
@@ -166,12 +144,10 @@ void PlayScene::UpdateCamera()
 
 	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, zoomZ), VGet(posx, posy, 0));
 
-#if 0
-	ImGui::Begin("Camera");
-	ImGui::InputFloat("zoomZ", &zoomZ);
+	//ImGui::Begin("Camera");
+	//ImGui::InputFloat("zoomZ", &zoomZ);
 	//ImGui::InputInt("Type", &opponentType);
-	ImGui::End();
-#endif // 0
+	//ImGui::End();
 }
 
 void PlayScene::UpdateBattleFont()
@@ -268,13 +244,11 @@ void PlayScene::MenuKey()
 				miniwindow->ToggleCommand();
 				break;
 			case 1:
-				fade->FadeOut();
-				changeScene = true;
+				fade->ExclusiveFadeOut();
 				SceneManager::ChangeScene("SELECT");
 				break;
 			case 2:
-				fade->FadeOut();
-				changeScene = true;
+				fade->ExclusiveFadeOut();
 				SceneManager::ChangeScene("TITLE");
 				break;
 			}

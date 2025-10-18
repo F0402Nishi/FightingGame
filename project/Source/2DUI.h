@@ -5,6 +5,8 @@
 // #include "Player.h"
 
 class Character;
+class Player;
+class CPU;
 
 enum class Battle {
 	None,
@@ -31,14 +33,21 @@ public:
 	void SetMaxHp(int hp);
 	void HPbar();
 	void SetMessage(Battle newBattle, int BattleFrame);
+	void GameFont();
+	void NameFont();
 
 	bool IsBattleFinish() const { return (battle == Battle::None); }
 
 private:
 	Character* character;
+	Player* player;
+	CPU* Cenemy;
 
 	Battle battle; // 今表示しているメッセージ
 	UIType uitype;
+
+	VECTOR Ppos;
+	VECTOR Cpos;
 
 	int HPbackImage = -1;
 	int HPImage = -1;

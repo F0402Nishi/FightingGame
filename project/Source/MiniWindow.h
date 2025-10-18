@@ -26,6 +26,7 @@ public:
 	bool IsCommandNow() { return commandwindowOpen; }
 	bool IsResultNow() { return resultwindowOpen; }
 
+	bool resultwindowOpen;
 private:
 	SelectScene* selectScene;
 	PlayScene* playScene;
@@ -49,5 +50,4 @@ private:
 	bool listStat;
 	bool listLast;
 	bool menuwindowOpen;
-	bool resultwindowOpen;
 };

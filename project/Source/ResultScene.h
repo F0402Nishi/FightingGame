@@ -24,4 +24,6 @@ private:
 	int loseImage;
 	int resultnumbers;
 	int sceneNumber;
+
+	bool windowClose;
 };

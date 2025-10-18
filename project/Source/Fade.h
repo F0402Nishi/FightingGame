@@ -8,6 +8,7 @@ public:
 	void FadeIn();
 	void FadeOut();
 	void Draw();
+	void ExclusiveFadeOut();
 
 	bool IsFading() const { return fadingIn || fadingOut; }
 	bool IsFadeInEnd() const { return alpha <= 0; }

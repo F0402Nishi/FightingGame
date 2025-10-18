@@ -52,3 +52,8 @@ void Fade::Draw()
 	DrawBox(0, 0, screenW, screenH, GetColor(0, 0, 0), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
+
+void Fade::ExclusiveFadeOut()
+{
+	FadeOut();
+}

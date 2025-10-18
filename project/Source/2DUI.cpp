@@ -83,6 +83,11 @@ void UI2D::Update()
     // === HPbarの処理 ===
 
     if (character && uitype == UIType::HP) {
+        
+        // === 座標取得 ===
+        Cpos = character->GetTransform().position;
+        Cpos.y += 350.0f;
+
         fullTank = currenthp;
         SetHp(character->GetHp());
         SetMaxHp(character->GetMaxHp());
@@ -131,45 +136,16 @@ void UI2D::Draw()
 {
     // === バトル開始の文字表示 & Resultの処理 ===
 
-    const char* battleFontText = "";
-    float battleFontSize = 15.0f;
-    int battleFontColor = GetColor(255, 255, 255);
-
-    switch (battle) {
-    case Battle::Training:
-        battleFontText = "TRAINING";
-        battleFontColor = GetColor(255, 255, 255);
-        DrawExtendString(100, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor); // 文字を大きめに中央に描画
-        break;
-    case Battle::Ready:
-        battleFontText = "READY";
-        battleFontColor = GetColor(255, 255, 255);
-        DrawExtendString(300, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor); // 文字を大きめに中央に描画
-        break;
-    case Battle::Fight:
-        battleFontText = "FIGHT";
-        battleFontColor = GetColor(255, 255, 255);
-        DrawExtendString(300, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor);
-        break;
-    case Battle::KO:
-        battleFontText = "K.O.";
-        battleFontColor = GetColor(255, 255, 255);
-        DrawExtendString(450, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor);
-        break;
-    }
-
+    GameFont();
 
     // === HPbar用の関数を呼び出し ===
+    // === 名前タグ（PLAYER / CPU）描画 ===
     // キャラクターが存在するUIだけHPバーを描画
 
-    if (uitype == UIType::HP) { HPbar(); }
-
-    //if (character->GetWinner()) { // 勝ち
-    //    DrawExtendString(500, 100, 5, 5, "YOU WIN", GetColor(190, 0, 63));
-    //}
-    //else if (!character->GetWinner() && character->GetHp() <= 0) { // 負け
-    //    DrawExtendString(500, 100, 5, 5, "YOU LOSE", GetColor(0, 0, 190));
-    //}
+    if (character && uitype == UIType::HP) { 
+        NameFont();
+        HPbar(); 
+    }
 }
 
 void UI2D::SetHp(int hp)
@@ -196,22 +172,93 @@ void UI2D::HPbar()
     int drawW = static_cast<int>(graphW * IMAGE_SCALE);
     int drawH = static_cast<int>(graphH * IMAGE_SCALE);
 
+    // === HP数値表示 ===
+    char hpText[64];
+    sprintf_s(hpText, "%d / %d", character->GetHp(), maxhp);
+    DrawFormatString(100, 100, GetColor(255, 255, 255), hpText);
+
     if (isRightCpu) {
         DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE); // 背景とHPを合わせるためにX座標を調整
 
         // DrawRectExtendGraph(左端, 上, 右端, 下,,,)
         DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, HPIMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
+        DrawFormatString(100, 100, GetColor(255, 255, 255), hpText);
     }
     else
     {
         if (isLeftPlayer) {
             DrawTurnGraph(IMAGE_POSITION_LEFT_X - 15.0f, IMAGE_POSITION_Y, HPbackImage, TRUE); // 背景とHPを合わせるためにX座標を調整
             DrawRectExtendGraph((IMAGE_POSITION_LEFT_X + drawW) - scaleBarW, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + drawW, HPIMAGE_POSITION_Y + drawH, graphW - barW, 0.0f, barW, graphH, HPImageLeft, TRUE);
+            DrawFormatString(100, 150, GetColor(255, 255, 255), hpText);
         }
         else if (!isLeftPlayer) {
             DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE);
             DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, HPIMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
         }
+    }
+}
+
+void UI2D::GameFont()
+{
+    const char* battleFontText = "";
+    float battleFontSize = 15.0f;
+    int battleFontColor = GetColor(255, 255, 255);
+
+    switch (battle) {
+    case Battle::Training:
+        battleFontText = "TRAINING";
+        battleFontColor = GetColor(255, 255, 255);
+        DrawExtendString(100, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor); // 文字を大きめに中央に描画
+        break;
+    case Battle::Ready:
+        battleFontText = "READY";
+        battleFontColor = GetColor(255, 255, 255);
+        DrawExtendString(300, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor); // 文字を大きめに中央に描画
+        break;
+    case Battle::Fight:
+        battleFontText = "FIGHT";
+        battleFontColor = GetColor(255, 255, 255);
+        DrawExtendString(300, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor);
+        break;
+    case Battle::KO:
+        battleFontText = "K.O.";
+        battleFontColor = GetColor(255, 255, 255);
+        DrawExtendString(450, 200, battleFontSize, battleFontSize, battleFontText, battleFontColor);
+        break;
+    }
+}
+
+void UI2D::NameFont()
+{
+    VECTOR screenPos = ConvWorldPosToScreenPos(Cpos);
+
+    const char* nameText = nullptr;
+    int nameColor = GetColor(255, 255, 255);
+
+    // --- プレイヤー1 ---
+    if (isLeftPlayer) {
+        nameText = "PLAYER";
+        nameColor = GetColor(190, 0, 63); // 赤
+    }
+
+    // --- 対人戦の2P ---
+    else if (!isLeftPlayer && !isRightCpu) {
+        if (gameType == 1) { nameText = "CPU"; }
+        else { nameText = "PLAYER2"; }
+        nameColor = GetColor(0, 80, 255); // 青
+    }
+
+    // --- CPU ---
+    else if (isRightCpu) {
+        nameText = "CPU";
+        nameColor = GetColor(0, 80, 255); // 青
+    }
+
+    if (nameText) {
+        // 文字の影（黒）
+        DrawString((int)screenPos.x - 19, (int)screenPos.y + 1, nameText, GetColor(0, 0, 0));
+        // 本体
+        DrawString((int)screenPos.x - 20, (int)screenPos.y, nameText, nameColor);
     }
 }
 
