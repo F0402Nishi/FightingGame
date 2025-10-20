@@ -54,6 +54,8 @@ CPU::CPU(bool _iscpu)
 	NowAttack = false;
 	Nowpos = false;
 	actionFinished = false;
+	GuardOn = false;
+	GuardNow = false;
 
 	brain = MID_COMBAT;
 
@@ -72,7 +74,21 @@ void CPU::Update()
 	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
 	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 
-	// if (!isCpu) anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+	if (!isCpu && CheckHitKey(KEY_INPUT_Q) && !GuardNow) { GuardOn = !GuardOn; GuardNow = true; }
+	else if (!CheckHitKey(KEY_INPUT_Q) && GuardNow) { GuardNow = false; }
+	if (GuardOn) {
+		state = S_PROTECT; isGuarding = true;
+	}
+	else
+	{
+		state = S_STOP;
+	}
+	
+	ImGui::Begin("CPU");
+	ImGui::Checkbox("GuardOn", &GuardOn);
+	ImGui::Checkbox("GuardNow", &GuardNow);
+	ImGui::End();
+	
 	if (!isCpu) return;
 
 	// === HPが0以下なら行動を止める ===
@@ -130,8 +146,6 @@ void CPU::Update()
 	time += 1.0f;
 
 #if 0
-	ImGui::Begin("CPU");
-	ImGui::Checkbox("isCpu", &isCpu);
 	ImGui::Checkbox("isMoving", &isMoveing);
 	ImGui::Checkbox("isAlive", &isAlive);
 	ImGui::Text("brain: %d", (int)brain);
@@ -150,7 +164,6 @@ void CPU::Update()
 	ImGui::InputFloat("float moved", &moved);
 	ImGui::InputFloat("float CPUpos", &CPUpos);
 	ImGui::Text("MyPosition：%d", (int) & mypos);
-	ImGui::End();
 #endif // 0
 }
 

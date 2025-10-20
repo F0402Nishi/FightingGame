@@ -24,6 +24,7 @@ public:
 	void ToggleMenu() { menuwindowOpen = !menuwindowOpen; }
 	void ToggleReslut(int _result) { resultwindowOpen = _result; }
 	bool IsCommandNow() { return commandwindowOpen; }
+	bool IsMenuNow() { return menuwindowOpen; }
 	bool IsResultNow() { return resultwindowOpen; }
 
 	bool resultwindowOpen;

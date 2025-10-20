@@ -34,6 +34,7 @@ public:
 	int GetMaxHp() const { return MaxHp; }
 
 	void SetHp(int value) { Hp = value; }
+	void SetInputDisplay(bool _display) { InputTypeP = _display; }
 	// bool GetisPunching() const { return isPunching; }
 	// bool GetisPlayer() const { return isPlayer; }
 
@@ -79,6 +80,7 @@ protected:
 	bool isAltIdle;
 	bool isHitPlaying;
 	bool isAlive; // HP > 0 ‚Ì‚¾‚¯ true
+	bool InputTypeP;
 
 	// Player‚Ìœ§Œä
 	int headBone;

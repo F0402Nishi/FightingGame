@@ -1,12 +1,14 @@
 #pragma once
 #include <DxLib.h>
 #include <algorithm>
+#include <vector> 
 #include "Object3D.h"
 // #include "Player.h"
 
 class Character;
 class Player;
 class CPU;
+class MiniWindow;
 
 enum class Battle {
 	None,
@@ -35,6 +37,8 @@ public:
 	void SetMessage(Battle newBattle, int BattleFrame);
 	void GameFont();
 	void NameFont();
+	void AttackInformation();
+	void DrawInputHistory(const std::vector<int>& inputHistory);
 
 	bool IsBattleFinish() const { return (battle == Battle::None); }
 
@@ -42,6 +46,7 @@ private:
 	Character* character;
 	Player* player;
 	CPU* Cenemy;
+	MiniWindow* mini;
 
 	Battle battle; // 今表示しているメッセージ
 	UIType uitype;
@@ -68,6 +73,7 @@ private:
 	int battleTime; // 表示してからの経過フレーム数 
 	int battleFrame; // 何フレーム表示するか
 	int gameType;
+	int damageHp; // 受けたダメージ
 
 	float angle; // 回転角度を保持する変数
 

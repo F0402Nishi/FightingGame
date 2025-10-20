@@ -3,6 +3,7 @@
 #include <DxLib.h>
 #include <assert.h>
 #include <algorithm>
+#include <vector> 
 #include "../ImGui/imgui.h"
 #include "2DUI.h"
 #include "Character.h"
@@ -28,6 +29,7 @@ UI2D::UI2D()
 
     battle = Battle::None;
     uitype = UIType::HP;
+    mini = new MiniWindow();
 
     character = nullptr;
 
@@ -42,6 +44,7 @@ UI2D::UI2D()
     recoveryFrame = 180;
     battleTime = 0;
     battleFrame = 0;
+    damageHp = 0;
 
     angle = 0.0f;
 
@@ -95,7 +98,7 @@ void UI2D::Update()
         // === トレーニングモードの回復処理.1 ===
         if (!isRightCpu && gameType == 1 && currenthp < fullTank) {
             recoveryTimer = 180;
-            int damageHp = fullTank - currenthp;
+            damageHp = fullTank - currenthp;
             recoveryHp += damageHp;
             recoveryTimer = recoveryFrame;
         }
@@ -138,6 +141,35 @@ void UI2D::Draw()
 
     GameFont();
 
+    // === トレーニングモードの情報を乗せる背景 
+
+    if (isLeftPlayer && gameType == 1) {
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 189);
+
+        // === 攻撃情報表示の背景 ===
+
+        int startY = 70;      // 最初のY位置
+        int height = 30;      // ボックスの高さ（110 - 70）
+        int gap = 10;         // ボックス同士の間隔
+
+        for (int i = 0; i < 3; i++) {
+            int y1 = startY + (height + gap) * i;
+            int y2 = y1 + height;
+            DrawBox(440, y1, 840, y2, GetColor(0, 0, 0), TRUE);
+        }
+
+        // === 入力情報表示の背景 ===
+        
+        DrawBox(80, 130, 130, 560, GetColor(0, 0, 0), TRUE);
+        
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+        DrawExtendString(630, 78, 1, 1, "HP", GetColor(255, 255, 255));
+        DrawExtendString(600, 118, 1, 1, "ダメージ", GetColor(255, 255, 255));
+        DrawExtendString(600, 158, 1, 1, "モード", GetColor(255, 255, 255));
+        DrawExtendString(90, 140, 1, 1, "入力", GetColor(255, 255, 255));
+    }
+
     // === HPbar用の関数を呼び出し ===
     // === 名前タグ（PLAYER / CPU）描画 ===
     // キャラクターが存在するUIだけHPバーを描画
@@ -145,6 +177,10 @@ void UI2D::Draw()
     if (character && uitype == UIType::HP) { 
         NameFont();
         HPbar(); 
+
+        if (gameType == 1) {
+            AttackInformation(); 
+        }
     }
 }
 
@@ -172,24 +208,18 @@ void UI2D::HPbar()
     int drawW = static_cast<int>(graphW * IMAGE_SCALE);
     int drawH = static_cast<int>(graphH * IMAGE_SCALE);
 
-    // === HP数値表示 ===
-    char hpText[64];
-    sprintf_s(hpText, "%d / %d", character->GetHp(), maxhp);
-    DrawFormatString(100, 100, GetColor(255, 255, 255), hpText);
-
     if (isRightCpu) {
         DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE); // 背景とHPを合わせるためにX座標を調整
 
         // DrawRectExtendGraph(左端, 上, 右端, 下,,,)
         DrawRectExtendGraph(IMAGE_POSITION_RIGHT_X, HPIMAGE_POSITION_Y, IMAGE_POSITION_RIGHT_X + scaleBarW, HPIMAGE_POSITION_Y + drawH, 0.0f, 0.0f, barW, graphH, HPImage, TRUE);
-        DrawFormatString(100, 100, GetColor(255, 255, 255), hpText);
     }
     else
     {
         if (isLeftPlayer) {
             DrawTurnGraph(IMAGE_POSITION_LEFT_X - 15.0f, IMAGE_POSITION_Y, HPbackImage, TRUE); // 背景とHPを合わせるためにX座標を調整
             DrawRectExtendGraph((IMAGE_POSITION_LEFT_X + drawW) - scaleBarW, HPIMAGE_POSITION_Y, IMAGE_POSITION_LEFT_X + drawW, HPIMAGE_POSITION_Y + drawH, graphW - barW, 0.0f, barW, graphH, HPImageLeft, TRUE);
-            DrawFormatString(100, 150, GetColor(255, 255, 255), hpText);
+            
         }
         else if (!isLeftPlayer) {
             DrawGraph(IMAGE_POSITION_RIGHT_X - 100.0f, IMAGE_POSITION_Y, HPbackImage, TRUE);
@@ -259,6 +289,82 @@ void UI2D::NameFont()
         DrawString((int)screenPos.x - 19, (int)screenPos.y + 1, nameText, GetColor(0, 0, 0));
         // 本体
         DrawString((int)screenPos.x - 20, (int)screenPos.y, nameText, nameColor);
+    }
+}
+
+void UI2D::AttackInformation()
+{
+    // === HP数値表示 ===
+    char hpText[64];
+    sprintf_s(hpText, "%d", character->GetHp(), maxhp);
+    // DrawFormatString(100, 100, GetColor(255, 255, 255), hpText);
+
+    
+    if (isLeftPlayer) { 
+        DrawFormatString(480, 78, GetColor(255, 255, 255), hpText); 
+        DrawFormatString(500, 118, GetColor(255, 255, 255), "%d", damageHp);
+    }
+    else if (!isRightCpu) {
+        DrawFormatString(760, 78, GetColor(255, 255, 255), hpText);
+        DrawFormatString(760, 118, GetColor(255, 255, 255), "%d", damageHp);
+    }
+}
+
+void UI2D::DrawInputHistory(const std::vector<int>& inputHistory)
+{
+    // if (!isLeftPlayer) return; // トレーニングモードのみ描画
+
+    int startX = 100;  // 描画開始X座標
+    int startY = 170;  // 描画Y座標
+    int spacing = 40;  // アイコン間の間隔
+
+    for (int i = 0; i < (int)inputHistory.size(); i++)
+    {
+        int y = startY + i * spacing;
+        int key = inputHistory[i];
+        const char* icon = "?";
+
+        switch (key)
+        {
+        case NEUTRAL:
+            icon = "N";
+            break;
+        case KEY_INPUT_A:
+            icon = "←";
+            break;
+        case KEY_INPUT_D:
+            icon = "→";
+            break;
+        case KEY_INPUT_U:
+            icon = "弱P";
+            startX = 90;
+            break;
+        case KEY_INPUT_I:
+            icon = "中P";
+            startX = 90;
+            break;
+        case KEY_INPUT_O:
+            icon = "強P";
+            startX = 90;
+            break;
+        case KEY_INPUT_J:
+            icon = "弱K";
+            startX = 90;
+            break;
+        case KEY_INPUT_K:
+            icon = "中K";
+            startX = 90;
+            break;
+        case KEY_INPUT_L:
+            icon = "強K";
+            startX = 90;
+            break;
+        case KEY_INPUT_H:
+            icon = "G";
+            break;
+        }
+
+        DrawFormatString(startX, y, GetColor(255, 255, 255), icon);
     }
 }
 

@@ -6,10 +6,19 @@
 #include "Cpu.h"
 #include "2DUI.h"
 
+// 入力履歴用
+std::vector<int> inputHistory;
+const int maxHistory = 10;
+
 Player::Player(bool _isPlayer)
 {
 	isPlayer = _isPlayer;
 	isJumping = false;
+
+	lastKey = NEUTRAL;
+	currentKey = NEUTRAL;
+
+	ui2d = new UI2D();
 
 	if (!isPlayer) {
 		transform.position = VGet(200.0f, 14.0f, 150.0f);
@@ -20,7 +29,6 @@ Player::Player(bool _isPlayer)
 
 Player::~Player()
 {
-	// delete anim;
 }
 
 void Player::Update()
@@ -40,13 +48,18 @@ void Player::Update()
 	if (state == S_STOP) {
 		if (CheckHitKey(KEY_INPUT_A)) {
 			inputDir.x = -10.0f;
+			currentKey = KEY_INPUT_A;
 			// anim->Play("data/Character/Player/Walk_B.mv1", true); // 後ろ歩き
 		}
 		else if (CheckHitKey(KEY_INPUT_D)) {
 			inputDir.x = 10.0f;
+			currentKey = KEY_INPUT_D;
 			// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
 		}
-		// else { anim->Play("data/Character/Player/Fight_Idle.mv1", true); }
+		else { 
+			anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+			currentKey = NEUTRAL;
+		}
 	}
 
 	//のちに戻す
@@ -75,13 +88,44 @@ void Player::Update()
 	// キャンセル用の関数または変数を定義
 	// 例.Uのアニメーション中にIを押されたら、、、
 
-	if (CheckHitKey(KEY_INPUT_U) && !isMoveing) { state = S_PUNCH1; canReduceHp = true; isMoveing = true; } // パンチ1
-	if (CheckHitKey(KEY_INPUT_I) && !isMoveing) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; } // パンチ2
-	if (CheckHitKey(KEY_INPUT_O) && !isMoveing) { state = S_PUNCH3; canReduceHp = true; isMoveing = true; } // パンチ3
-	if (CheckHitKey(KEY_INPUT_J) && !isMoveing) { state = S_KICK1; canReduceHp = true; isMoveing = true; } // キック1
-	if (CheckHitKey(KEY_INPUT_K) && !isMoveing) { state = S_KICK2; canReduceHp = true; isMoveing = true;} // キック2
-	if (CheckHitKey(KEY_INPUT_L) && !isMoveing) { state = S_KICK3; canReduceHp = true; isMoveing = true; } // キック3
-	if (CheckHitKey(KEY_INPUT_H)) { state = S_PROTECT; isGuarding = true; } // ガード
+	if (CheckHitKey(KEY_INPUT_U) && !isMoveing) { // パンチ1
+		state = S_PUNCH1; canReduceHp = true; isMoveing = true; 
+		currentKey = KEY_INPUT_U;
+	} 
+	if (CheckHitKey(KEY_INPUT_I) && !isMoveing) { // パンチ2
+		state = S_PUNCH2; canReduceHp = true; isMoveing = true; 
+		currentKey = KEY_INPUT_I;
+	}
+	if (CheckHitKey(KEY_INPUT_O) && !isMoveing) { // パンチ3
+		state = S_PUNCH3; canReduceHp = true; isMoveing = true; 
+		currentKey = KEY_INPUT_O;
+	}
+	if (CheckHitKey(KEY_INPUT_J) && !isMoveing) { // キック1
+		state = S_KICK1; canReduceHp = true; isMoveing = true; 
+		currentKey = KEY_INPUT_J;
+	}
+	if (CheckHitKey(KEY_INPUT_K) && !isMoveing) {  // キック2
+		state = S_KICK2; canReduceHp = true; isMoveing = true;
+		currentKey = KEY_INPUT_K;
+	}
+	if (CheckHitKey(KEY_INPUT_L) && !isMoveing) { // キック3
+		state = S_KICK3; canReduceHp = true; isMoveing = true;
+		currentKey = KEY_INPUT_L;
+	}
+	if (CheckHitKey(KEY_INPUT_H)) {  // ガード
+		state = S_PROTECT; isGuarding = true;
+		currentKey = KEY_INPUT_H;
+	}
+
+	// === 履歴に追加するのは押した瞬間だけ ===
+	if (inputHistory.empty() || currentKey != lastKey) {
+		inputHistory.push_back(currentKey);
+	}
+
+	// === 次フレーム用に保存 ===
+	lastKey = currentKey; 
+
+	// 途中キャンセルを試してみた
 
 	if (state == S_PUNCH1 && canCancel) {
 		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
@@ -94,6 +138,15 @@ void Player::Update()
 	if (state == S_PUNCH3 && canCancel) {
 		if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; canReduceHp = true; isMoveing = true; }
 		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
+	}
+
+	// 古い入力を削除
+	while (inputHistory.size() > maxHistory) {
+		inputHistory.erase(inputHistory.begin());
+	}
+
+	if (InputTypeP) {
+		ui2d->DrawInputHistory(inputHistory);
 	}
 
 	//ImGui::Begin("PLAYER");

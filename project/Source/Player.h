@@ -8,6 +8,8 @@
 class UI2D;
 class CPU;
 
+constexpr int NEUTRAL = -1; // 待機モーション
+
 class Player : public Character
 {
 public:
@@ -21,10 +23,12 @@ public:
 
 private:
 	CPU* cpu;
+	UI2D* ui2d;
 
 	VECTOR velocity;
+	int lastKey;
+	int currentKey;
 	bool isPlayer;
-
 };
 
 #if false "参考のために保留"

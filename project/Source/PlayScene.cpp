@@ -27,12 +27,15 @@ PlayScene::PlayScene()
 
 	if (opponentType == 1) { // トレーニングモード
 		p2 = new CPU(false);
+		p1->SetInputDisplay(true);
 	}
 	else if (opponentType == 2) { // CPU戦モード
 		p2 = new CPU(true);
+		p1->SetInputDisplay(false);
 	}
 	else if (opponentType == 3) { // Player戦モード
 		p2 = new Player(false);
+		p1->SetInputDisplay(false);
 	}
 
 	new Stage();
@@ -46,6 +49,8 @@ PlayScene::PlayScene()
 	h1->Init(p1, opponentType, UIType::HP);
 	h2->Init(p2, opponentType, UIType::HP);
 	ui2d->Init(nullptr, opponentType, UIType::B_Font);
+	h1->AttackInformation();
+	h2->AttackInformation();
 	p1->SetOpponent(p2);
 	p2->SetOpponent(p1);
 	p1->SetHitSpheres();
@@ -227,6 +232,7 @@ void PlayScene::MenuKey()
 
 	// === 矢印移動(上下) ===
 	if (openwind) {
+		p1->SetInputDisplay(false);
 		if (!miniwindow->IsCommandNow()) {
 			if (keyCounter[KEY_INPUT_DOWN] == 1) {
 				miniwindow->MoveBox(1); // 下移動
@@ -254,4 +260,5 @@ void PlayScene::MenuKey()
 			}
 		}
 	}
+	else { p1->SetInputDisplay(true); }
 }
