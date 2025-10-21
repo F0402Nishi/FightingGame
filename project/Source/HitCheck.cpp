@@ -1,4 +1,4 @@
-#include "HitCheck.h"
+﻿#include "HitCheck.h"
 #include <cmath>
 #include <DxLib.h>
 #include "Character.h"

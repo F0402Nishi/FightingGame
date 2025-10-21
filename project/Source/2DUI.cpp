@@ -307,6 +307,14 @@ void UI2D::AttackInformation()
     else if (!isRightCpu) {
         DrawFormatString(760, 78, GetColor(255, 255, 255), hpText);
         DrawFormatString(760, 118, GetColor(255, 255, 255), "%d", damageHp);
+
+        if (character->IsGuardOn()) {
+            DrawFormatString(750, 158, GetColor(255, 255, 255), "ÉKÅ[Éh");
+        }
+        else
+        {
+            DrawFormatString(750, 158, GetColor(255, 255, 255), "ë“ã@");
+        }
     }
 }
 

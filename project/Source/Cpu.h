@@ -60,7 +60,6 @@ private:
 	bool NowAttack;
 	bool Nowpos;
 	bool actionFinished;
-	bool GuardOn;
 	bool GuardNow;
 
 	State attackStates[7] = {

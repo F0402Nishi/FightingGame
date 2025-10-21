@@ -48,6 +48,7 @@ Character::Character()
 	isGuarding = false;
 	isHitPlaying = false;
 	isAlive = true;
+	GuardOn = false;
 
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;

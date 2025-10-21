@@ -30,11 +30,15 @@ public:
 
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
+
+	VECTOR GetPosition() const { return transform.position; }
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
+	bool IsGuardOn() const { return GuardOn; }
 
 	void SetHp(int value) { Hp = value; }
 	void SetInputDisplay(bool _display) { InputTypeP = _display; }
+	void SetPosition(const VECTOR& pos) { transform.position = pos; }
 	// bool GetisPunching() const { return isPunching; }
 	// bool GetisPlayer() const { return isPlayer; }
 
@@ -81,6 +85,7 @@ protected:
 	bool isHitPlaying;
 	bool isAlive; // HP > 0 ‚Ì‚¾‚¯ true
 	bool InputTypeP;
+	bool GuardOn;
 
 	// Player‚Ìœ§Œä
 	int headBone;

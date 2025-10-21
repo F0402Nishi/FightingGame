@@ -27,7 +27,7 @@ CPU::CPU(bool _iscpu)
 {
 	player = FindGameObject<Player>();
 	
-	transform.position = VGet(200.0f, 14.0f, 150.0f);
+	transform.position = VGet(200.0f, 14.0f, 183.0f);
 	transform.rotation = VGet(0, DegToRad(90.0f), 0);
 
 	previousStop = transform.position;
@@ -54,7 +54,6 @@ CPU::CPU(bool _iscpu)
 	NowAttack = false;
 	Nowpos = false;
 	actionFinished = false;
-	GuardOn = false;
 	GuardNow = false;
 
 	brain = MID_COMBAT;
