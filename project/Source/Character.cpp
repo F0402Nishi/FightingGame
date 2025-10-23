@@ -7,7 +7,7 @@
 
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
-#define PLAYER_HP 10
+#define PLAYER_HP 1000
 
 struct AttackData {
 	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
@@ -82,6 +82,10 @@ void Character::Always()
 
 	BoneCollision();
 	ResolvePlayerCollision();
+
+	myPos = transform.position;
+	opPos = opponent->GetTransform().position;
+	direction = VNorm(opPos - myPos);
 
 	if (isHitPlaying) {
 		if (anim->IsFinish()) { isHitPlaying = false; }
@@ -288,12 +292,43 @@ void Character::UpdatePunch3()
 
 void Character::UpdateKick1()
 {
-	PlayAttack("data/Character/Player/Atk_K_1.mv1", false);
+	if (isPositionCorrected) {
+
+		// === 攻撃モーション補正（踏み込み・振りかぶり）===
+		direction.z = 0; // Zは後で別に補正するのでここでは無視
+
+		VECTOR offset;
+
+		if (frame < Kick1Data.hitStartFrame) {
+			offset = VScale(direction, -0.5f); // 振りかぶり
+		}
+		else if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
+			offset = VScale(direction, 1.0f);  // 踏み込み
+		}
+		else {
+			offset = VScale(direction, 0.2f);  // 振り抜き
+		}
+
+		// === Z軸だけ別にずらす ===
+		// 例えば、自分が左なら -0.5、右なら +0.5
+		float zOffset = (myPos.x < opPos.x) ? -0.5f : 0.5f;
+		offset.z = zOffset;
+
+		// 位置更新
+		transform.position = VAdd(myPos, offset);
+		isPositionCorrected = false;
+	}
+
+	if (!isPositionCorrected) {
+		PlayAttack("data/Character/Player/Atk_K_1.mv1", false);
+
+	}
 	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
 	if (opponent != nullptr) {
+		// === ヒット判定 ===
 		if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
 			colIndex = 13;
 			damage = 20;
@@ -445,6 +480,10 @@ void Character::SetAlive(bool ali)
 		state = S_STOP;
 		inputDir = VGet(0, 0, 0);
 	}
+}
+
+void Character::ApplyAttackMotion()
+{
 }
 
 void Character::CollisionDetection()

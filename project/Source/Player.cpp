@@ -101,7 +101,7 @@ void Player::Update()
 		currentKey = KEY_INPUT_O;
 	}
 	if (CheckHitKey(KEY_INPUT_J) && !isMoveing) { // キック1
-		state = S_KICK1; canReduceHp = true; isMoveing = true; 
+		state = S_KICK1; canReduceHp = true; isMoveing = true; isPositionCorrected = true;
 		currentKey = KEY_INPUT_J;
 	}
 	if (CheckHitKey(KEY_INPUT_K) && !isMoveing) {  // キック2

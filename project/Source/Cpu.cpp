@@ -27,7 +27,7 @@ CPU::CPU(bool _iscpu)
 {
 	player = FindGameObject<Player>();
 	
-	transform.position = VGet(200.0f, 14.0f, 183.0f);
+	transform.position = VGet(200.0f, 14.0f, 150.0f);
 	transform.rotation = VGet(0, DegToRad(90.0f), 0);
 
 	previousStop = transform.position;
@@ -75,18 +75,9 @@ void CPU::Update()
 
 	if (!isCpu && CheckHitKey(KEY_INPUT_Q) && !GuardNow) { GuardOn = !GuardOn; GuardNow = true; }
 	else if (!CheckHitKey(KEY_INPUT_Q) && GuardNow) { GuardNow = false; }
-	if (GuardOn) {
-		state = S_PROTECT; isGuarding = true;
-	}
-	else
-	{
-		state = S_STOP;
-	}
-	
-	ImGui::Begin("CPU");
-	ImGui::Checkbox("GuardOn", &GuardOn);
-	ImGui::Checkbox("GuardNow", &GuardNow);
-	ImGui::End();
+
+	if (GuardOn) { state = S_PROTECT; isGuarding = true; }
+	else { state = S_STOP; }
 	
 	if (!isCpu) return;
 
@@ -145,6 +136,11 @@ void CPU::Update()
 	time += 1.0f;
 
 #if 0
+	
+	ImGui::Begin("CPU");
+	ImGui::Checkbox("GuardOn", &GuardOn);
+	ImGui::Checkbox("GuardNow", &GuardNow);
+	ImGui::End();
 	ImGui::Checkbox("isMoving", &isMoveing);
 	ImGui::Checkbox("isAlive", &isAlive);
 	ImGui::Text("brain: %d", (int)brain);

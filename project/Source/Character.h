@@ -22,6 +22,7 @@ public:
 	void SetHitSpheres();
 	void SetOpponent(Character* other);
 	void SetAlive(bool ali);
+	void ApplyAttackMotion();
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
@@ -31,14 +32,12 @@ public:
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
 
-	VECTOR GetPosition() const { return transform.position; }
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
 	bool IsGuardOn() const { return GuardOn; }
 
 	void SetHp(int value) { Hp = value; }
 	void SetInputDisplay(bool _display) { InputTypeP = _display; }
-	void SetPosition(const VECTOR& pos) { transform.position = pos; }
 	// bool GetisPunching() const { return isPunching; }
 	// bool GetisPlayer() const { return isPlayer; }
 
@@ -56,6 +55,10 @@ protected:
 	VECTOR basePos; // 現在位置
 	VECTOR worldCenter;  // Colliderの現在位置
 	VECTOR attackPos; // 攻撃の時に当たったColliderの位置
+	VECTOR myPos;
+	VECTOR opPos;
+	VECTOR direction;
+	VECTOR startPos;
 
 	int Hp; // 現在のHP
 	int MaxHp; // 最大値のHP
@@ -86,6 +89,7 @@ protected:
 	bool isAlive; // HP > 0 の時だけ true
 	bool InputTypeP;
 	bool GuardOn;
+	bool isPositionCorrected;
 
 	// Playerの骨制御
 	int headBone;

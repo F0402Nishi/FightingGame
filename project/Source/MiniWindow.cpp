@@ -12,7 +12,10 @@ const char* commandList[] = {
 	"弱キック", 
 	"中キック", 
 	"強キック", 
-	"ガード"
+	"ガード",
+	"トレーニング専用",
+	"オプション",
+	"モード切り替え",
 };
 
 // === コマンドキーリスト ===
@@ -25,7 +28,10 @@ const char* KeyList[] = {
 	"J", 
 	"K", 
 	"L", 
-	"H"
+	"H",
+	"",
+	"Tab",
+	"Q",
 };
 
 MiniWindow::MiniWindow()
@@ -132,8 +138,8 @@ void MiniWindow::CommandWindow()
 {
 	int x = 50, y = 50, w = 1200, h = 650;
 	const int baseY = 100; // 最初の行のY
-	const int StatIndex = 0;
-	const int LastIndex = 9;
+	const int StatIndex = 0; // 最初の項目のインデックス
+	const int LastIndex = 12; // 最後の項目のインデックス
 	int rightY = baseY + StatIndex * itemHeight + scrollOffset;
 	int guardY = baseY + LastIndex * itemHeight + scrollOffset;
 		
@@ -144,8 +150,12 @@ void MiniWindow::CommandWindow()
 	SetDrawArea(x, y, x + w, y + h);
 
 	for (int i = 0; i < commandCount; i++) {
+		int drawX = 200;
 		int drawY = 100 + i * 100 + scrollOffset; // 基準Y + スクロール
-		DrawExtendString(200, drawY, 2, 2, commandList[i], GetColor(255, 255, 255));
+		
+		if (i == 9) { drawX = 70; }
+
+		DrawExtendString(drawX, drawY, 2, 2, commandList[i], GetColor(255, 255, 255));
 	}
 
 	for (int k = 0; k < KeyCount; k++) {
