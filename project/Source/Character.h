@@ -76,12 +76,14 @@ protected:
 	float ratio; // 0～1 の割合
 	float deltaTime; // 前フレームから現在フレームまでの経過時間
 	float idleTimer;
+	float zOffset;
+	float framespeed; // 戻る速さ（調整可能）
 
 	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる
 	// bool isPlayer;
 	bool isMoveing; // アニメーションが再生中かの判定
-	bool isPunching; // パンチ中かの判定
+	// bool isPunching; // パンチ中かの判定
 	bool canCancel; // 攻撃キャンセル可能かの判定中
 	bool isGuarding; // ガード中かの判定
 	bool isAltIdle;
@@ -89,7 +91,7 @@ protected:
 	bool isAlive; // HP > 0 の時だけ true
 	bool InputTypeP;
 	bool GuardOn;
-	bool isPositionCorrected;
+	bool startPosSaved;
 
 	// Playerの骨制御
 	int headBone;

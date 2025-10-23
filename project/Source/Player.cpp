@@ -101,7 +101,7 @@ void Player::Update()
 		currentKey = KEY_INPUT_O;
 	}
 	if (CheckHitKey(KEY_INPUT_J) && !isMoveing) { // キック1
-		state = S_KICK1; canReduceHp = true; isMoveing = true; isPositionCorrected = true;
+		state = S_KICK1; canReduceHp = true; isMoveing = true;
 		currentKey = KEY_INPUT_J;
 	}
 	if (CheckHitKey(KEY_INPUT_K) && !isMoveing) {  // キック2
@@ -149,19 +149,19 @@ void Player::Update()
 		ui2d->DrawInputHistory(inputHistory);
 	}
 
-	//ImGui::Begin("PLAYER");
+	ImGui::Begin("PLAYER");
 	//ImGui::Text("state: %d", (int)state);
 	//ImGui::InputFloat("IdleTimer", &idleTimer);
 	//ImGui::Checkbox("Punching", &isPunching);
-	// ImGui::InputFloat("position.x", &transform.position.x);
-	// ImGui::InputFloat("position.y", &transform.position.y);
-	// ImGui::Text("push.x: %.2f", hit.x);
-	// ImGui::Text("push.y: %.2f", hit.y);
-	// ImGui::InputFloat("frame", &frame);
-	// ImGui::InputFloat("totalframe", &total);
-	// ImGui::InputFloat("ratioframe", &ratio);
-	// ImGui::Text("HP: %d", (int)Hp);
-	//ImGui::End();
+	//ImGui::InputFloat("position.x", &transform.position.x);
+	//ImGui::InputFloat("position.y", &transform.position.y);
+	//ImGui::Text("push.x: %.2f", hit.x);
+	//ImGui::Text("push.y: %.2f", hit.y);
+	ImGui::InputFloat("frame", &frame);
+	ImGui::InputFloat("totalframe", &total);
+	ImGui::InputFloat("ratioframe", &ratio);
+	//ImGui::Text("HP: %d", (int)Hp);
+	ImGui::End();
 
 }
 

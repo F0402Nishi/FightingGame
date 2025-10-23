@@ -39,16 +39,17 @@ Character::Character()
 	colIndex = 0;
 	deltaTime = 1.0f / 60.0f;
 	idleTimer = 0.0f;
+	framespeed = 0.2f;
 
 	canReduceHp = false;
 	canCancel = false;
 	isAltIdle = false;
 	isMoveing = false;
-	isPunching = false;
 	isGuarding = false;
 	isHitPlaying = false;
 	isAlive = true;
 	GuardOn = false;
+	startPosSaved = false;
 
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
@@ -292,41 +293,47 @@ void Character::UpdatePunch3()
 
 void Character::UpdateKick1()
 {
-	if (isPositionCorrected) {
-
-		// === 攻撃モーション補正（踏み込み・振りかぶり）===
-		direction.z = 0; // Zは後で別に補正するのでここでは無視
-
-		VECTOR offset;
-
-		if (frame < Kick1Data.hitStartFrame) {
-			offset = VScale(direction, -0.5f); // 振りかぶり
-		}
-		else if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
-			offset = VScale(direction, 1.0f);  // 踏み込み
-		}
-		else {
-			offset = VScale(direction, 0.2f);  // 振り抜き
-		}
-
-		// === Z軸だけ別にずらす ===
-		// 例えば、自分が左なら -0.5、右なら +0.5
-		float zOffset = (myPos.x < opPos.x) ? -0.5f : 0.5f;
-		offset.z = zOffset;
-
-		// 位置更新
-		transform.position = VAdd(myPos, offset);
-		isPositionCorrected = false;
-	}
-
-	if (!isPositionCorrected) {
-		PlayAttack("data/Character/Player/Atk_K_1.mv1", false);
-
-	}
-	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
+	if (!startPosSaved) {
+		startPos = transform.position;
+		startPosSaved = true;
+	}
+
+	// === 攻撃モーション補正（踏み込み・振りかぶり）===
+	direction.z = 0; // Zは後で別に補正するのでここでは無視
+	VECTOR offset;
+
+	if (frame < Kick1Data.hitStartFrame) {
+		offset = VScale(direction, -0.5f); // 振りかぶり
+	}
+	else if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
+		offset = VScale(direction, 1.0f);  // 踏み込み
+	}
+	else {
+		offset = VScale(direction, 0.2f);  // 振り抜き
+	}
+
+	// === Z軸だけ別にずらす ===
+	if (frame <= 16) {
+		// 例えば、自分が左なら -1.5、右なら +1.5
+		zOffset = (myPos.x < opPos.x) ? -1.5f : 1.5f;
+	}
+	else {
+		// 16フレームを超えたらゆっくり戻る
+		float diffZ = startPos.z - transform.position.z;
+		zOffset = diffZ * framespeed; // 徐々にstartPosへ近づく
+	}
+
+	// Z方向の最終補正を offset に反映
+	offset.z = zOffset;
+
+	// 位置更新
+	transform.position = VAdd(myPos, offset);
+
+	PlayAttack("data/Character/Player/Atk_K_1.mv1", false);
+	
 	if (opponent != nullptr) {
 		// === ヒット判定 ===
 		if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
@@ -432,19 +439,19 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 	anim->Play(animFile, loop); // , true のちに追加
 
 	//ImGui::Begin("PlayAttack");
-	// ImGui::Text("Current Animation: %s", cur.c_str());
-	// ImGui::Text("isFromIdle: %s", isFromIdle ? "true" : "false");
-	// ImGui::Text("force: %s", force ? "true" : "false");
+	//ImGui::Text("Current Animation: %s", cur.c_str());
+	//ImGui::Text("isFromIdle: %s", isFromIdle ? "true" : "false");
+	//ImGui::Text("force: %s", force ? "true" : "false");
 	//ImGui::End();
 }
 
 void Character::InReturn()
 {
 	if (anim->IsFinish()) {
-		isMoveing = false;
-		isPunching = false;
+		startPosSaved = false; // 次回攻撃用にフラグリセット
+		isMoveing = false; // 攻撃終了
 		canReduceHp = false;
-		state = S_STOP;
+		state = S_STOP; // 状態を通常に戻す
 		return;
 	}
 }
