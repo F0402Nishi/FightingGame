@@ -209,7 +209,6 @@ void CPU::UpdateCloseCombat()
 					canReduceHp = true;
 				}
 				isMoveing = true;
-				sum = 0;
 				break;
 			}
 		}
@@ -262,10 +261,9 @@ void CPU::UpdateMidCombat()
 			if (a < sum) {
 				state = attackStates[i];
 				canReduceHp = true;
-				isMoveing = true;
-				sum = 0;
-				break;
 			}
+			isMoveing = true;
+			break;
 		}
 	}
 	else { // 90〜99 → ガード（10%）
@@ -308,10 +306,9 @@ void CPU::UpdateLongCombat()
 			if (a < sum) {
 				state = attackStates[i];
 				canReduceHp = true;
-				isMoveing = true;
-				sum = 0;
-				break;
 			}
+			isMoveing = true;
+			break;
 		}
 	}
 	else { // 85～94 → ガード 10%

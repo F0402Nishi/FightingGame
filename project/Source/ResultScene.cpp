@@ -84,13 +84,13 @@ void ResultScene::Update()
 	if (sceneNumber == 2 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("SELECT"); }
 	if (sceneNumber == 3 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("TITLE"); }
 
-	ImGui::Begin("Result");
-	ImGui::Checkbox("window", &windowClose);
-	ImGui::Checkbox("resultwindowOpen", &miniwindow->resultwindowOpen);
+	// ImGui::Begin("Result");
+	// ImGui::Checkbox("window", &windowClose);
+	// ImGui::Checkbox("resultwindowOpen", &miniwindow->resultwindowOpen);
 	// ImGui::Text("boxY = %d", miniwindow->boxY);
 	// ImGui::Text("resultNumber = %d", (int)resultNumber);
 	// ImGui::Text("resultnumbers = %d", (int)resultnumbers);
-	ImGui::End();
+	// ImGui::End();
 }
 
 void ResultScene::Draw()

@@ -38,6 +38,7 @@ PlayScene::PlayScene()
 		p1->SetInputDisplay(false);
 	}
 
+
 	new Stage();
 	new Field();
 	h1 = new UI2D();
@@ -260,5 +261,5 @@ void PlayScene::MenuKey()
 			}
 		}
 	}
-	else { p1->SetInputDisplay(true); }
+	else { p1->SetInputDisplay(false); }
 }

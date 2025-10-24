@@ -13,6 +13,20 @@ enum class AttackType {
 	Kick
 };
 
+struct AttackData {
+	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
+	int hitEndFrame; // 当たり判定が「消える」最後のフレーム
+	int cancelStartFrame; // 別の技へ“キャンセルしてよい”最初のフレーム
+	int cancelEndFrame; // キャンセル“してよい”最後のフレーム
+};
+
+static const AttackData Punch1Data = { 7, 10, 0, 6 }; // 15
+static const AttackData Punch2Data = { 7, 11, 0, 6 }; // 19
+static const AttackData Punch3Data = { 12, 17, 0, 11 }; // 22
+static const AttackData Kick1Data = { 15, 20, 0, 14 }; // 27
+static const AttackData Kick2Data = { 15, 20, 0, 14 }; // 27
+static const AttackData Kick3Data = { 18, 23, 0, 17 }; // 44
+
 class Character : public Object3D
 {
 public:
@@ -22,7 +36,8 @@ public:
 	void SetHitSpheres();
 	void SetOpponent(Character* other);
 	void SetAlive(bool ali);
-	void ApplyAttackMotion();
+	void SetHp(int value) { Hp = value; }
+	void SetInputDisplay(bool _display) { InputTypeP = _display; }
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
@@ -32,12 +47,12 @@ public:
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
 
+	VECTOR ApplyAttackMotion(const AttackData& data, const VECTOR& direction, float frame, char moveAxis);
+	
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
+	
 	bool IsGuardOn() const { return GuardOn; }
-
-	void SetHp(int value) { Hp = value; }
-	void SetInputDisplay(bool _display) { InputTypeP = _display; }
 	// bool GetisPunching() const { return isPunching; }
 	// bool GetisPlayer() const { return isPlayer; }
 
@@ -59,6 +74,7 @@ protected:
 	VECTOR opPos;
 	VECTOR direction;
 	VECTOR startPos;
+	VECTOR baseOffset;
 
 	int Hp; // 現在のHP
 	int MaxHp; // 最大値のHP
@@ -76,8 +92,8 @@ protected:
 	float ratio; // 0～1 の割合
 	float deltaTime; // 前フレームから現在フレームまでの経過時間
 	float idleTimer;
-	float zOffset;
 	float framespeed; // 戻る速さ（調整可能）
+	float zOffset;
 
 	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる

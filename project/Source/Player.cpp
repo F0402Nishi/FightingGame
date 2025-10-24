@@ -150,19 +150,20 @@ void Player::Update()
 	}
 
 	ImGui::Begin("PLAYER");
-	//ImGui::Text("state: %d", (int)state);
-	//ImGui::InputFloat("IdleTimer", &idleTimer);
-	//ImGui::Checkbox("Punching", &isPunching);
+	ImGui::Checkbox("InputTypeP", &InputTypeP);
 	//ImGui::InputFloat("position.x", &transform.position.x);
 	//ImGui::InputFloat("position.y", &transform.position.y);
-	//ImGui::Text("push.x: %.2f", hit.x);
-	//ImGui::Text("push.y: %.2f", hit.y);
+	//ImGui::InputFloat("IdleTimer", &idleTimer);
+	//ImGui::InputFloat("zOffset", &zOffset);
 	ImGui::InputFloat("frame", &frame);
 	ImGui::InputFloat("totalframe", &total);
-	ImGui::InputFloat("ratioframe", &ratio);
+	//ImGui::InputFloat("ratioframe", &ratio);
+	//ImGui::Text("state: %d", (int)state);
+	//ImGui::Text("push.x: %.2f", hit.x);
+	//ImGui::Text("push.y: %.2f", hit.y);
+	//ImGui::Text("Position: z=%.2f", startPos.z);
 	//ImGui::Text("HP: %d", (int)Hp);
 	ImGui::End();
-
 }
 
 void Player::Draw()

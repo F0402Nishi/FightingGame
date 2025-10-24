@@ -1,5 +1,6 @@
 ﻿#include "Character.h"
 #include <assert.h>
+#include <vector>
 #include "../ImGui/imgui.h"
 #include "Stage.h"
 #include "HitCheck.h"
@@ -8,20 +9,6 @@
 #define PLAYER_SPEED 2.0f
 #define PLAYER_JUMP 25.0f
 #define PLAYER_HP 1000
-
-struct AttackData {
-	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
-	int hitEndFrame; // 当たり判定が「消える」最後のフレーム
-	int cancelStartFrame; // 別の技へ“キャンセルしてよい”最初のフレーム
-	int cancelEndFrame; // キャンセル“してよい”最後のフレーム
-};
-
-static const AttackData Punch1Data = { 7, 10, 0, 6 }; // 15
-static const AttackData Punch2Data = { 7, 11, 0, 6 }; // 19
-static const AttackData Punch3Data = { 12, 17, 0, 11 }; // 22
-static const AttackData Kick1Data = { 15, 20, 0, 14 }; // 27
-static const AttackData Kick2Data = { 15, 20, 0, 14 }; // 27
-static const AttackData Kick3Data = { 18, 23, 0, 17 }; // 44
 
 Character::Character()
 {
@@ -86,7 +73,9 @@ void Character::Always()
 
 	myPos = transform.position;
 	opPos = opponent->GetTransform().position;
-	direction = VNorm(opPos - myPos);
+	if (state == S_STOP) {
+		direction = VNorm(opPos - myPos);
+	}
 
 	if (isHitPlaying) {
 		if (anim->IsFinish()) { isHitPlaying = false; }
@@ -153,7 +142,7 @@ void Character::Draw()
 	basePos = transform.position;
 	for (const SphereCollder& col : hitSpheres) {
 		worldCenter = col.GetWorldCenter(basePos);
-		//DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
+		// DrawSphere3D(VAdd(worldCenter, VGet(0, 0, 0)), col.radius, 20, GetColor(255, 0, 0), GetColor(255, 0, 0), FALSE);
 	}
 
 	if (!anim) return;
@@ -302,18 +291,9 @@ void Character::UpdateKick1()
 	}
 
 	// === 攻撃モーション補正（踏み込み・振りかぶり）===
+	zOffset = 0;
 	direction.z = 0; // Zは後で別に補正するのでここでは無視
-	VECTOR offset;
-
-	if (frame < Kick1Data.hitStartFrame) {
-		offset = VScale(direction, -0.5f); // 振りかぶり
-	}
-	else if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
-		offset = VScale(direction, 1.0f);  // 踏み込み
-	}
-	else {
-		offset = VScale(direction, 0.2f);  // 振り抜き
-	}
+	baseOffset = ApplyAttackMotion(Kick1Data, direction, frame, 'z');
 
 	// === Z軸だけ別にずらす ===
 	if (frame <= 16) {
@@ -324,13 +304,17 @@ void Character::UpdateKick1()
 		// 16フレームを超えたらゆっくり戻る
 		float diffZ = startPos.z - transform.position.z;
 		zOffset = diffZ * framespeed; // 徐々にstartPosへ近づく
+		if (fabs(diffZ) < 0.1f) { // 誤差閾値
+			transform.position.z = startPos.z;
+		}
 	}
 
 	// Z方向の最終補正を offset に反映
-	offset.z = zOffset;
+	// baseOffset.z = zOffset;
 
 	// 位置更新
-	transform.position = VAdd(myPos, offset);
+	// transform.position = VAdd(myPos, baseOffset);
+	transform.position.z = startPos.z + zOffset;
 
 	PlayAttack("data/Character/Player/Atk_K_1.mv1", false);
 	
@@ -351,15 +335,41 @@ void Character::UpdateKick1()
 	}
 
 	InReturn();
+
+	//ImGui::Begin("KickAttack");
+	//ImGui::Text("Current Animation: %s", cur.c_str());
+	//ImGui::Text("isFromIdle: %s", isFromIdle ? "true" : "false");
+	//ImGui::Text("force: %s", force ? "true" : "false");
+	//ImGui::End();
 }
 
 void Character::UpdateKick2()
 {
-	PlayAttack("data/Character/Player/Atk_K_2.mv1", false);
-	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
+	if (!startPosSaved) {
+		startPos = transform.position;
+		startPosSaved = true;
+	}
+
+	// === Kick2専用：X軸を少し後ろに下げる（溜め動作）===
+	float xOffset = 0.0f;
+	// direction.x = 0;
+	baseOffset = ApplyAttackMotion(Kick2Data, direction, frame, 'x');
+
+	if (frame < 16) {
+		// 相手が右側なら左に、左側なら右に少し下がる
+		xOffset = (myPos.x < opPos.x) ? -3.0f : +3.0f;
+	}
+
+	baseOffset.x += xOffset;
+
+	// 位置更新
+	transform.position = VAdd(startPos, baseOffset);
+
+	PlayAttack("data/Character/Player/Atk_K_2.mv1", false);
+	
 	if (opponent != nullptr) {
 		if (frame >= Kick2Data.hitStartFrame && frame <= Kick2Data.hitEndFrame) {
 			colIndex = 10;
@@ -437,12 +447,6 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 	// const bool force = !isFromIdle;
 
 	anim->Play(animFile, loop); // , true のちに追加
-
-	//ImGui::Begin("PlayAttack");
-	//ImGui::Text("Current Animation: %s", cur.c_str());
-	//ImGui::Text("isFromIdle: %s", isFromIdle ? "true" : "false");
-	//ImGui::Text("force: %s", force ? "true" : "false");
-	//ImGui::End();
 }
 
 void Character::InReturn()
@@ -489,17 +493,38 @@ void Character::SetAlive(bool ali)
 	}
 }
 
-void Character::ApplyAttackMotion()
+VECTOR Character::ApplyAttackMotion(const AttackData& data, const VECTOR& _direction, float _frame, char moveAxis)
 {
+	VECTOR offset = VGet(0, 0, 0);
+
+	VECTOR dirNoX = _direction;
+	dirNoX.x = 0;
+
+	if (_frame < data.hitStartFrame) {
+		offset = VScale(_direction, -0.5f); // 振りかぶり
+	}
+	else if (_frame >= data.hitStartFrame && _frame <= data.hitEndFrame) {
+		offset = VScale(_direction, 1.0f);  // 踏み込み
+	}
+	else {
+		offset = VScale(_direction, 0.2f);  // 振り抜き
+	}
+
+	//if (moveAxis == 'x' && _frame < 16) {
+	//	float xOffset = (myPos.x < opPos.x) ? -20.0f : 20.0f;
+	//	offset.x += xOffset;
+	//}
+
+	return offset;
 }
 
 void Character::CollisionDetection()
 {
-	if (opponent != nullptr) {
+	if (opponent != nullptr && canReduceHp) {
 		attackPos = hitSpheres[colIndex].GetWorldCenter(transform.position);
 		attackRadius = hitSpheres[colIndex].radius;
 		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-		if (!hitPart.empty() && canReduceHp) {
+		if (!hitPart.empty()) {
 			opponent->UpdateDamage(damage, attacktype);
 			canReduceHp = false;
 		}
@@ -517,6 +542,7 @@ void Character::ResolvePlayerCollision()
 
 	// 距離ベクトルと長さ
 	VECTOR diff = center2 - center;
+	diff.z = 0.0f; // Z軸を無視
 	float dist = VSize(diff);
 	float minDist = E_collder->radius * 0.7f; // 半径に係数をかける(もっと近づける)
 
