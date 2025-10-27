@@ -47,7 +47,7 @@ public:
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
 
-	VECTOR ApplyAttackMotion(const AttackData& data, const VECTOR& direction, float frame, char moveAxis);
+	VECTOR ApplyAttackMotion(const AttackData& data, float frame, char moveAxis);
 	
 	int GetHp() const { return Hp; }
 	int GetMaxHp() const { return MaxHp; }
@@ -93,7 +93,9 @@ protected:
 	float deltaTime; // 前フレームから現在フレームまでの経過時間
 	float idleTimer;
 	float framespeed; // 戻る速さ（調整可能）
-	float zOffset;
+	float xOffset;
+	float dist;
+	float correctionRange;
 
 	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる

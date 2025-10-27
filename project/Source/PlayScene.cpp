@@ -261,5 +261,11 @@ void PlayScene::MenuKey()
 			}
 		}
 	}
-	else { p1->SetInputDisplay(false); }
+	else if (!openwind && opponentType == 1){ 
+		p1->SetInputDisplay(true);
+	}
+	else
+	{
+		p1->SetInputDisplay(false);
+	}
 }

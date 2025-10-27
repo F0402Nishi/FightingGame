@@ -112,10 +112,12 @@ void Player::Update()
 		state = S_KICK3; canReduceHp = true; isMoveing = true;
 		currentKey = KEY_INPUT_L;
 	}
+
 	if (CheckHitKey(KEY_INPUT_H)) {  // ガード
 		state = S_PROTECT; isGuarding = true;
 		currentKey = KEY_INPUT_H;
 	}
+
 
 	// === 履歴に追加するのは押した瞬間だけ ===
 	if (inputHistory.empty() || currentKey != lastKey) {
@@ -150,11 +152,12 @@ void Player::Update()
 	}
 
 	ImGui::Begin("PLAYER");
-	ImGui::Checkbox("InputTypeP", &InputTypeP);
+	//ImGui::Checkbox("InputTypeP", &InputTypeP);
 	//ImGui::InputFloat("position.x", &transform.position.x);
 	//ImGui::InputFloat("position.y", &transform.position.y);
+	ImGui::InputFloat("position.z", &transform.position.z);
 	//ImGui::InputFloat("IdleTimer", &idleTimer);
-	//ImGui::InputFloat("zOffset", &zOffset);
+	ImGui::InputFloat("dist", &dist);
 	ImGui::InputFloat("frame", &frame);
 	ImGui::InputFloat("totalframe", &total);
 	//ImGui::InputFloat("ratioframe", &ratio);

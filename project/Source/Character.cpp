@@ -27,6 +27,8 @@ Character::Character()
 	deltaTime = 1.0f / 60.0f;
 	idleTimer = 0.0f;
 	framespeed = 0.2f;
+	xOffset = 0.0f;
+	correctionRange = 185.0f;
 
 	canReduceHp = false;
 	canCancel = false;
@@ -70,12 +72,6 @@ void Character::Always()
 
 	BoneCollision();
 	ResolvePlayerCollision();
-
-	myPos = transform.position;
-	opPos = opponent->GetTransform().position;
-	if (state == S_STOP) {
-		direction = VNorm(opPos - myPos);
-	}
 
 	if (isHitPlaying) {
 		if (anim->IsFinish()) { isHitPlaying = false; }
@@ -212,12 +208,8 @@ void Character::UpdatePunch1()
 	
 	if (opponent != nullptr) {
 		if (frame >= Punch1Data.hitStartFrame && frame <= Punch1Data.hitEndFrame) {
-			colIndex = 4;
-			damage = 20;
 			attacktype = AttackType::Punch;
-
-			// 相手がガード中かどうか判定
-			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			colIndex = 4;
 			
 			CollisionDetection();
 		}
@@ -239,11 +231,8 @@ void Character::UpdatePunch2()
 	
 	if (opponent != nullptr) {
 		if (frame >= Punch2Data.hitStartFrame && frame <= Punch2Data.hitEndFrame) {
-			colIndex = 7;
-			damage = 50;
 			attacktype = AttackType::Punch;
-
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			colIndex = 7;
 			
 			CollisionDetection();
 		}
@@ -264,11 +253,8 @@ void Character::UpdatePunch3()
 
 	if (opponent != nullptr) {
 		if (frame >= Punch3Data.hitStartFrame && frame <= Punch3Data.hitEndFrame) {
-			colIndex = 4;
-			damage = 70;
 			attacktype = AttackType::Punch;
-
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			colIndex = 4;
 			
 			CollisionDetection();
 		}
@@ -290,42 +276,40 @@ void Character::UpdateKick1()
 		startPosSaved = true;
 	}
 
-	// === 攻撃モーション補正（踏み込み・振りかぶり）===
-	zOffset = 0;
-	direction.z = 0; // Zは後で別に補正するのでここでは無視
-	baseOffset = ApplyAttackMotion(Kick1Data, direction, frame, 'z');
+	// === 攻撃モーション補正（Z軸）===
+	baseOffset = ApplyAttackMotion(Kick1Data, frame, 'z');
+	
+	// === Z方向の追加補正 ===
+	float zOffset = 0.0f;
 
-	// === Z軸だけ別にずらす ===
-	if (frame <= 16) {
-		// 例えば、自分が左なら -1.5、右なら +1.5
-		zOffset = (myPos.x < opPos.x) ? -1.5f : 1.5f;
-	}
-	else {
-		// 16フレームを超えたらゆっくり戻る
-		float diffZ = startPos.z - transform.position.z;
-		zOffset = diffZ * framespeed; // 徐々にstartPosへ近づく
-		if (fabs(diffZ) < 0.1f) { // 誤差閾値
-			transform.position.z = startPos.z;
+	if (dist < correctionRange) {
+		// === Z軸だけ別にずらす ===
+		if (frame <= 16) {
+			// 例えば、自分が左なら -1.5、右なら +1.5
+			zOffset = (myPos.x < opPos.x) ? -30.5f : 30.5f;
 		}
+		else {
+			// 16フレームを超えたらゆっくり戻る
+			float diffZ = startPos.z - transform.position.z;
+			zOffset = diffZ * framespeed; // 徐々にstartPosへ近づく
+			if (fabs(diffZ) < 0.1f) { // 誤差閾値
+				transform.position.z = startPos.z;
+			}
+		}
+
+		// 位置更新
+		transform.position = VAdd(startPos, baseOffset);
+		transform.position.z += zOffset;
 	}
-
-	// Z方向の最終補正を offset に反映
-	// baseOffset.z = zOffset;
-
-	// 位置更新
-	// transform.position = VAdd(myPos, baseOffset);
-	transform.position.z = startPos.z + zOffset;
+	else { zOffset = 0.0f; }
 
 	PlayAttack("data/Character/Player/Atk_K_1.mv1", false);
 	
 	if (opponent != nullptr) {
 		// === ヒット判定 ===
 		if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
-			colIndex = 13;
-			damage = 20;
 			attacktype = AttackType::Kick;
-
-			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			colIndex = 13;
 			
 			CollisionDetection();
 		}
@@ -353,30 +337,30 @@ void Character::UpdateKick2()
 		startPosSaved = true;
 	}
 
-	// === Kick2専用：X軸を少し後ろに下げる（溜め動作）===
-	float xOffset = 0.0f;
-	// direction.x = 0;
-	baseOffset = ApplyAttackMotion(Kick2Data, direction, frame, 'x');
+	// === 攻撃モーション補正（X軸）===
+	baseOffset = ApplyAttackMotion(Kick2Data, frame, 'x');
 
-	if (frame < 16) {
-		// 相手が右側なら左に、左側なら右に少し下がる
-		xOffset = (myPos.x < opPos.x) ? -3.0f : +3.0f;
+	// === X方向の追加補正 ===
+	xOffset = 0.0f;
+
+	if (dist < correctionRange) {
+		if (frame <= 16) {
+			// 相手が右側なら左に、左側なら右に少し下がる
+			xOffset = (myPos.x < opPos.x) ? -65.0f : +65.0f;
+		}
+
+		// 位置更新
+		transform.position = VAdd(startPos, baseOffset);
+		transform.position.x += xOffset;
 	}
-
-	baseOffset.x += xOffset;
-
-	// 位置更新
-	transform.position = VAdd(startPos, baseOffset);
+	else { xOffset = 0.0f; }
 
 	PlayAttack("data/Character/Player/Atk_K_2.mv1", false);
 	
 	if (opponent != nullptr) {
 		if (frame >= Kick2Data.hitStartFrame && frame <= Kick2Data.hitEndFrame) {
-			colIndex = 10;
-			damage = 50;
 			attacktype = AttackType::Kick;
-
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			colIndex = 10;
 			
 			CollisionDetection();
 		}
@@ -391,18 +375,38 @@ void Character::UpdateKick2()
 
 void Character::UpdateKick3()
 {
-	PlayAttack("data/Character/Player/Atk_K_3.mv1", false);
-	
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
+	if (!startPosSaved) {
+		startPos = transform.position;
+		startPosSaved = true;
+	}
+
+	// === 攻撃モーション補正（X軸）===
+	baseOffset = ApplyAttackMotion(Kick3Data, frame, 'x');
+
+	// === X方向の追加補正 ===
+	xOffset = 0.0f;
+
+	if (dist < correctionRange) {
+		if (frame <= 20) {
+			// 相手が右側なら左に、左側なら右に少し下がる
+			xOffset = (myPos.x < opPos.x) ? -75.0f : +75.0f;
+		}
+
+		// 位置更新
+		transform.position = VAdd(startPos, baseOffset);
+		transform.position.x += xOffset;
+	}
+	else { xOffset = 0.0f; }
+
+	PlayAttack("data/Character/Player/Atk_K_3.mv1", false);
+	
 	if (opponent != nullptr) {
 		if (frame >= Kick3Data.hitStartFrame && frame <= Kick3Data.hitEndFrame) {
-			colIndex = 13;
-			damage = 70;
 			attacktype = AttackType::Kick;
-
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			colIndex = 13;
 			
 			CollisionDetection();
 		}
@@ -421,7 +425,6 @@ void Character::UpdateProtect()
 
 	if (anim->IsFinish()) {
 		isMoveing = false;
-		isGuarding = false;
 		canReduceHp = false;
 		state = S_STOP;
 		return;
@@ -454,6 +457,7 @@ void Character::InReturn()
 	if (anim->IsFinish()) {
 		startPosSaved = false; // 次回攻撃用にフラグリセット
 		isMoveing = false; // 攻撃終了
+		isGuarding = false; // ガード終了
 		canReduceHp = false;
 		state = S_STOP; // 状態を通常に戻す
 		return;
@@ -467,6 +471,8 @@ void Character::UpdateJump()
 
 void Character::UpdateDamage(int dmg, AttackType type)
 {
+	if (dmg <= 0) return; // ダメージが0なら何もしない
+
 	Hp -= dmg;
 
 	if (!isHitPlaying) { 
@@ -493,27 +499,29 @@ void Character::SetAlive(bool ali)
 	}
 }
 
-VECTOR Character::ApplyAttackMotion(const AttackData& data, const VECTOR& _direction, float _frame, char moveAxis)
+VECTOR Character::ApplyAttackMotion(const AttackData& data, float _frame, char moveAxis)
 {
+	// === 攻撃開始時点での位置関係を取得 ===
+	myPos = transform.position;
+	opPos = opponent->GetTransform().position;
+	direction = VNorm(opPos - myPos); // 差分
+	dist = VSize(VSub(opPos, myPos)); // 距離
+
 	VECTOR offset = VGet(0, 0, 0);
 
-	VECTOR dirNoX = _direction;
-	dirNoX.x = 0;
-
 	if (_frame < data.hitStartFrame) {
-		offset = VScale(_direction, -0.5f); // 振りかぶり
+		offset = VScale(direction, -0.5f); // 振りかぶり
 	}
 	else if (_frame >= data.hitStartFrame && _frame <= data.hitEndFrame) {
-		offset = VScale(_direction, 1.0f);  // 踏み込み
+		offset = VScale(direction, 1.0f);  // 踏み込み
 	}
 	else {
-		offset = VScale(_direction, 0.2f);  // 振り抜き
+		offset = VScale(direction, 0.2f);  // 振り抜き
 	}
 
-	//if (moveAxis == 'x' && _frame < 16) {
-	//	float xOffset = (myPos.x < opPos.x) ? -20.0f : 20.0f;
-	//	offset.x += xOffset;
-	//}
+	// === X・Z軸の補正（必要に応じて）===
+	if (moveAxis == 'x') offset.z = 0.0f;
+	if (moveAxis == 'z') offset.x = 0.0f;
 
 	return offset;
 }
@@ -525,6 +533,38 @@ void Character::CollisionDetection()
 		attackRadius = hitSpheres[colIndex].radius;
 		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
 		if (!hitPart.empty()) {
+			switch (state) {
+			case S_PUNCH1:
+				if (hitPart == "Head") damage = 50;
+				else damage = 0;
+				if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+				break;
+			case S_PUNCH2:
+				if (hitPart == "Head") damage = 100;
+				else damage = 0;
+				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+				break;
+			case S_PUNCH3:
+				if (hitPart == "Head") damage = 150;
+				else damage = 0;
+				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+				break;
+			case S_KICK1:
+				if (hitPart == "Body") damage = 50;
+				else damage = 0;
+				if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+				break;
+			case S_KICK2:
+				if (hitPart == "Body") damage = 100;
+				else damage = 0;
+				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+				break;
+			case S_KICK3: 
+				if (hitPart == "Body") damage = 150;
+				else damage = 0;
+				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+				break;
+			}
 			opponent->UpdateDamage(damage, attacktype);
 			canReduceHp = false;
 		}
