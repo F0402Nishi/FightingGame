@@ -70,6 +70,14 @@ PlayScene::PlayScene()
 	openwind = false;
 	changeScene = false;
 
+	wasStartPressed = false;
+	wasUpPressed = false;
+	wasDownPressed = false;
+	firstFrame = true;
+
+	Gx = 0;
+	Gy = 0;
+
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
 
@@ -97,6 +105,26 @@ void PlayScene::Update()
 	UpdateCamera();
 	UpdateBattleFont();
 	MenuKey();
+	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
+	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
+
+	startPressed = inputScene.Buttons[XINPUT_BUTTON_START];
+	bPressed = inputScene.Buttons[XINPUT_BUTTON_B];
+	nowUp = keyCounter[KEY_INPUT_UP] == 1 || Gy < -200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_UP]; // 上キー or スティック上
+	nowDown = keyCounter[KEY_INPUT_DOWN] == 1 || Gy > 200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_DOWN];
+
+	startHit = startPressed && !wasStartPressed;
+	bHit = bPressed && !wasBPressed;
+	upHit = nowUp && !wasUpPressed;
+	downHit = nowDown && !wasDownPressed;
+
+	// シーン開始直後は押した瞬間判定を無効化
+	if (firstFrame) {
+		bHit = false;
+		upHit = false;
+		downHit = false;
+		firstFrame = false;
+	}
 
 	// === デバッグ用：強制遷移 ===
 	//if (CheckHitKey(KEY_INPUT_T)) {
@@ -221,7 +249,7 @@ void PlayScene::UpdateBattleFont()
 void PlayScene::MenuKey()
 {
 	if (isWind && !miniwindow->IsCommandNow()) {
-		if (keyCounter[KEY_INPUT_TAB] == 1 && !isMenu) {
+		if ((keyCounter[KEY_INPUT_TAB] == 1 || startHit) && !isMenu) {
 			isMenu = !isMenu;
 			openwind = !openwind;
 			miniwindow->ToggleMenu();
@@ -229,21 +257,23 @@ void PlayScene::MenuKey()
 		if (keyCounter[KEY_INPUT_TAB] == 0 && isMenu) {
 			isMenu = false;
 		}
+
+		wasStartPressed = startPressed;
 	}
 
 	// === 矢印移動(上下) ===
 	if (openwind) {
 		p1->SetInputDisplay(false);
 		if (!miniwindow->IsCommandNow()) {
-			if (keyCounter[KEY_INPUT_DOWN] == 1) {
+			if (downHit) {
 				miniwindow->MoveBox(1); // 下移動
 			}
-			if (keyCounter[KEY_INPUT_UP] == 1) {
+			if (upHit) {
 				miniwindow->MoveBox(-1); // 上移動
 			}
 		}
 
-		if (keyCounter[KEY_INPUT_RETURN] == 1) {
+		if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
 			int option = miniwindow->GetMenuOption();
 
 			switch (option) {
@@ -260,6 +290,10 @@ void PlayScene::MenuKey()
 				break;
 			}
 		}
+
+		wasBPressed = bPressed;
+		wasUpPressed = nowUp;
+		wasDownPressed = nowDown;
 	}
 	else if (!openwind && opponentType == 1){ 
 		p1->SetInputDisplay(true);

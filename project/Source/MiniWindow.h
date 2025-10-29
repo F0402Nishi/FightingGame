@@ -17,6 +17,7 @@ public:
 	void SetLayout(const std::vector<int>& _postionY);
 	void MoveBox(int _box);
 	void DrawResultBox(int _rnumbers);
+	void UpdateMenuWithRightStick();
 
 	int GetMenuOption() const;
 
@@ -44,6 +45,8 @@ private:
 	int arrowX;
 	int boxY;
 	int r = 0, g = 80, b = 255;
+	int Mx;
+	int My;
 
 	bool commandwindowOpen;
 	bool windowUpKeyInput;

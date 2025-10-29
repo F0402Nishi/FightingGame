@@ -21,6 +21,10 @@ TitleScene::TitleScene()
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
 
+	// === 前フレームの状態を保持 ===
+	wasBPressed = false;
+	wasBackPressed = false;
+
 #if false "ステージ試作"
 	ofstream f("data/test.txt"); //ファイルを開く
 	// const char* str = "1Aa_";
@@ -51,20 +55,33 @@ TitleScene::~TitleScene()
 void TitleScene::Update()
 {
 	UpdateKey();
+	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
 
-	if (keyCounter[KEY_INPUT_RETURN] == 1) {
+	// === 今フレームの状態 ===
+	bPressed = inputScene.Buttons[XINPUT_BUTTON_B];
+	backPressed = inputScene.Buttons[XINPUT_BUTTON_BACK];
+
+	// === 押した瞬間だけ ===
+	bHit = bPressed && !wasBPressed;
+	backHit = backPressed && !wasBackPressed;
+
+	// === シーン開始直後は押した瞬間判定を無効化 ===
+	if (firstFrame) {
+		bHit = false;
+		backHit = false;
+		firstFrame = false;
+	}
+
+	if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
 		SceneManager::ChangeScene("SELECT");
 	}
-	if (keyCounter[KEY_INPUT_ESCAPE] == 1) {
+	if (keyCounter[KEY_INPUT_ESCAPE] == 1 || backHit) {
 		SceneManager::Exit();
 	}
 
-	//if (CheckHitKey(KEY_INPUT_RETURN)) {
-	//	SceneManager::ChangeScene("SELECT");
-	//}
-	//if (CheckHitKey(KEY_INPUT_ESCAPE)) {
-	//	SceneManager::Exit();
-	//}
+	// === 前フレーム状態を更新 ===
+	wasBPressed = bPressed;
+	wasBackPressed = backPressed;
 }
 
 

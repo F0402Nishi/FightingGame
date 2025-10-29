@@ -32,6 +32,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetWindowSizeExtendRate(Screen::WINDOW_EXTEND);
 	ChangeWindowMode(Screen::WINDOW_MODE); // Windowモードの場合
 
+	// ★ここに追加！
+	SetUseXInputFlag(TRUE);   // ← Xboxコントローラー対応を有効化（重要！）
+
 	if (DxLib_Init() == -1)		// ＤＸライブラリ初期化処理
 	{
 		return -1;			// エラーが起きたら直ちに終了

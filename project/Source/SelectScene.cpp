@@ -29,11 +29,21 @@ SelectScene::SelectScene()
 	OpponentSelection = false;
 	isSetting = false;
 	changeScene = false;
+
+	firstFrame = true;
+	wasBPressed = false;
+	wasBackPressed = false;
+	wasRightPressed = false;
+	wasLeftPressed = false;
+	wasUpPressed = false;
+	wasDownPressed = false;
 	
 	COMMAND_X = -850;
 	COMMAND_Y = -200;
 	BATTLE_X = 400;
 	BATTLE_Y = 200;
+	Gx = 0;
+	Gy = 0;
 
 	Xkey = COMMAND_X;
 	Ykey = COMMAND_Y;
@@ -54,11 +64,38 @@ SelectScene::~SelectScene()
 void SelectScene::Update()
 {
 	KeyMovement();
+	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
+	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
 	fade->Update();
 
-	if (keyCounter[KEY_INPUT_TAB] == 1 && !isSetting) {
+	// === コントローラー用のKey一覧 ===
+	bPressed = inputScene.Buttons[XINPUT_BUTTON_B];
+	backPressed = inputScene.Buttons[XINPUT_BUTTON_BACK];
+	nowRight = keyCounter[KEY_INPUT_RIGHT] == 1 || Gx > 200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_RIGHT];
+	nowLeft = keyCounter[KEY_INPUT_LEFT] == 1 || Gx < -200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_LEFT];
+	nowUp = keyCounter[KEY_INPUT_UP] == 1 || Gy < -200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_UP]; // 上キー or スティック上
+	nowDown = keyCounter[KEY_INPUT_DOWN] == 1 || Gy > 200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_DOWN];
+
+	bHit = bPressed && !wasBPressed;
+	backHit = backPressed && !wasBackPressed;
+	rightHit = nowRight && !wasRightPressed;
+	leftHit = nowLeft && !wasLeftPressed;
+	upHit = nowUp && !wasUpPressed;
+	downHit = nowDown && !wasDownPressed;
+	
+	// シーン開始直後は押した瞬間判定を無効化
+	if (firstFrame) {
+		bHit = false;
+		backHit = false;
+		firstFrame = false;
+	}
+
+
+	if ((keyCounter[KEY_INPUT_TAB] == 1 || backHit) && !isSetting) {
 		SceneManager::ChangeScene("TITLE");
 	}
+
+	wasBackPressed = backPressed;
 }
 
 void SelectScene::Draw()
@@ -107,7 +144,7 @@ void SelectScene::KeyMovement()
 	UpdateKey();
 
 	// === コマンド表示用 ===
-	if (atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
+	if (atInit && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) && !SelectKeyInput) {
 		operation = !operation;
 		isSetting = !isSetting;
 		InputPossible = !InputPossible;
@@ -118,7 +155,7 @@ void SelectScene::KeyMovement()
 	}
 
 	// === ゲームタイプ選択用 ===
-	if (!atInit && keyCounter[KEY_INPUT_RETURN] == 1 && !SelectKeyInput) {
+	if (!atInit && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) && !SelectKeyInput) {
 		switch (YInit) {
 		case 0:
 			OpponentSelection = !OpponentSelection;
@@ -149,7 +186,7 @@ void SelectScene::KeyMovement()
 
 	// === 矢印移動(左右) ===
 	if (InputPossible) {
-		if (keyCounter[KEY_INPUT_RIGHT] == 1 || keyCounter[KEY_INPUT_LEFT] == 1) {
+		if (rightHit || leftHit) {
 			if (atInit) { // 初期位置にいたなら → 移動先へ
 				Xkey = BATTLE_X;
 				Ykey = BATTLE_Y;
@@ -165,15 +202,22 @@ void SelectScene::KeyMovement()
 
 	// === 矢印移動(上下) ===
 	if (OpponentSelection) {
-		if (keyCounter[KEY_INPUT_DOWN] == 1) {
+		if (downHit) {
 			YInit++; // 次の段階へ
 			if (YInit > 3) { YInit = 0; } // 4回目で戻る
 			Ykey = YPosition[YInit];
 		}
-		if (keyCounter[KEY_INPUT_UP] == 1) {
+		if (upHit) {
 			YInit--; // 前の段階へ
 			if (YInit < 0) { YInit = 3; } // 最初より前なら最後に戻る
 			Ykey = YPosition[YInit];
 		}
 	}
+
+	// === 前フレーム状態を更新 ===
+	wasBPressed = bPressed;
+	wasRightPressed = nowRight;
+	wasLeftPressed = nowLeft;
+	wasUpPressed = nowUp;
+	wasDownPressed = nowDown;
 }

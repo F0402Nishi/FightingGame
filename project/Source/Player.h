@@ -26,8 +26,16 @@ private:
 	UI2D* ui2d;
 
 	VECTOR velocity;
+	VECTOR stick; // 左スティックX軸取得用
+
+	XINPUT_STATE input;
+
+	int joyInput;
 	int lastKey;
 	int currentKey;
+	int lx;
+	int ly;
+	
 	bool isPlayer;
 };
 

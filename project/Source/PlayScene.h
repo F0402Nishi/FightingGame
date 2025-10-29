@@ -52,4 +52,7 @@ private:
 	bool isMenu;
 	bool isWind;
 	bool openwind;
+	bool wasStartPressed;
+	bool startPressed;
+	bool startHit;
 };

@@ -18,6 +18,9 @@ Player::Player(bool _isPlayer)
 	lastKey = NEUTRAL;
 	currentKey = NEUTRAL;
 
+	lx = 0;
+	ly = 0;
+
 	ui2d = new UI2D();
 
 	if (!isPlayer) {
@@ -34,6 +37,9 @@ Player::~Player()
 void Player::Update()
 {
 	Character::Always();
+	// joyInput = GetJoypadInputState(DX_INPUT_PAD1);
+	GetJoypadXInputState(DX_INPUT_PAD1, &input);
+	GetJoypadAnalogInput(&lx, &ly, DX_INPUT_PAD1);
 
 	if (!isPlayer) { // !isPlayerの攻撃判定用Colliderの位置を調整
 		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
@@ -46,12 +52,12 @@ void Player::Update()
 	if (!isAlive) return;
 
 	if (state == S_STOP) {
-		if (CheckHitKey(KEY_INPUT_A)) {
+		if (CheckHitKey(KEY_INPUT_A) || lx < -200) {
 			inputDir.x = -10.0f;
 			currentKey = KEY_INPUT_A;
 			// anim->Play("data/Character/Player/Walk_B.mv1", true); // 後ろ歩き
 		}
-		else if (CheckHitKey(KEY_INPUT_D)) {
+		else if (CheckHitKey(KEY_INPUT_D) || lx > 200) {
 			inputDir.x = 10.0f;
 			currentKey = KEY_INPUT_D;
 			// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
@@ -62,15 +68,6 @@ void Player::Update()
 		}
 	}
 
-	//のちに戻す
-#if false 
-	if (CheckHitKey(KEY_INPUT_SPACE)) {
-		velocityY = PLAYER_JUMP;
-		transform.position.y += velocityY;
-		state = S_JUMP;
-	}
-#endif
-
 	// 左右移動
 	if (VSize(inputDir) > 0) {
 		if (VSize(inputDir) >= 1.0f) {
@@ -80,6 +77,14 @@ void Player::Update()
 		transform.position += velocity;
 	}
 
+#if false "のちに戻す" 
+	if (CheckHitKey(KEY_INPUT_SPACE)) {
+		velocityY = PLAYER_JUMP;
+		transform.position.y += velocityY;
+		state = S_JUMP;
+	}
+#endif
+
 	// KEYが押しっぱなしの時に、canReduceHpがtrueとfalseを繰り返している
 	// そのため、ダメージが重複している。かつ、アニメーションは１回しか再生されておらず分かりにくい
 	// KEY_INPUTの際に、bool型の変数を追加して条件を「KEY_INPUT＆false」の時に変更
@@ -88,32 +93,32 @@ void Player::Update()
 	// キャンセル用の関数または変数を定義
 	// 例.Uのアニメーション中にIを押されたら、、、
 
-	if (CheckHitKey(KEY_INPUT_U) && !isMoveing) { // パンチ1
+	if ((CheckHitKey(KEY_INPUT_U) || input.Buttons[XINPUT_BUTTON_B]) && !isMoveing) { // パンチ1
 		state = S_PUNCH1; canReduceHp = true; isMoveing = true; 
 		currentKey = KEY_INPUT_U;
 	} 
-	if (CheckHitKey(KEY_INPUT_I) && !isMoveing) { // パンチ2
+	if ((CheckHitKey(KEY_INPUT_I) || input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER]) && !isMoveing) { // パンチ2
 		state = S_PUNCH2; canReduceHp = true; isMoveing = true; 
 		currentKey = KEY_INPUT_I;
 	}
-	if (CheckHitKey(KEY_INPUT_O) && !isMoveing) { // パンチ3
+	if ((CheckHitKey(KEY_INPUT_O) || input.RightTrigger > 50) && !isMoveing) { // パンチ3
 		state = S_PUNCH3; canReduceHp = true; isMoveing = true; 
 		currentKey = KEY_INPUT_O;
 	}
-	if (CheckHitKey(KEY_INPUT_J) && !isMoveing) { // キック1
+	if ((CheckHitKey(KEY_INPUT_J) || input.Buttons[XINPUT_BUTTON_A]) && !isMoveing) { // キック1
 		state = S_KICK1; canReduceHp = true; isMoveing = true;
 		currentKey = KEY_INPUT_J;
 	}
-	if (CheckHitKey(KEY_INPUT_K) && !isMoveing) {  // キック2
+	if ((CheckHitKey(KEY_INPUT_K) || input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER]) && !isMoveing) {  // キック2
 		state = S_KICK2; canReduceHp = true; isMoveing = true;
 		currentKey = KEY_INPUT_K;
 	}
-	if (CheckHitKey(KEY_INPUT_L) && !isMoveing) { // キック3
+	if ((CheckHitKey(KEY_INPUT_L) || input.LeftTrigger > 50) && !isMoveing) { // キック3
 		state = S_KICK3; canReduceHp = true; isMoveing = true;
 		currentKey = KEY_INPUT_L;
 	}
 
-	if (CheckHitKey(KEY_INPUT_H)) {  // ガード
+	if (CheckHitKey(KEY_INPUT_H) || input.Buttons[XINPUT_BUTTON_X]) {  // ガード
 		state = S_PROTECT; isGuarding = true;
 		currentKey = KEY_INPUT_H;
 	}
@@ -151,21 +156,26 @@ void Player::Update()
 		ui2d->DrawInputHistory(inputHistory);
 	}
 
-	ImGui::Begin("PLAYER");
+	//ImGui::Begin("PLAYER");
 	//ImGui::Checkbox("InputTypeP", &InputTypeP);
 	//ImGui::InputFloat("position.x", &transform.position.x);
 	//ImGui::InputFloat("position.y", &transform.position.y);
-	ImGui::InputFloat("position.z", &transform.position.z);
+	//ImGui::InputFloat("position.z", &transform.position.z);
 	//ImGui::InputFloat("IdleTimer", &idleTimer);
-	ImGui::InputFloat("dist", &dist);
-	ImGui::InputFloat("frame", &frame);
-	ImGui::InputFloat("totalframe", &total);
+	//ImGui::InputFloat("dist", &dist);
+	//ImGui::InputFloat("frame", &frame);
+	//ImGui::InputFloat("totalframe", &total);
 	//ImGui::InputFloat("ratioframe", &ratio);
 	//ImGui::Text("state: %d", (int)state);
 	//ImGui::Text("push.x: %.2f", hit.x);
 	//ImGui::Text("push.y: %.2f", hit.y);
 	//ImGui::Text("Position: z=%.2f", startPos.z);
 	//ImGui::Text("HP: %d", (int)Hp);
+	//ImGui::End();
+
+	ImGui::Begin("PAD DEBUG");
+	ImGui::Text("joyInput: %d", joyInput);
+	ImGui::Text("lx: %d, ly: %d", lx, ly);
 	ImGui::End();
 }
 

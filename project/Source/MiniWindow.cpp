@@ -1,6 +1,8 @@
 ﻿#include "MiniWindow.h"
 #include <assert.h>
 #include "SelectScene.h"
+#include <Xinput.h>
+#pragma comment(lib, "XInput9_1_0.lib")
 
 // === コマンドリスト ===
 const char* commandList[] = {
@@ -60,6 +62,9 @@ MiniWindow::MiniWindow()
 	windowDownKeyInput = false;
 	listLast = false;
 	listStat = false;
+
+	Mx = 0;
+	My = 0;
 }
 
 MiniWindow::~MiniWindow()
@@ -68,7 +73,6 @@ MiniWindow::~MiniWindow()
 
 void MiniWindow::Update()
 {
-	// windowOpen = selectScene->GetMiniWindow();
 
 	if (commandwindowOpen) { 
 		if (CheckHitKey(KEY_INPUT_UP) == 1 && !windowUpKeyInput && !listStat) { // 上キー → 上スクロール
@@ -235,4 +239,15 @@ void MiniWindow::DrawResultBox(int _rnumbers)
 		r = 0; g = 255; b = 0;    // 緑
 		break;
 	}
+}
+
+void UpdateMenuWithRightStick() {
+	XINPUT_STATE inputMini;
+	if (XInputGetState(0, &inputMini) != ERROR_SUCCESS) return;
+
+	int ry = inputMini.Gamepad.sThumbRY;   // 右スティック Y
+	const int DZ = 2000;               // デッドゾーン
+
+	if (ry < -DZ) miniwindow->MoveBox(-1); // 上
+	if (ry > DZ) miniwindow->MoveBox(1);  // 下
 }
