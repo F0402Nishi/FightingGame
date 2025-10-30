@@ -179,7 +179,7 @@ void CPU::UpdateDice()
 {
 	// ===== 新しい行動を決める =====
 	
-	if (!isMoveing && !canReduceHp) {
+	if (!isMoveing) {
 		time += 1.0f;
 
 		if (time > 100.0f) { 
@@ -207,7 +207,7 @@ void CPU::UpdateCloseCombat()
 		NowAttack = true;
 
 		if (m < 20) {
-			inputDir.x = -0.5f;
+			inputDir.x = -1.0f;
 			Nowpos = true;
 		}
 		else {

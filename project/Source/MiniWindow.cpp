@@ -74,10 +74,12 @@ MiniWindow::~MiniWindow()
 
 void MiniWindow::Update()
 {
-	UpdateMenuWithRightStick();
+	GetJoypadAnalogInputRight(&Mx, &My, DX_INPUT_PAD1);
+	int DZ = 200; // デッドゾーン
+	stickUp = My < -DZ;
+	stickDown = My > DZ;
 
 	if (commandwindowOpen) { 
-
 		if ((CheckHitKey(KEY_INPUT_UP) == 1 || stickUp) && !windowUpKeyInput && !listStat) { // 上キー → 上スクロール
 			scrollOffset += 100;
 			windowUpKeyInput = true;
@@ -91,12 +93,14 @@ void MiniWindow::Update()
 			listStat = false;
 		}
 		if (CheckHitKey(KEY_INPUT_DOWN) == 0) { windowDownKeyInput = false; }
+
+		ImGui::Begin("Mini");
+		ImGui::Checkbox("stickUp", &stickUp);
+		ImGui::Checkbox("stickDown", &stickDown);
+		ImGui::InputInt("My", &My);
+		ImGui::End();
 	}
 
-	ImGui::Begin("Mini");
-	ImGui::Checkbox("stickUp", &stickUp);
-	ImGui::Checkbox("stickDown", &stickDown);
-	ImGui::End();
 
 
 	// === スクロール範囲の制限 ===
@@ -107,6 +111,12 @@ void MiniWindow::Update()
 
 void MiniWindow::Draw()
 {
+	if (padwindowOpen) {
+		int rx = 400, ry = 370, rw = 500, rh = 300;
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(192, 192, 192), TRUE); // 背景（濃い灰色）
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(255, 255, 255), FALSE); // 枠線（白）
+	}
+
 	if (menuwindowOpen) {
 		int mx = 0, my = 0.5, mw = 1280, mh = 720;
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
@@ -251,12 +261,5 @@ void MiniWindow::DrawResultBox(int _rnumbers)
 }
 
 void UpdateMenuWithRightStick() {
-	::XINPUT_STATE inputMini;
-	if (::XInputGetState(0, &inputMini) != ERROR_SUCCESS) return;
 
-	int ry = inputMini.Gamepad.sThumbRY;   // 右スティック Y
-	const int DZ = 2000; // デッドゾーン
-
-	stickUp = ry < -DZ;
-	stickDown = ry > DZ;
 }

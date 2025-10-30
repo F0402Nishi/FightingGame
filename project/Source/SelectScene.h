@@ -16,6 +16,7 @@ public:
 	void Update() override;
 	void Draw() override;
 	void KeyMovement();
+	int GetConnectedPadCount();
 
 	static int gameType;
 	// bool GetMiniWindow() const { return isWindowOpen; }
@@ -37,6 +38,7 @@ private:
 	int BATTLE_Y;
 	int YInit;
 	int YPosition[4] = {200, 75, -85, -250};
+	int padCount;
 
 	bool operation;
 	bool SelectKeyInput;

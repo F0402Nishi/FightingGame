@@ -49,6 +49,7 @@ SelectScene::SelectScene()
 	Ykey = COMMAND_Y;
 
 	YInit = 0;
+	padCount = 0;
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -63,6 +64,8 @@ SelectScene::~SelectScene()
 
 void SelectScene::Update()
 {
+	padCount = GetConnectedPadCount();
+
 	KeyMovement();
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
 	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
@@ -116,6 +119,9 @@ void SelectScene::Draw()
 		DrawExtendString(930, 300, 2, 2, "TRAINING", GetColor(255, 255, 255));
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
 		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(192, 192, 192));
+		if (padCount > 2) {
+			DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(255, 255, 255));
+		}
 	}
 
 	fade->Draw();
@@ -173,9 +179,14 @@ void SelectScene::KeyMovement()
 			changeScene = true;
 			break;
 		case 3:
-			gameType = YInit;
-			// fade->FadeOut();
-			changeScene = true;
+			if (padCount >= 2) {
+				gameType = YInit;
+				fade->FadeOut();
+				changeScene = true;
+			}
+			else {
+				miniwindow->TogglePad(true);
+			}
 			break;
 		}
 	}
@@ -220,4 +231,19 @@ void SelectScene::KeyMovement()
 	wasLeftPressed = nowLeft;
 	wasUpPressed = nowUp;
 	wasDownPressed = nowDown;
+}
+
+int SelectScene::GetConnectedPadCount()
+{
+	int count = 0;
+	XINPUT_STATE state;
+
+	// 最大4台分チェック
+	for (int i = 0; i < 4; i++) {
+		if (GetJoypadXInputState(DX_INPUT_PAD1 + i, &state) == 0) {
+			count++;
+		}
+	}
+
+	return count;
 }

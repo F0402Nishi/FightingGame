@@ -24,6 +24,7 @@ public:
 	void ToggleCommand() { commandwindowOpen = !commandwindowOpen; }
 	void ToggleMenu() { menuwindowOpen = !menuwindowOpen; }
 	void ToggleReslut(int _result) { resultwindowOpen = _result; }
+	void TogglePad(int _pad) { padwindowOpen = _pad; }
 	bool IsCommandNow() { return commandwindowOpen; }
 	bool IsMenuNow() { return menuwindowOpen; }
 	bool IsResultNow() { return resultwindowOpen; }
@@ -46,6 +47,7 @@ private:
 	int arrowX;
 	int boxY;
 	int r = 0, g = 80, b = 255;
+	int ry;
 	int Mx;
 	int My;
 
@@ -56,4 +58,5 @@ private:
 	bool listLast;
 	bool menuwindowOpen;
 	bool resultwindowOpen;
+	bool padwindowOpen;
 };
