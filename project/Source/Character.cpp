@@ -30,6 +30,9 @@ Character::Character()
 	xOffset = 0.0f;
 	correctionRange = 185.0f;
 
+	debugCollisionCount = 0;
+	debugRetunCount = 0;
+
 	canReduceHp = false;
 	canCancel = false;
 	isAltIdle = false;
@@ -455,10 +458,11 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 void Character::InReturn()
 {
 	if (anim->IsFinish()) {
+		debugRetunCount++;
 		startPosSaved = false; // 次回攻撃用にフラグリセット
+		canReduceHp = false;
 		isMoveing = false; // 攻撃終了
 		isGuarding = false; // ガード終了
-		canReduceHp = false;
 		state = S_STOP; // 状態を通常に戻す
 		return;
 	}
@@ -533,6 +537,7 @@ void Character::CollisionDetection()
 		attackRadius = hitSpheres[colIndex].radius;
 		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
 		if (!hitPart.empty()) {
+			debugCollisionCount++;
 			switch (state) {
 			case S_PUNCH1:
 				if (hitPart == "Head") damage = 50;
@@ -567,6 +572,7 @@ void Character::CollisionDetection()
 			}
 			opponent->UpdateDamage(damage, attacktype);
 			canReduceHp = false;
+			return;
 		}
 	}
 }

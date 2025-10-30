@@ -96,6 +96,8 @@ protected:
 	float xOffset;
 	float dist;
 	float correctionRange;
+	int debugCollisionCount;
+	int debugRetunCount;
 
 	bool isJumping; //ƒWƒƒƒ“ƒv’†‚©‚Ì”»’è
 	bool canReduceHp; // true‚Ì‚Æ‚«‚¾‚¯HP‚ðŒ¸‚ç‚¹‚é

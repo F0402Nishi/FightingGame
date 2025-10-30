@@ -27,6 +27,11 @@ ResultScene::ResultScene()
 	changeScene = false;
 	windowClose = false;
 
+	firstFrame = true;
+	wasBPressed = false;
+	wasUpPressed = false;
+	wasDownPressed = false;
+
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
 }
@@ -38,21 +43,35 @@ ResultScene::~ResultScene()
 void ResultScene::Update()
 {
 	UpdateKey();
+	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
+	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
 	fade->Update();
 	miniwindow->DrawResultBox(resultnumbers);
 
-	//if (keyCounter[KEY_INPUT_TAB] == 1) {
-	//	SceneManager::ChangeScene("TITLE");
-	//}
+	bPressed = inputScene.Buttons[XINPUT_BUTTON_B];
+	nowUp = keyCounter[KEY_INPUT_UP] == 1 || Gy < -200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_UP]; // 上キー or スティック上
+	nowDown = keyCounter[KEY_INPUT_DOWN] == 1 || Gy > 200 || inputScene.Buttons[XINPUT_BUTTON_DPAD_DOWN];
+
+	bHit = bPressed && !wasBPressed;
+	upHit = nowUp && !wasUpPressed;
+	downHit = nowDown && !wasDownPressed;
+
+	// シーン開始直後は押した瞬間判定を無効化
+	if (firstFrame) {
+		bHit = false;
+		upHit = false;
+		downHit = false;
+		firstFrame = false;
+	}
 
 	if (miniwindow->IsResultNow()) {
-		if (keyCounter[KEY_INPUT_DOWN] == 1) {
+		if (downHit) {
 			miniwindow->MoveBox(1); // 下移動
 		}
-		if (keyCounter[KEY_INPUT_UP] == 1) {
+		if (upHit) {
 			miniwindow->MoveBox(-1); // 上移動
 		}
-		if (keyCounter[KEY_INPUT_RETURN] == 1) {
+		if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
 			int option = miniwindow->GetMenuOption();
 
 			switch (option) {
@@ -76,6 +95,10 @@ void ResultScene::Update()
 				break;
 			}
 		}
+
+		wasBPressed = bPressed;
+		wasUpPressed = nowUp;
+		wasDownPressed = nowDown;
 	}
 
 	if (windowClose) { miniwindow->ToggleReslut(false); }

@@ -28,7 +28,8 @@ public:
 	bool IsMenuNow() { return menuwindowOpen; }
 	bool IsResultNow() { return resultwindowOpen; }
 
-	bool resultwindowOpen;
+	bool stickUp;
+	bool stickDown;
 private:
 	SelectScene* selectScene;
 	PlayScene* playScene;
@@ -54,4 +55,5 @@ private:
 	bool listStat;
 	bool listLast;
 	bool menuwindowOpen;
+	bool resultwindowOpen;
 };

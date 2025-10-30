@@ -1,6 +1,7 @@
 ﻿#include "MiniWindow.h"
 #include <assert.h>
 #include "SelectScene.h"
+#include "../ImGui/imgui.h"
 #include <Xinput.h>
 #pragma comment(lib, "XInput9_1_0.lib")
 
@@ -73,22 +74,30 @@ MiniWindow::~MiniWindow()
 
 void MiniWindow::Update()
 {
+	UpdateMenuWithRightStick();
 
 	if (commandwindowOpen) { 
-		if (CheckHitKey(KEY_INPUT_UP) == 1 && !windowUpKeyInput && !listStat) { // 上キー → 上スクロール
+
+		if ((CheckHitKey(KEY_INPUT_UP) == 1 || stickUp) && !windowUpKeyInput && !listStat) { // 上キー → 上スクロール
 			scrollOffset += 100;
 			windowUpKeyInput = true;
 			listLast = false;
 		}
 		if (CheckHitKey(KEY_INPUT_UP) == 0) { windowUpKeyInput = false; }
 	
-		if (CheckHitKey(KEY_INPUT_DOWN) == 1 && !windowDownKeyInput && !listLast) { // 下キー → 下スクロール
+		if ((CheckHitKey(KEY_INPUT_DOWN) == 1 || stickDown) && !windowDownKeyInput && !listLast) { // 下キー → 下スクロール
 			scrollOffset -= 100;
 			windowDownKeyInput = true;
 			listStat = false;
 		}
 		if (CheckHitKey(KEY_INPUT_DOWN) == 0) { windowDownKeyInput = false; }
 	}
+
+	ImGui::Begin("Mini");
+	ImGui::Checkbox("stickUp", &stickUp);
+	ImGui::Checkbox("stickDown", &stickDown);
+	ImGui::End();
+
 
 	// === スクロール範囲の制限 ===
 	//int minOffset = -(commandCount * itemHeight - windowHeight); // 一番下まで
@@ -242,12 +251,12 @@ void MiniWindow::DrawResultBox(int _rnumbers)
 }
 
 void UpdateMenuWithRightStick() {
-	XINPUT_STATE inputMini;
-	if (XInputGetState(0, &inputMini) != ERROR_SUCCESS) return;
+	::XINPUT_STATE inputMini;
+	if (::XInputGetState(0, &inputMini) != ERROR_SUCCESS) return;
 
 	int ry = inputMini.Gamepad.sThumbRY;   // 右スティック Y
-	const int DZ = 2000;               // デッドゾーン
+	const int DZ = 2000; // デッドゾーン
 
-	if (ry < -DZ) miniwindow->MoveBox(-1); // 上
-	if (ry > DZ) miniwindow->MoveBox(1);  // 下
+	stickUp = ry < -DZ;
+	stickDown = ry > DZ;
 }

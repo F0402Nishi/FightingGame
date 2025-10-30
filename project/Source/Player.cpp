@@ -52,12 +52,12 @@ void Player::Update()
 	if (!isAlive) return;
 
 	if (state == S_STOP) {
-		if (CheckHitKey(KEY_INPUT_A) || lx < -200) {
+		if (CheckHitKey(KEY_INPUT_A) || lx < -200 || input.Buttons[XINPUT_BUTTON_DPAD_LEFT]) {
 			inputDir.x = -10.0f;
 			currentKey = KEY_INPUT_A;
 			// anim->Play("data/Character/Player/Walk_B.mv1", true); // 後ろ歩き
 		}
-		else if (CheckHitKey(KEY_INPUT_D) || lx > 200) {
+		else if (CheckHitKey(KEY_INPUT_D) || lx > 200 || input.Buttons[XINPUT_BUTTON_DPAD_RIGHT]) {
 			inputDir.x = 10.0f;
 			currentKey = KEY_INPUT_D;
 			// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
@@ -156,8 +156,11 @@ void Player::Update()
 		ui2d->DrawInputHistory(inputHistory);
 	}
 
-	//ImGui::Begin("PLAYER");
+	ImGui::Begin("PLAYER");
 	//ImGui::Checkbox("InputTypeP", &InputTypeP);
+	ImGui::Checkbox("canReduceHp", &canReduceHp);
+	ImGui::Checkbox("isMoving", &isMoveing);
+	//ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
 	//ImGui::InputFloat("position.x", &transform.position.x);
 	//ImGui::InputFloat("position.y", &transform.position.y);
 	//ImGui::InputFloat("position.z", &transform.position.z);
@@ -171,12 +174,12 @@ void Player::Update()
 	//ImGui::Text("push.y: %.2f", hit.y);
 	//ImGui::Text("Position: z=%.2f", startPos.z);
 	//ImGui::Text("HP: %d", (int)Hp);
-	//ImGui::End();
-
-	ImGui::Begin("PAD DEBUG");
-	ImGui::Text("joyInput: %d", joyInput);
-	ImGui::Text("lx: %d, ly: %d", lx, ly);
 	ImGui::End();
+
+	//ImGui::Begin("PAD DEBUG");
+	//ImGui::Text("joyInput: %d", joyInput);
+	//ImGui::Text("lx: %d, ly: %d", lx, ly);
+	//ImGui::End();
 }
 
 void Player::Draw()
