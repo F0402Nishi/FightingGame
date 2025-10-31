@@ -26,7 +26,6 @@ public:
 
 private:
 	Player* player;
-	Animator* anim;
 
 	VECTOR mypos; // ©•ª‚ÌˆÊ’u
 	VECTOR playerpos; // Player‚ÌˆÊ’u
@@ -39,6 +38,10 @@ private:
 	int a;
 	int sum;
 	int attackCount;
+	int movingrandom;
+	int attackrandom;
+	int random;
+	int attackNumber;
 
 	float targetDistance; // —‘z‚ÌŠÔ‡‚¢
 	float expandThreshold; // ‚±‚±‚Ü‚ÅL‚ª‚Á‚½‚ç‹l‚ß’¼‚·
@@ -89,4 +92,5 @@ private:
 	void UpdateMidCombat();
 	void UpdateLongCombat();
 	void UpdateDice();
+	void UpdateCombat();
 };

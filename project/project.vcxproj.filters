@@ -92,6 +92,7 @@
     <ClCompile Include="Source\ResultScene.cpp">
       <Filter>ResultScene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />
@@ -197,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="Source\ResultScene.h">
       <Filter>ResultScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\InputManager.h">
+      <Filter>PlayScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

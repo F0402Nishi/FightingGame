@@ -56,7 +56,6 @@ CPU::CPU(bool _iscpu)
 	actionFinished = false;
 	GuardNow = false;
 	
-	isBusy = isBusy = isMoveing || (state != S_STOP && !anim->IsFinish());
 
 	brain = MID_COMBAT;
 
@@ -80,6 +79,8 @@ void CPU::Update()
 
 	if (GuardOn) { state = S_PROTECT; isGuarding = true; }
 	else { state = S_STOP; }
+
+	isBusy = isMoveing || (state != S_STOP && !anim->IsFinish());
 	
 	if (!isCpu) return;
 
@@ -116,6 +117,9 @@ void CPU::Update()
 	// === CPUの思考パターン別による関数に移動 ===
 	switch (brain) {
 	case CLOSE_COMBAT:
+		random = 20;
+		movingrandom = 20;
+		attackrandom = 90;
 		UpdateCloseCombat();
 		break;
 	case MID_COMBAT:
@@ -146,20 +150,16 @@ void CPU::Update()
 	ImGui::Checkbox("isMoving", &isMoveing);
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("Current state: %s", StateToString(state));
+	ImGui::InputInt("damage", &damage);
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("attack", &a);
 	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
 	ImGui::InputInt("debugRetunCount", &debugRetunCount);
 	ImGui::InputFloat("inputDir.x", &inputDir.x);
+	ImGui::InputFloat("time", &time);
 	ImGui::End();
 
-	if (!canReduceHp) {
-		int F = 0;
-	}
-	else {
-		int K = 0;
-	}
 #if 0
 	
 	ImGui::Checkbox("GuardOn", &GuardOn);
@@ -167,9 +167,7 @@ void CPU::Update()
 	
 	ImGui::Checkbox("isAlive", &isAlive);
 	ImGui::Text("state: %d", (int)state);
-	ImGui::InputInt("damage", &damage);
 	ImGui::InputInt("speed", &speed);
-	ImGui::InputFloat("time", &time);
 	ImGui::InputFloat("position.x", &transform.position.x);
 	ImGui::InputFloat("position.y", &transform.position.y);
 	ImGui::InputFloat("dx", &dx);
@@ -200,10 +198,10 @@ void CPU::UpdateCloseCombat()
 
 		// 移動方向の決定
 		if (m < 20) {
-			inputDir.x = -1.0f; // 左
+			// inputDir.x = -1.0f; // 左
 		}
 		else {
-			inputDir.x = 1.0f; // 右
+			// inputDir.x = 1.0f; // 右
 		}
 
 		// フレームごとに移動
@@ -223,20 +221,17 @@ void CPU::UpdateCloseCombat()
 		NowMovement = true;
 
 		// === 攻撃系 ===
-		if (canReduceHp == false) {
-			for (int i = 0; i < attackCount; i++) {
-				sum += Close_attack[i];
-				if (a < sum) {
-					if (state != attackStates[i]) {
-						state = attackStates[i];
-						canReduceHp = true;
-					}
-					isMoveing = true;
-					break;
+		for (int i = 0; i < attackCount; i++) {
+			sum += Close_attack[i];
+			if (a < sum) {
+				if (state != attackStates[i]) {
+					state = attackStates[i];
+					canReduceHp = true;
 				}
+				isMoveing = true;
+				break;
 			}
 		}
-		
 	}
 	else { // 90〜99 → ガード（10%）
 		state = S_PROTECT;
@@ -257,10 +252,10 @@ void CPU::UpdateMidCombat()
 
 		// 移動方向の決定
 		if (m < 50) {
-			inputDir.x = -1.0f; // 左
+			// inputDir.x = -1.0f; // 左
 		}
 		else {
-			inputDir.x = 1.0f; // 右
+			// inputDir.x = 1.0f; // 右
 		}
 
 		// フレームごとに移動
@@ -311,10 +306,10 @@ void CPU::UpdateLongCombat()
 
 		// 移動方向の決定
 		if (m < 10) {
-			inputDir.x = 1.0f; // 右
+			// inputDir.x = 1.0f; // 右
 		}
 		else {
-			inputDir.x = -1.0f;  // 左
+			// inputDir.x = -1.0f;  // 左
 		}
 
 		// フレームごとに移動
@@ -356,7 +351,7 @@ void CPU::UpdateDice()
 {
 	// ===== 新しい行動を決める =====
 
-	if (!isMoveing && time > 100.0f) {
+	if (!isMoveing && time > 50.0f) {
 		NowDice = false;
 		NowMovement = false;
 		NowAttack = false;
@@ -367,6 +362,60 @@ void CPU::UpdateDice()
 	if (!NowDice) { r = rand() % 100; NowDice = true; }
 	if (!NowMovement) { m = rand() % 100; NowMovement = true; }
 	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
+}
+
+void CPU::UpdateCombat()
+{
+	// 移動や攻撃中は乱数を生成しない
+	if (!isBusy) { UpdateDice(); }
+
+	if (r < random) { // 0～19 → 移動 20%
+		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
+		isMoveing = true;
+		NowAttack = true;
+
+		// 移動方向の決定
+		if (m < movingrandom) {
+			inputDir.x = -1.0f; // 左
+		}
+		else {
+			inputDir.x = 1.0f; // 右
+		}
+
+		// フレームごとに移動
+		mypos.x += inputDir.x;
+
+		// 開始位置からの移動距離を計算
+		moved = mypos.x - CPUpos;
+
+		// 方向と距離に応じて停止判定
+		if ((inputDir.x > 0.0f && fabs(moved) >= 100.0f) || (inputDir.x < 0.0f && fabs(moved) >= 10.0f)) {
+			inputDir.x = 0.0f;
+			Nowpos = false;
+		}
+	}
+	else if (r < attackrandom) { // 20～89 → 攻撃 70%
+		// NowAttack = true; // a もリセット
+		NowMovement = true;
+
+		// === 攻撃系 ===
+		for (int i = 0; i < attackCount; i++) {
+			sum += Close_attack[i];
+			if (a < sum) {
+				if (state != attackStates[i]) {
+					state = attackStates[i];
+					canReduceHp = true;
+				}
+				isMoveing = true;
+				break;
+			}
+		}
+	}
+	else { // 90〜99 → ガード（10%）
+		state = S_PROTECT;
+		isGuarding = true;
+		isMoveing = true;
+	}
 }
 
 void CPU::EffectiveRange()
