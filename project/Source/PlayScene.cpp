@@ -134,16 +134,16 @@ void PlayScene::Update()
 	//	SceneManager::ChangeScene("SELECT");
 	//}
 	
-	ImGui::Begin("Menu");
+	//ImGui::Begin("Menu");
 	//ImGui::Text("arrowY = %d", miniwindow->arrowY);
 	//ImGui::InputInt("Type", &opponentType);
 	//ImGui::Text("alpha = %d", fade->alpha);
 	//ImGui::Text("IsBattleFinish = %d", h2->IsBattleFinish());
 	//ImGui::Checkbox("changeScene", &changeScene);
 	//ImGui::Checkbox("isWind", &isWind);
-	ImGui::Checkbox("stickUp", &miniwindow->stickUp);
-	ImGui::Checkbox("stickDown", &miniwindow->stickDown);
-	ImGui::End();
+	//ImGui::Checkbox("stickUp", &miniwindow->stickUp);
+	//ImGui::Checkbox("stickDown", &miniwindow->stickDown);
+	//ImGui::End();
 }
 
 void PlayScene::Draw()

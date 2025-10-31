@@ -26,6 +26,7 @@ public:
 	int Gy;
 
 	bool changeScene;
+
 	// === ‘OƒtƒŒ[ƒ€‚Ìó‘Ô‚ğ•Û ===
 	bool firstFrame;
 	bool wasBPressed;

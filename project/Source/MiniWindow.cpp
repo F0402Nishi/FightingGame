@@ -2,8 +2,6 @@
 #include <assert.h>
 #include "SelectScene.h"
 #include "../ImGui/imgui.h"
-#include <Xinput.h>
-#pragma comment(lib, "XInput9_1_0.lib")
 
 // === コマンドリスト ===
 const char* commandList[] = {
@@ -59,10 +57,15 @@ MiniWindow::MiniWindow()
 	commandwindowOpen = false;
 	menuwindowOpen = false;
 	resultwindowOpen = false;
+	padwindowOpen = false;
 	windowUpKeyInput = false;
 	windowDownKeyInput = false;
 	listLast = false;
 	listStat = false;
+
+	firstOptionFrame = true;
+	commandUpPressed = false;
+	commandDownPressed = false;
 
 	Mx = 0;
 	My = 0;
@@ -74,34 +77,48 @@ MiniWindow::~MiniWindow()
 
 void MiniWindow::Update()
 {
+	GetJoypadXInputState(DX_INPUT_PAD1, &inputCommand);
 	GetJoypadAnalogInputRight(&Mx, &My, DX_INPUT_PAD1);
 	int DZ = 200; // デッドゾーン
 	stickUp = My < -DZ;
 	stickDown = My > DZ;
 
+	nowCUp = inputCommand.Buttons[XINPUT_BUTTON_DPAD_UP];
+	nowCDown = inputCommand.Buttons[XINPUT_BUTTON_DPAD_DOWN];
+
+	upCHit = nowCUp && !commandUpPressed;
+	downCHit = nowCDown && !commandDownPressed;
+
+	if (firstOptionFrame) {
+		upCHit = false;
+		downCHit = false;
+		firstOptionFrame = false;
+	}
+
 	if (commandwindowOpen) { 
-		if ((CheckHitKey(KEY_INPUT_UP) == 1 || stickUp) && !windowUpKeyInput && !listStat) { // 上キー → 上スクロール
+		if ((CheckHitKey(KEY_INPUT_UP) == 1 || stickUp || upCHit) && !windowUpKeyInput && !listStat) { // 上キー → 上スクロール
 			scrollOffset += 100;
 			windowUpKeyInput = true;
 			listLast = false;
 		}
 		if (CheckHitKey(KEY_INPUT_UP) == 0) { windowUpKeyInput = false; }
 	
-		if ((CheckHitKey(KEY_INPUT_DOWN) == 1 || stickDown) && !windowDownKeyInput && !listLast) { // 下キー → 下スクロール
+		if ((CheckHitKey(KEY_INPUT_DOWN) == 1 || stickDown || downCHit) && !windowDownKeyInput && !listLast) { // 下キー → 下スクロール
 			scrollOffset -= 100;
 			windowDownKeyInput = true;
 			listStat = false;
 		}
 		if (CheckHitKey(KEY_INPUT_DOWN) == 0) { windowDownKeyInput = false; }
 
-		ImGui::Begin("Mini");
-		ImGui::Checkbox("stickUp", &stickUp);
-		ImGui::Checkbox("stickDown", &stickDown);
-		ImGui::InputInt("My", &My);
-		ImGui::End();
+		commandUpPressed = nowCUp;
+		commandDownPressed = nowCDown;
 	}
 
-
+	//ImGui::Begin("Mini");
+	//ImGui::Checkbox("stickUp", &stickUp);
+	//ImGui::Checkbox("stickDown", &stickDown);
+	//ImGui::InputInt("My", &My);
+	//ImGui::End();
 
 	// === スクロール範囲の制限 ===
 	//int minOffset = -(commandCount * itemHeight - windowHeight); // 一番下まで
@@ -113,7 +130,7 @@ void MiniWindow::Draw()
 {
 	if (padwindowOpen) {
 		int rx = 400, ry = 370, rw = 500, rh = 300;
-		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(192, 192, 192), TRUE); // 背景（濃い灰色）
+		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
 		DrawBox(rx, ry, rx + rw, ry + rh, GetColor(255, 255, 255), FALSE); // 枠線（白）
 	}
 
@@ -258,8 +275,4 @@ void MiniWindow::DrawResultBox(int _rnumbers)
 		r = 0; g = 255; b = 0;    // 緑
 		break;
 	}
-}
-
-void UpdateMenuWithRightStick() {
-
 }

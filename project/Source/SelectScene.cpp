@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include <fstream>
 #include <assert.h>
+#include "../ImGui/imgui.h"
 #include "PlayScene.h"
 #include "MiniWindow.h"
 
@@ -50,6 +51,7 @@ SelectScene::SelectScene()
 
 	YInit = 0;
 	padCount = 0;
+	padMiniwindowCount = 0;
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -99,6 +101,8 @@ void SelectScene::Update()
 	}
 
 	wasBackPressed = backPressed;
+
+
 }
 
 void SelectScene::Draw()
@@ -186,6 +190,13 @@ void SelectScene::KeyMovement()
 			}
 			else {
 				miniwindow->TogglePad(true);
+				OpponentSelection = false;
+				padMiniwindowCount++;
+				if (padMiniwindowCount >= 10) {
+					miniwindow->TogglePad(false);
+					OpponentSelection = true;
+					padMiniwindowCount = 0;
+				}
 			}
 			break;
 		}
@@ -236,14 +247,29 @@ void SelectScene::KeyMovement()
 int SelectScene::GetConnectedPadCount()
 {
 	int count = 0;
-	XINPUT_STATE state;
+	XINPUT_STATE padstate;
+
+	const int pads[4] = { DX_INPUT_PAD1, DX_INPUT_PAD2, DX_INPUT_PAD3, DX_INPUT_PAD4 };
+
+	ImGui::Begin("Pad");
+	//ImGui::InputInt("padCount", &padCount);
+	//ImGui::InputInt("padMiniwindowCount", &padMiniwindowCount);
 
 	// 最大4台分チェック
 	for (int i = 0; i < 4; i++) {
-		if (GetJoypadXInputState(DX_INPUT_PAD1 + i, &state) == 0) {
-			count++;
+		//if (GetJoypadXInputState(pads[i], &padstate) == 0) {
+		//	count++;
+		//}
+		int result = GetJoypadXInputState(DX_INPUT_PAD1 + i, &padstate);
+		if (result == 0) {
+			ImGui::Text("PAD %d: Connected", i + 1);
+		}
+		else {
+			ImGui::Text("PAD %d: Not found", i + 1);
 		}
 	}
 
+	ImGui::End();
+	
 	return count;
 }

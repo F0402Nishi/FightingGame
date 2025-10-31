@@ -157,11 +157,11 @@ void Player::Update()
 		ui2d->DrawInputHistory(inputHistory);
 	}
 
-	//ImGui::Begin("PLAYER");
+	ImGui::Begin("PLAYER");
 	//ImGui::Checkbox("InputTypeP", &InputTypeP);
-	//ImGui::Checkbox("canReduceHp", &canReduceHp);
-	//ImGui::Checkbox("isMoving", &isMoveing);
-	//ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
+	ImGui::Checkbox("canReduceHp", &canReduceHp);
+	ImGui::Checkbox("isMoving", &isMoveing);
+	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
 	//ImGui::InputFloat("position.x", &transform.position.x);
 	//ImGui::InputFloat("position.y", &transform.position.y);
 	//ImGui::InputFloat("position.z", &transform.position.z);
@@ -175,7 +175,7 @@ void Player::Update()
 	//ImGui::Text("push.y: %.2f", hit.y);
 	//ImGui::Text("Position: z=%.2f", startPos.z);
 	//ImGui::Text("HP: %d", (int)Hp);
-	//ImGui::End();
+	ImGui::End();
 
 	//ImGui::Begin("PAD DEBUG");
 	//ImGui::Text("joyInput: %d", joyInput);

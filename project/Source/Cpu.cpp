@@ -55,6 +55,8 @@ CPU::CPU(bool _iscpu)
 	Nowpos = false;
 	actionFinished = false;
 	GuardNow = false;
+	
+	isBusy = isBusy = isMoveing || (state != S_STOP && !anim->IsFinish());
 
 	brain = MID_COMBAT;
 
@@ -90,8 +92,6 @@ void CPU::Update()
 		return;
 	}
 
-	InReturn();
-
 	// === 座標取得 ===
 	mypos = transform.position;
 	playerpos = player->GetTransform().position;
@@ -111,6 +111,7 @@ void CPU::Update()
 		}
 	}
 
+	time += 1.0f;
 
 	// === CPUの思考パターン別による関数に移動 ===
 	switch (brain) {
@@ -133,28 +134,40 @@ void CPU::Update()
 		CPUvelocity = inputDir * speed;
 		transform.position += CPUvelocity;
 	}
+	else {
+		isMoveing = false;
+	}
+
 
 	// EffectiveRange();
 
 	ImGui::Begin("CPU");
 	ImGui::Checkbox("canReduceHp", &canReduceHp);
+	ImGui::Checkbox("isMoving", &isMoveing);
 	ImGui::Text("brain: %d", (int)brain);
+	ImGui::Text("Current state: %s", StateToString(state));
 	ImGui::InputInt("dice", &r);
+	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("attack", &a);
 	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
+	ImGui::InputInt("debugRetunCount", &debugRetunCount);
 	ImGui::InputFloat("inputDir.x", &inputDir.x);
 	ImGui::End();
+
+	if (!canReduceHp) {
+		int F = 0;
+	}
+	else {
+		int K = 0;
+	}
 #if 0
 	
 	ImGui::Checkbox("GuardOn", &GuardOn);
 	ImGui::Checkbox("GuardNow", &GuardNow);
-	ImGui::InputInt("debugRetunCount", &debugRetunCount);
 	
-	ImGui::Checkbox("isMoving", &isMoveing);
 	ImGui::Checkbox("isAlive", &isAlive);
 	ImGui::Text("state: %d", (int)state);
 	ImGui::InputInt("damage", &damage);
-	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("speed", &speed);
 	ImGui::InputFloat("time", &time);
 	ImGui::InputFloat("position.x", &transform.position.x);
@@ -175,53 +188,35 @@ void CPU::Draw()
 	Character::Draw();
 }
 
-void CPU::UpdateDice()
-{
-	// ===== 新しい行動を決める =====
-	
-	if (!isMoveing) {
-		time += 1.0f;
-
-		if (time > 100.0f) { 
-			NowDice = false;
-			NowMovement = false;
-			NowAttack = false; 
-			time = 0;
-		}
-	}
-	
-	// if (time == 30) { } // 0～99 の乱数を作る
-	if (!NowDice) { r = rand() % 100; NowDice = true; }
-	if (!NowMovement) { m = rand() % 100; NowMovement = true; }
-	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
-}
-
 void CPU::UpdateCloseCombat()
 {
-	UpdateDice();
+	// 移動や攻撃中は乱数を生成しない
+	if (!isBusy) { UpdateDice(); }
 
 	if (r < 20) { // 0～19 → 移動 20%
-		if (!Nowpos) { CPUpos = mypos.x; }
-		// NowMovement = true; // m もリセット
+		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
 		isMoveing = true;
 		NowAttack = true;
 
+		// 移動方向の決定
 		if (m < 20) {
-			inputDir.x = -1.0f;
-			Nowpos = true;
+			inputDir.x = -1.0f; // 左
 		}
 		else {
-			inputDir.x = 10.0f;
-			NowMovement = false;
-			Nowpos = true;
+			inputDir.x = 1.0f; // 右
 		}
 
-		moved = fabs(mypos.x - CPUpos);
-		if (moved >= 10.0f) {
-			isMoveing = false;
+		// フレームごとに移動
+		mypos.x += inputDir.x;
+
+		// 開始位置からの移動距離を計算
+		moved = mypos.x - CPUpos;
+		
+		// 方向と距離に応じて停止判定
+		if ((inputDir.x > 0.0f && fabs(moved) >= 100.0f) || (inputDir.x < 0.0f && fabs(moved) >= 10.0f)) {
+			inputDir.x = 0.0f;
 			Nowpos = false;
 		}
-
 	}
 	else if (r < 90) { // 20～89 → 攻撃 70%
 		// NowAttack = true; // a もリセット
@@ -236,7 +231,6 @@ void CPU::UpdateCloseCombat()
 						state = attackStates[i];
 						canReduceHp = true;
 					}
-					else { canReduceHp = false; }
 					isMoveing = true;
 					break;
 				}
@@ -253,34 +247,33 @@ void CPU::UpdateCloseCombat()
 
 void CPU::UpdateMidCombat()
 {
-	UpdateDice();
+	// 移動や攻撃中は乱数を生成しない
+	if (!isBusy) { UpdateDice(); }
 	
 	if (r < 45) { // 0〜44 → 移動 45%
-		if (!Nowpos) { CPUpos = mypos.x; }
-		// NowMovement = true; // m もリセット
+		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
 		isMoveing = true;
 		NowAttack = true;
 
+		// 移動方向の決定
 		if (m < 50) {
-			inputDir.x = -5.0f;
-			Nowpos = true;
-			moved = fabs(mypos.x - CPUpos);
-			if (moved >= 5.0f) {
-				isMoveing = false;
-				Nowpos = false;
-			}
+			inputDir.x = -1.0f; // 左
 		}
 		else {
-			inputDir.x = 10.0f;
-			NowMovement = false;
-			Nowpos = true;
-			moved = fabs(mypos.x - CPUpos);
-			if (moved >= 10.0f) {
-				isMoveing = false;
-				Nowpos = false;
-			}
+			inputDir.x = 1.0f; // 右
 		}
 
+		// フレームごとに移動
+		mypos.x += inputDir.x;
+
+		// 開始位置からの移動距離を計算
+		moved = mypos.x - CPUpos;
+
+		// 方向と距離に応じて停止判定
+		if ((inputDir.x > 0 && fabs(moved) >= 100.0f) || (inputDir.x < 0 && fabs(moved) >= 30.0f)) {
+			inputDir.x = 0.0f;
+			Nowpos = false;
+		}
 	}
 	else if (r < 90){ // 45〜89 → 攻撃 45%
 		// NowAttack = true; // a もリセット
@@ -308,25 +301,31 @@ void CPU::UpdateMidCombat()
 
 void CPU::UpdateLongCombat()
 {
-	UpdateDice();
+	// 移動や攻撃中は乱数を生成しない
+	if (!isBusy) { UpdateDice(); }
 
 	if (r < 75) { // 0～74 → 移動 75%
-		if (!Nowpos) { CPUpos = mypos.x; }
+		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
 		isMoveing = true;
 		NowAttack = true;
 
+		// 移動方向の決定
 		if (m < 10) {
-			inputDir.x = 10.0f;
-			Nowpos = true;
+			inputDir.x = 1.0f; // 右
 		}
 		else {
-			inputDir.x = -10.0f;
-			Nowpos = true;
+			inputDir.x = -1.0f;  // 左
 		}
 
-		moved = fabs(mypos.x - CPUpos);
-		if (moved >= 10.0f) {
-			isMoveing = false;
+		// フレームごとに移動
+		mypos.x += inputDir.x;
+
+		// 開始位置からの移動距離を計算
+		moved = mypos.x - CPUpos;
+
+		// 方向と距離に応じて停止判定
+		if ((inputDir.x != 0.0f && fabs(moved) >= 100.0f)) {
+			inputDir.x = 0.0f;
 			Nowpos = false;
 		}
 	}
@@ -351,6 +350,23 @@ void CPU::UpdateLongCombat()
 		isGuarding = true;
 		isMoveing = true;
 	}
+}
+
+void CPU::UpdateDice()
+{
+	// ===== 新しい行動を決める =====
+
+	if (!isMoveing && time > 100.0f) {
+		NowDice = false;
+		NowMovement = false;
+		NowAttack = false;
+		time = 0;
+	}
+
+	// === 0～99 の乱数を作る ===
+	if (!NowDice) { r = rand() % 100; NowDice = true; }
+	if (!NowMovement) { m = rand() % 100; NowMovement = true; }
+	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
 }
 
 void CPU::EffectiveRange()
@@ -467,4 +483,20 @@ void CPU::EffectiveRange()
 		}
 	}
 #endif // 0
+}
+
+const char* CPU::StateToString(Character::State s)
+{
+	switch (s) {
+	case Character::S_STOP:    return "S_STOP";
+	case Character::S_PUNCH1:  return "S_PUNCH1";
+	case Character::S_PUNCH2:  return "S_PUNCH2";
+	case Character::S_PUNCH3:  return "S_PUNCH3";
+	case Character::S_KICK1:   return "S_KICK1";
+	case Character::S_KICK2:   return "S_KICK2";
+	case Character::S_KICK3:   return "S_KICK3";
+	case Character::S_PROTECT: return "S_PROTECT";
+	case Character::S_JUMP:    return "S_JUMP";
+	default: return "UNKNOWN";
+	}
 }

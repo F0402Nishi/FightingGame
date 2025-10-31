@@ -18,6 +18,7 @@ public:
 	void Update() override;
 	void Draw() override ;
 	void EffectiveRange();
+	const char* StateToString(Character::State s);
 	
 	
 	virtual bool GetisCpu() const override { return isCpu; }
@@ -61,6 +62,7 @@ private:
 	bool Nowpos;
 	bool actionFinished;
 	bool GuardNow;
+	bool isBusy;
 
 	State attackStates[7] = {
 		S_PUNCH1, // é„P

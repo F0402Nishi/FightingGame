@@ -17,7 +17,6 @@ public:
 	void SetLayout(const std::vector<int>& _postionY);
 	void MoveBox(int _box);
 	void DrawResultBox(int _rnumbers);
-	void UpdateMenuWithRightStick();
 
 	int GetMenuOption() const;
 
@@ -37,6 +36,8 @@ private:
 
 	std::vector<int> Yposition;
 
+	XINPUT_STATE inputCommand;
+
 	int scrollOffset;
 	int commandCount; // コマンドリストの項目数
 	int itemHeight; // 1項目の高さ
@@ -52,11 +53,19 @@ private:
 	int My;
 
 	bool commandwindowOpen;
+	bool menuwindowOpen;
+	bool resultwindowOpen;
+	bool padwindowOpen;
 	bool windowUpKeyInput;
 	bool windowDownKeyInput;
 	bool listStat;
 	bool listLast;
-	bool menuwindowOpen;
-	bool resultwindowOpen;
-	bool padwindowOpen;
+
+	bool firstOptionFrame;
+	bool commandUpPressed;
+	bool commandDownPressed;
+	bool nowCUp;
+	bool nowCDown;
+	bool upCHit;
+	bool downCHit;
 };

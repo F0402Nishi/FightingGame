@@ -39,6 +39,7 @@ private:
 	int YInit;
 	int YPosition[4] = {200, 75, -85, -250};
 	int padCount;
+	int padMiniwindowCount;
 
 	bool operation;
 	bool SelectKeyInput;

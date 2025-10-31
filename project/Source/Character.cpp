@@ -457,8 +457,8 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 
 void Character::InReturn()
 {
+	debugRetunCount += 1;
 	if (anim->IsFinish()) {
-		debugRetunCount++;
 		startPosSaved = false; // 次回攻撃用にフラグリセット
 		canReduceHp = false;
 		isMoveing = false; // 攻撃終了
