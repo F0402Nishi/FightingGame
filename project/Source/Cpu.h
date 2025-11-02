@@ -92,5 +92,8 @@ private:
 	void UpdateMidCombat();
 	void UpdateLongCombat();
 	void UpdateDice();
-	void UpdateCombat();
+	void UpdateMove();
+	void UpdateAttack();
+	void UpdateGuard();
+
 };

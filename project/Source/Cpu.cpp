@@ -117,16 +117,16 @@ void CPU::Update()
 	// === CPUの思考パターン別による関数に移動 ===
 	switch (brain) {
 	case CLOSE_COMBAT:
-		random = 20;
-		movingrandom = 20;
-		attackrandom = 90;
-		UpdateCloseCombat();
+		UpdateDice();
+		// UpdateCloseCombat();
 		break;
 	case MID_COMBAT:
-		UpdateMidCombat();
+		UpdateDice();
+		// UpdateMidCombat();
 		break;
 	case LONG_COMBAT:
-		UpdateLongCombat();
+		UpdateDice();
+		// UpdateLongCombat();
 		break;
 	}
 
@@ -189,7 +189,7 @@ void CPU::Draw()
 void CPU::UpdateCloseCombat()
 {
 	// 移動や攻撃中は乱数を生成しない
-	if (!isBusy) { UpdateDice(); }
+	// if (!isBusy) { UpdateDice(); }
 
 	if (r < 20) { // 0～19 → 移動 20%
 		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
@@ -243,7 +243,7 @@ void CPU::UpdateCloseCombat()
 void CPU::UpdateMidCombat()
 {
 	// 移動や攻撃中は乱数を生成しない
-	if (!isBusy) { UpdateDice(); }
+	// if (!isBusy) { UpdateDice(); }
 	
 	if (r < 45) { // 0〜44 → 移動 45%
 		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
@@ -297,7 +297,7 @@ void CPU::UpdateMidCombat()
 void CPU::UpdateLongCombat()
 {
 	// 移動や攻撃中は乱数を生成しない
-	if (!isBusy) { UpdateDice(); }
+	// if (!isBusy) { UpdateDice(); }
 
 	if (r < 75) { // 0～74 → 移動 75%
 		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
@@ -353,69 +353,69 @@ void CPU::UpdateDice()
 
 	if (!isMoveing && time > 50.0f) {
 		NowDice = false;
-		NowMovement = false;
-		NowAttack = false;
+		// NowMovement = false;
+		// NowAttack = false;
 		time = 0;
 	}
 
 	// === 0～99 の乱数を作る ===
 	if (!NowDice) { r = rand() % 100; NowDice = true; }
-	if (!NowMovement) { m = rand() % 100; NowMovement = true; }
-	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
+	// if (!NowMovement) { m = rand() % 100; NowMovement = true; }
+	// if (!NowAttack) { a = rand() % 100; NowAttack = true; }
 }
 
-void CPU::UpdateCombat()
+void CPU::UpdateMove()
 {
-	// 移動や攻撃中は乱数を生成しない
-	if (!isBusy) { UpdateDice(); }
+	if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
+	isMoveing = true;
+	// NowAttack = true;
 
-	if (r < random) { // 0～19 → 移動 20%
-		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
-		isMoveing = true;
-		NowAttack = true;
-
-		// 移動方向の決定
-		if (m < movingrandom) {
-			inputDir.x = -1.0f; // 左
-		}
-		else {
-			inputDir.x = 1.0f; // 右
-		}
-
-		// フレームごとに移動
-		mypos.x += inputDir.x;
-
-		// 開始位置からの移動距離を計算
-		moved = mypos.x - CPUpos;
-
-		// 方向と距離に応じて停止判定
-		if ((inputDir.x > 0.0f && fabs(moved) >= 100.0f) || (inputDir.x < 0.0f && fabs(moved) >= 10.0f)) {
-			inputDir.x = 0.0f;
-			Nowpos = false;
-		}
+	// 移動方向の決定
+	if (m < movingrandom) {
+		inputDir.x = -1.0f; // 左
 	}
-	else if (r < attackrandom) { // 20～89 → 攻撃 70%
-		// NowAttack = true; // a もリセット
-		NowMovement = true;
+	else {
+		inputDir.x = 1.0f; // 右
+	}
 
-		// === 攻撃系 ===
-		for (int i = 0; i < attackCount; i++) {
-			sum += Close_attack[i];
-			if (a < sum) {
-				if (state != attackStates[i]) {
-					state = attackStates[i];
-					canReduceHp = true;
-				}
-				isMoveing = true;
-				break;
+	// フレームごとに移動
+	mypos.x += inputDir.x;
+
+	// 開始位置からの移動距離を計算
+	moved = mypos.x - CPUpos;
+
+	// 方向と距離に応じて停止判定
+	if ((inputDir.x > 0.0f && fabs(moved) >= 100.0f) || (inputDir.x < 0.0f && fabs(moved) >= 10.0f)) {
+		inputDir.x = 0.0f;
+		Nowpos = false;
+	}
+}
+
+void CPU::UpdateAttack()
+{
+	// NowAttack = true; // a もリセット
+	// NowMovement = true;
+
+	// === 攻撃系 ===
+	for (int i = 0; i < attackCount; i++) {
+		sum += Close_attack[i];
+		if (a < sum) {
+			if (state != attackStates[i]) {
+				state = attackStates[i];
+				canReduceHp = true;
 			}
+			isMoveing = true;
+			break;
 		}
 	}
-	else { // 90〜99 → ガード（10%）
-		state = S_PROTECT;
-		isGuarding = true;
-		isMoveing = true;
-	}
+}
+
+void CPU::UpdateGuard()
+{
+	// 90〜99 → ガード（10%）
+	state = S_PROTECT;
+	isGuarding = true;
+	isMoveing = true;
 }
 
 void CPU::EffectiveRange()
