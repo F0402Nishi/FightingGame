@@ -36,12 +36,12 @@ private:
 	int r;
 	int m;
 	int a;
-	int sum;
+	// int sum;
 	int attackCount;
-	int movingrandom;
-	int attackrandom;
 	int random;
-	int attackNumber;
+	// int movingrandom;
+	int attackrandom;
+	// int attackNumber;
 
 	float targetDistance; // —‘z‚ÌŠÔ‡‚¢
 	float expandThreshold; // ‚±‚±‚Ü‚ÅL‚ª‚Á‚½‚ç‹l‚ß’¼‚·
@@ -67,14 +67,13 @@ private:
 	bool GuardNow;
 	bool isBusy;
 
-	State attackStates[7] = {
+	State attackStates[6] = {
 		S_PUNCH1, // ãP
 		S_PUNCH2, // ’†P
 		S_PUNCH3, // ‹­P
 		S_KICK1,  // ãK
 		S_KICK2,  // ’†K
 		S_KICK3,  // ‹­K
-		S_PROTECT // ƒK[ƒh
 	};
 
 	int Close_attack[6] = { 15, 25, 15, 10, 20, 15 };
@@ -92,8 +91,8 @@ private:
 	void UpdateMidCombat();
 	void UpdateLongCombat();
 	void UpdateDice();
-	void UpdateMove();
-	void UpdateAttack();
+	void UpdateMove(int _moving, int _ld, int _rd);
+	void UpdateAttack(int* _attack);
 	void UpdateGuard();
 
 };
