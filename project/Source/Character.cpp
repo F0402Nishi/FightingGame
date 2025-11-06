@@ -126,10 +126,12 @@ void Character::Always()
 	if (stage->SearchObject(transform.position + VGet(100, 0, 0), transform.position + VGet(-100, 0, 0), &hit1)) {
 		if (transform.position.x >= hit1.x) { // 左の壁に当たった時...
 			transform.position = hit1 + VGet(100, 0, 0); // hit1の位置に+ x.100を加える
+			isActing = false;
 		}
 		else // 右の壁に当たった時...
 		{
 			transform.position = hit1 + VGet(-100, 0, 0); // hit1の位置に- x.100を加える
+			isActing = false;
 		}
 	}
 }
@@ -427,9 +429,10 @@ void Character::UpdateProtect()
 	PlayAttack("data/Character/Player/Guard_Idle.mv1", false);
 
 	if (anim->IsFinish()) {
-		isMoveing = false;
-		canReduceHp = false;
 		state = S_STOP;
+		canReduceHp = false;
+		isMoveing = false;
+		isActing = false;
 		return;
 	}
 
@@ -457,13 +460,14 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 
 void Character::InReturn()
 {
-	debugRetunCount += 1;
 	if (anim->IsFinish()) {
+		debugRetunCount += 1;
+		state = S_STOP; // 状態を通常に戻す
 		startPosSaved = false; // 次回攻撃用にフラグリセット
 		canReduceHp = false;
-		isMoveing = false; // 攻撃終了
 		isGuarding = false; // ガード終了
-		state = S_STOP; // 状態を通常に戻す
+		isMoveing = false; // 攻撃終了
+		isActing = false; // CPU行動終了
 		return;
 	}
 }
@@ -475,6 +479,8 @@ void Character::UpdateJump()
 
 void Character::UpdateDamage(int dmg, AttackType type)
 {
+	dmg = 0; // デバック用
+
 	if (dmg <= 0) return; // ダメージが0なら何もしない
 
 	Hp -= dmg;

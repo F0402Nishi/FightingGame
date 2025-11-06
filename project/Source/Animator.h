@@ -23,11 +23,15 @@ public:
 	}
 
 private:
+	std::string currentFile;
+	
 	int handle;
 	int attachID;
-	float animTime;
 	int animMaxTime;
 	int model;
-	std::string currentFile;
+	
+	float animTime;
+	
 	bool loopMode;
+	bool finished;
 };

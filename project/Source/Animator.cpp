@@ -34,11 +34,13 @@ void Animator::Update()
 	if (loopMode) {
 		if (animTime >= animMaxTime) {
 			animTime -= animMaxTime;
+			finished = false;
 		}
 	}
 	else {
 		if (animTime > animMaxTime) {
 			animTime = animMaxTime;
+			finished = true;
 		}
 	}
 	MV1SetAttachAnimTime(model, attachID, animTime);
@@ -71,5 +73,5 @@ bool Animator::IsFinish()
 		if (animTime >= animMaxTime) { return true; }
 	}
 
-	return false;
+	return finished;
 }

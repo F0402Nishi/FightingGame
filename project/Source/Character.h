@@ -112,6 +112,7 @@ protected:
 	bool InputTypeP;
 	bool GuardOn;
 	bool startPosSaved;
+	bool isActing;
 
 	// Player‚Ìœ§Œä
 	int headBone;
