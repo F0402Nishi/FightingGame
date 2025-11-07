@@ -9,6 +9,7 @@ public:
 	void Update();
 	void Play(std::string filename, bool loop); // , bool force ‚Ì‚¿‚É’Ç‰Á
 	bool IsFinish();
+	void ResetTime();
 	
 	int GetModelHandle() const { return model; }
 	float CurrentAnimTime() const { return static_cast<int> (animTime); }

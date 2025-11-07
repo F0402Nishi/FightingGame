@@ -38,6 +38,7 @@ public:
 	void SetAlive(bool ali);
 	void SetHp(int value) { Hp = value; }
 	void SetInputDisplay(bool _display) { InputTypeP = _display; }
+
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
@@ -113,6 +114,8 @@ protected:
 	bool GuardOn;
 	bool startPosSaved;
 	bool isActing;
+	bool animRetun;
+	bool hasHit = false;
 
 	// PlayerÇÃçúêßå‰
 	int headBone;

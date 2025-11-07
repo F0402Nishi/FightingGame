@@ -75,3 +75,9 @@ bool Animator::IsFinish()
 
 	return finished;
 }
+
+void Animator::ResetTime()
+{
+	animTime = 0.0f;
+	MV1SetAttachAnimTime(model, attachID, animTime);
+}

@@ -41,6 +41,7 @@ Player::~Player()
 void Player::Update()
 {
 	Character::Always();
+	
 	// === 入力を取得 ===
 	GetJoypadXInputState(padNo, &input);
 	GetJoypadAnalogInput(&lx, &ly, padNo);
@@ -95,27 +96,27 @@ void Player::Update()
 	// 例.Uのアニメーション中にIを押されたら、、、
 
 	if ((CheckHitKey(KEY_INPUT_U) || input.Buttons[XINPUT_BUTTON_B]) && !isMoveing) { // パンチ1
-		state = S_PUNCH1; canReduceHp = true; isMoveing = true; 
+		state = S_PUNCH1; canReduceHp = true; isMoveing = true; //animRetun = true;
 		currentKey = KEY_INPUT_U;
 	} 
 	if ((CheckHitKey(KEY_INPUT_I) || input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER]) && !isMoveing) { // パンチ2
-		state = S_PUNCH2; canReduceHp = true; isMoveing = true; 
+		state = S_PUNCH2; canReduceHp = true; isMoveing = true; //animRetun = true;
 		currentKey = KEY_INPUT_I;
 	}
 	if ((CheckHitKey(KEY_INPUT_O) || input.RightTrigger > 50) && !isMoveing) { // パンチ3
-		state = S_PUNCH3; canReduceHp = true; isMoveing = true; 
+		state = S_PUNCH3; canReduceHp = true; isMoveing = true; //animRetun = true;
 		currentKey = KEY_INPUT_O;
 	}
 	if ((CheckHitKey(KEY_INPUT_J) || input.Buttons[XINPUT_BUTTON_A]) && !isMoveing) { // キック1
-		state = S_KICK1; canReduceHp = true; isMoveing = true;
+		state = S_KICK1; canReduceHp = true; isMoveing = true; //animRetun = true;
 		currentKey = KEY_INPUT_J;
 	}
 	if ((CheckHitKey(KEY_INPUT_K) || input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER]) && !isMoveing) {  // キック2
-		state = S_KICK2; canReduceHp = true; isMoveing = true;
+		state = S_KICK2; canReduceHp = true; isMoveing = true; //animRetun = true;
 		currentKey = KEY_INPUT_K;
 	}
 	if ((CheckHitKey(KEY_INPUT_L) || input.LeftTrigger > 50) && !isMoveing) { // キック3
-		state = S_KICK3; canReduceHp = true; isMoveing = true;
+		state = S_KICK3; canReduceHp = true; isMoveing = true; //animRetun = true;
 		currentKey = KEY_INPUT_L;
 	}
 
@@ -157,11 +158,12 @@ void Player::Update()
 		ui2d->DrawInputHistory(inputHistory);
 	}
 
-	ImGui::Begin("PLAYER");
+	//ImGui::Begin("PLAYER");
 	//ImGui::Checkbox("InputTypeP", &InputTypeP);
-	ImGui::Checkbox("canReduceHp", &canReduceHp);
-	ImGui::Checkbox("isMoving", &isMoveing);
-	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
+	//ImGui::Checkbox("canReduceHp", &canReduceHp);
+	//ImGui::Checkbox("isMoving", &isMoveing);
+	//ImGui::Checkbox("animRetun", &animRetun);
+	//ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
 	//ImGui::InputFloat("position.x", &transform.position.x);
 	//ImGui::InputFloat("position.y", &transform.position.y);
 	//ImGui::InputFloat("position.z", &transform.position.z);
@@ -175,7 +177,7 @@ void Player::Update()
 	//ImGui::Text("push.y: %.2f", hit.y);
 	//ImGui::Text("Position: z=%.2f", startPos.z);
 	//ImGui::Text("HP: %d", (int)Hp);
-	ImGui::End();
+	//ImGui::End();
 
 	//ImGui::Begin("PAD DEBUG");
 	//ImGui::Text("joyInput: %d", joyInput);

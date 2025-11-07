@@ -42,6 +42,7 @@ Character::Character()
 	isAlive = true;
 	GuardOn = false;
 	startPosSaved = false;
+	animRetun = false;
 
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
@@ -213,10 +214,13 @@ void Character::UpdatePunch1()
 	
 	if (opponent != nullptr) {
 		if (frame >= Punch1Data.hitStartFrame && frame <= Punch1Data.hitEndFrame) {
-			attacktype = AttackType::Punch;
-			colIndex = 4;
+			if (!hasHit) {
+				attacktype = AttackType::Punch;
+				colIndex = 4;
 			
-			CollisionDetection();
+				CollisionDetection();
+				hasHit = true;
+			}
 		}
 
 		// if (frame >= Punch1Data.cancelStartFrame && frame <= Punch1Data.cancelEndFrame) { canCancel = true; }
@@ -236,10 +240,13 @@ void Character::UpdatePunch2()
 	
 	if (opponent != nullptr) {
 		if (frame >= Punch2Data.hitStartFrame && frame <= Punch2Data.hitEndFrame) {
-			attacktype = AttackType::Punch;
-			colIndex = 7;
+			if (!hasHit) {
+				attacktype = AttackType::Punch;
+				colIndex = 7;
 			
-			CollisionDetection();
+				CollisionDetection();
+				hasHit = true;
+			}
 		}
 
 		// if (frame >= Punch2Data.cancelStartFrame && frame <= Punch2Data.cancelEndFrame) { canCancel = true; }
@@ -258,10 +265,13 @@ void Character::UpdatePunch3()
 
 	if (opponent != nullptr) {
 		if (frame >= Punch3Data.hitStartFrame && frame <= Punch3Data.hitEndFrame) {
-			attacktype = AttackType::Punch;
-			colIndex = 4;
+			if (!hasHit) {
+				attacktype = AttackType::Punch;
+				colIndex = 4;
 			
-			CollisionDetection();
+				CollisionDetection();
+				hasHit = true;
+			}
 		}
 
 		// if (frame >= Punch3Data.cancelStartFrame && frame <= Punch3Data.cancelEndFrame) { canCancel = true; }
@@ -313,10 +323,13 @@ void Character::UpdateKick1()
 	if (opponent != nullptr) {
 		// === ヒット判定 ===
 		if (frame >= Kick1Data.hitStartFrame && frame <= Kick1Data.hitEndFrame) {
-			attacktype = AttackType::Kick;
-			colIndex = 13;
+			if (!hasHit) {
+				attacktype = AttackType::Kick;
+				colIndex = 13;
 			
-			CollisionDetection();
+				CollisionDetection();
+				hasHit = true;
+			}
 		}
 
 		// if (frame >= Kick1Data.cancelStartFrame && frame <= Kick1Data.cancelEndFrame) { canCancel = true; }
@@ -364,10 +377,13 @@ void Character::UpdateKick2()
 	
 	if (opponent != nullptr) {
 		if (frame >= Kick2Data.hitStartFrame && frame <= Kick2Data.hitEndFrame) {
-			attacktype = AttackType::Kick;
-			colIndex = 10;
+			if (!hasHit) {
+				attacktype = AttackType::Kick;
+				colIndex = 10;
 			
-			CollisionDetection();
+				CollisionDetection();
+				hasHit = true;
+			}
 		}
 
 		// if (frame >= Kick2Data.cancelStartFrame && frame <= Kick2Data.cancelEndFrame) { canCancel = true; }
@@ -410,10 +426,13 @@ void Character::UpdateKick3()
 	
 	if (opponent != nullptr) {
 		if (frame >= Kick3Data.hitStartFrame && frame <= Kick3Data.hitEndFrame) {
-			attacktype = AttackType::Kick;
-			colIndex = 13;
+			if (!hasHit) {
+				attacktype = AttackType::Kick;
+				colIndex = 13;
 			
-			CollisionDetection();
+				CollisionDetection();
+				hasHit = true;
+			}
 		}
 
 		// if (frame >= Kick3Data.cancelStartFrame && frame <= Kick3Data.cancelEndFrame) { canCancel = true; }
@@ -460,7 +479,7 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 
 void Character::InReturn()
 {
-	if (anim->IsFinish()) {
+	if (anim->IsFinish() && !animRetun) {
 		debugRetunCount += 1;
 		state = S_STOP; // 状態を通常に戻す
 		startPosSaved = false; // 次回攻撃用にフラグリセット
@@ -468,8 +487,12 @@ void Character::InReturn()
 		isGuarding = false; // ガード終了
 		isMoveing = false; // 攻撃終了
 		isActing = false; // CPU行動終了
+		animRetun = true;
+		hasHit = false;
 		return;
 	}
+
+	if (!anim->IsFinish()) { animRetun = false; }
 }
 
 void Character::UpdateJump()
@@ -479,7 +502,7 @@ void Character::UpdateJump()
 
 void Character::UpdateDamage(int dmg, AttackType type)
 {
-	dmg = 0; // デバック用
+	// dmg = 0; // デバック用
 
 	if (dmg <= 0) return; // ダメージが0なら何もしない
 

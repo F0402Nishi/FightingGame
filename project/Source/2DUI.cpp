@@ -126,14 +126,14 @@ void UI2D::Update()
     }
 
     if (character && uitype == UIType::HP) {
-        ImGui::Begin("HPbar");
+        //ImGui::Begin("HPbar");
         //ImGui::Checkbox("isRightCpu", &isRightCpu);
         //ImGui::Checkbox("isLeftPlayer", &isLeftPlayer);
-        ImGui::Text("hp = %d", character->GetHp());
-        ImGui::InputInt("currenthp", &currenthp);
+        //ImGui::Text("hp = %d", character->GetHp());
+        //ImGui::InputInt("currenthp", &currenthp);
         //ImGui::InputInt("graphH", &graphH);
         //ImGui::InputInt("recoveryTimer", &recoveryTimer);
-        ImGui::End();
+        //ImGui::End();
     }
 }
 

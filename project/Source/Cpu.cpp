@@ -73,10 +73,12 @@ void CPU::Update()
 
 	ImGui::Begin("CPU");
 	ImGui::Checkbox("canReduceHp", &canReduceHp);
-	ImGui::Checkbox("isMoving", &isMoveing);
+	ImGui::Checkbox("hasHit", &hasHit);
 	ImGui::Checkbox("isActing", &isActing);
+	ImGui::Checkbox("animRetun", &animRetun);
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("Current state: %s", StateToString(state));
+	ImGui::InputInt("damage", &damage);
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("movement", &m);
 	ImGui::InputInt("attack", &a);
@@ -86,6 +88,24 @@ void CPU::Update()
 	ImGui::InputFloat("time", &time);
 	ImGui::End();
 
+#if false "ImGui"
+	
+	ImGui::Checkbox("GuardOn", &GuardOn);
+	ImGui::Checkbox("GuardNow", &GuardNow);
+	
+	ImGui::Checkbox("isAlive", &isAlive);
+	ImGui::Text("state: %d", (int)state);
+	ImGui::InputInt("speed", &speed);
+	ImGui::InputFloat("position.x", &transform.position.x);
+	ImGui::InputFloat("position.y", &transform.position.y);
+	ImGui::InputFloat("dx", &dx);
+	ImGui::InputFloat("dist", &dist);
+	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
+	ImGui::InputFloat("float moved", &moved);
+	ImGui::InputFloat("float CPUpos", &CPUpos);
+	ImGui::Text("MyPosition：%d", (int) & mypos);
+#endif // 0
+
 	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
 	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 
@@ -94,8 +114,6 @@ void CPU::Update()
 
 	if (GuardOn) { state = S_PROTECT; isGuarding = true; }
 	else { state = S_STOP; }
-
-	// isBusy = isMoveing || (state != S_STOP && !anim->IsFinish());
 	
 	if (!isCpu) return;
 
@@ -142,7 +160,7 @@ void CPU::Update()
 		break;
 	case LONG_COMBAT:
 		UpdateDice();
-		// UpdateLongCombat();
+		UpdateLongCombat();
 		break;
 	}
 
@@ -154,32 +172,11 @@ void CPU::Update()
 		CPUvelocity = inputDir * speed;
 		transform.position += CPUvelocity;
 	}
-
-#if 0
-	
-	ImGui::Checkbox("GuardOn", &GuardOn);
-	ImGui::Checkbox("GuardNow", &GuardNow);
-	
-	ImGui::Checkbox("isAlive", &isAlive);
-	ImGui::Text("state: %d", (int)state);
-	ImGui::InputInt("damage", &damage);
-	ImGui::InputInt("speed", &speed);
-	ImGui::InputFloat("position.x", &transform.position.x);
-	ImGui::InputFloat("position.y", &transform.position.y);
-	ImGui::InputFloat("dx", &dx);
-	ImGui::InputFloat("dist", &dist);
-	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
-	ImGui::InputFloat("float moved", &moved);
-	ImGui::InputFloat("float CPUpos", &CPUpos);
-	ImGui::Text("MyPosition：%d", (int) & mypos);
-#endif // 0
 }
 
 void CPU::Draw()
 {
 	Character::Draw();
-
-	std::cout << "CPU Draw" << std::endl;
 }
 
 void CPU::UpdateCloseCombat()
@@ -188,13 +185,13 @@ void CPU::UpdateCloseCombat()
 	// if (!isBusy) { UpdateDice(); }
 
 	if (r >= 0 && r < 20) { // 0～19 → 移動 20%
-		UpdateMove(20, 10, 100);
+		// UpdateMove(20, 10, 100);
 	}
 	else if (r >= 20 && r < 90) { // 20～89 → 攻撃 70%
 		UpdateAttack(Close_attack);
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
-		UpdateGuard();
+		// UpdateGuard();
 	}
 }
 
@@ -208,53 +205,11 @@ void CPU::UpdateMidCombat()
 		UpdateMove(50, 30, 100);
 	}
 	else if (r >= 45 && r < 90) { // 45〜89 → 攻撃 45%
-		UpdateAttack(Mid_attack);
+		//UpdateAttack(Mid_attack);
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
-		UpdateGuard();
+		//UpdateGuard();
 	}
-
-#if 0
-		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
-		isMoveing = true;
-		NowAttack = true;
-
-		// 移動方向の決定
-		if (m < 50) {
-			// inputDir.x = -1.0f; // 左
-		}
-		else {
-			// inputDir.x = 1.0f; // 右
-		}
-
-		// フレームごとに移動
-		mypos.x += inputDir.x;
-
-		// 開始位置からの移動距離を計算
-		moved = mypos.x - CPUpos;
-
-		// 方向と距離に応じて停止判定
-		if ((inputDir.x > 0 && fabs(moved) >= 100.0f) || (inputDir.x < 0 && fabs(moved) >= 30.0f)) {
-			inputDir.x = 0.0f;
-			Nowpos = false;
-		}
-
-		// NowAttack = true; // a もリセット
-		NowMovement = true;
-
-		// === 攻撃系 ===
-		for (int i = 0; i < attackCount; i++) {
-			sum += Mid_attack[i];
-			if (a < sum) {
-				if (state != attackStates[i]) {
-					state = attackStates[i];
-					canReduceHp = true;
-				}
-			}
-			isMoveing = true;
-			break;
-		}
-#endif // 0
 }
 
 void CPU::UpdateLongCombat()
@@ -263,7 +218,15 @@ void CPU::UpdateLongCombat()
 	// if (!isBusy) { UpdateDice(); }
 
 	if (r < 75) { // 0～74 → 移動 75%
-		UpdateMove(10, 100, 100);
+		UpdateMove(90, 100, 100);
+	}
+	else if (r < 85) { // 75～84 → 攻撃 10%
+		//UpdateAttack(Long_attack);
+	}
+	else { // 85～94 → ガード 10%
+		//UpdateGuard();
+	}
+
 #if 0
 		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
 		isMoveing = true;
@@ -289,31 +252,23 @@ void CPU::UpdateLongCombat()
 			Nowpos = false;
 		}
 #endif // 0
-	}
-	else if (r < 85) { // 75～84 → 攻撃 10%
-		UpdateAttack(Long_attack);
-	}
-	else { // 85～94 → ガード 10%
-		UpdateGuard();
-	}
 }
 
 void CPU::UpdateDice()
 {
 	// ===== 新しい行動を決める =====
 
-	if (state == S_STOP && !isActing && time > 50.0f) {
+	if (state == S_STOP && !isActing && time > 100.0f) {
 		NowDice = false;
 		NowMovement = false;
 		NowAttack = false;
 		Nowpos = false;
+		animRetun = false;
 		time = 0;
 	}
 
 	// === 0～99 の乱数を作る ===
 	if (!NowDice) { r = rand() % 100; NowDice = true; }
-	// if (!NowMovement) { m = rand() % 100; NowMovement = true; }
-	// if (!NowAttack) { a = rand() % 100; NowAttack = true; }
 }
 
 void CPU::UpdateMove(int _moving, int _ld, int _rd)
@@ -352,7 +307,6 @@ void CPU::UpdateMove(int _moving, int _ld, int _rd)
 
 void CPU::UpdateAttack(int* _attack)
 {
-	isActing = true;
 	int* attackNumber = _attack;
 	int sum = 0;
 
@@ -363,10 +317,11 @@ void CPU::UpdateAttack(int* _attack)
 	for (int i = 0; i < attackCount; i++) {
 		sum += attackNumber[i];
 		if (a < sum) {
-			if (state != attackStates[i]) {
+			if (!isActing || (state != attackStates[i])) {
 				state = attackStates[i];
 				canReduceHp = true;
 			}
+			isActing = true;
 			break;
 		}
 	}
