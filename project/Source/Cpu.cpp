@@ -134,7 +134,7 @@ void CPU::Update()
 	// === 距離によるCPUの思考パターンの決定 ===
 	if (!isActing) {
 		// === 再行動までの時間 ===
-		time += 1.0f;
+		time += 0.1f;
 
 		float ds = fabs(playerpos.x - mypos.x);
 		if (ds < 210.0f) {
@@ -189,7 +189,7 @@ void CPU::UpdateCloseCombat()
 		// UpdateMove(20, 10, 100);
 	}
 	else if (r >= 20 && r < 90) { // 20～89 → 攻撃 70%
-		if (r == prevR) { UpdateAttack(Close_attack, true); }
+		UpdateAttack(Close_attack, true);
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
 		// UpdateGuard();
@@ -259,7 +259,7 @@ void CPU::UpdateDice()
 {
 	// ===== 新しい行動を決める =====
 
-	if (state == S_STOP && !isActing && time > 100.0f) {
+	if (state == S_STOP && !isActing && time > 10.0f) {
 		NowDice = false;
 		NowMovement = false;
 		NowAttack = false;
