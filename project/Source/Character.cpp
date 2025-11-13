@@ -42,7 +42,7 @@ Character::Character()
 	isAlive = true;
 	GuardOn = false;
 	startPosSaved = false;
-	animRetun = false;
+	// animRetun = false;
 
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
@@ -219,7 +219,6 @@ void Character::UpdatePunch1()
 				colIndex = 4;
 			
 				CollisionDetection();
-				hasHit = true;
 			}
 		}
 
@@ -245,7 +244,6 @@ void Character::UpdatePunch2()
 				colIndex = 7;
 			
 				CollisionDetection();
-				hasHit = true;
 			}
 		}
 
@@ -270,7 +268,6 @@ void Character::UpdatePunch3()
 				colIndex = 4;
 			
 				CollisionDetection();
-				hasHit = true;
 			}
 		}
 
@@ -328,7 +325,6 @@ void Character::UpdateKick1()
 				colIndex = 13;
 			
 				CollisionDetection();
-				hasHit = true;
 			}
 		}
 
@@ -382,7 +378,6 @@ void Character::UpdateKick2()
 				colIndex = 10;
 			
 				CollisionDetection();
-				hasHit = true;
 			}
 		}
 
@@ -431,7 +426,6 @@ void Character::UpdateKick3()
 				colIndex = 13;
 			
 				CollisionDetection();
-				hasHit = true;
 			}
 		}
 
@@ -479,7 +473,7 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 
 void Character::InReturn()
 {
-	if (anim->IsFinish() && !animRetun) {
+	if (anim->IsFinish()) {
 		debugRetunCount += 1;
 		state = S_STOP; // 状態を通常に戻す
 		startPosSaved = false; // 次回攻撃用にフラグリセット
@@ -487,12 +481,12 @@ void Character::InReturn()
 		isGuarding = false; // ガード終了
 		isMoveing = false; // 攻撃終了
 		isActing = false; // CPU行動終了
-		animRetun = true;
+		// animRetun = true;
 		hasHit = false;
 		return;
 	}
 
-	if (!anim->IsFinish()) { animRetun = false; }
+	// if (!anim->IsFinish()) { animRetun = false; }
 }
 
 void Character::UpdateJump()
@@ -561,48 +555,49 @@ VECTOR Character::ApplyAttackMotion(const AttackData& data, float _frame, char m
 
 void Character::CollisionDetection()
 {
-	if (opponent != nullptr && canReduceHp) {
-		attackPos = hitSpheres[colIndex].GetWorldCenter(transform.position);
-		attackRadius = hitSpheres[colIndex].radius;
-		hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
-		if (!hitPart.empty()) {
-			debugCollisionCount++;
-			switch (state) {
-			case S_PUNCH1:
-				if (hitPart == "Head") damage = 50;
-				else damage = 0;
-				if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
-				break;
-			case S_PUNCH2:
-				if (hitPart == "Head") damage = 100;
-				else damage = 0;
-				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
-				break;
-			case S_PUNCH3:
-				if (hitPart == "Head") damage = 150;
-				else damage = 0;
-				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
-				break;
-			case S_KICK1:
-				if (hitPart == "Body") damage = 50;
-				else damage = 0;
-				if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
-				break;
-			case S_KICK2:
-				if (hitPart == "Body") damage = 100;
-				else damage = 0;
-				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
-				break;
-			case S_KICK3: 
-				if (hitPart == "Body") damage = 150;
-				else damage = 0;
-				if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
-				break;
-			}
-			opponent->UpdateDamage(damage, attacktype);
-			canReduceHp = false;
-			return;
+	if (opponent == nullptr || !canReduceHp || hasHit) return; // すでに当たっていたらスキップ
+
+	attackPos = hitSpheres[colIndex].GetWorldCenter(transform.position);
+	attackRadius = hitSpheres[colIndex].radius;
+	hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
+	if (!hitPart.empty()) {
+		debugCollisionCount++;
+		switch (state) {
+		case S_PUNCH1:
+			if (hitPart == "Head") damage = 50;
+			else damage = 0;
+			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			break;
+		case S_PUNCH2:
+			if (hitPart == "Head") damage = 100;
+			else damage = 0;
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			break;
+		case S_PUNCH3:
+			if (hitPart == "Head") damage = 150;
+			else damage = 0;
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			break;
+		case S_KICK1:
+			if (hitPart == "Body") damage = 50;
+			else damage = 0;
+			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			break;
+		case S_KICK2:
+			if (hitPart == "Body") damage = 100;
+			else damage = 0;
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			break;
+		case S_KICK3: 
+			if (hitPart == "Body") damage = 150;
+			else damage = 0;
+			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			break;
 		}
+		opponent->UpdateDamage(damage, attacktype);
+		canReduceHp = false;
+		hasHit = true;
+		return;
 	}
 }
 

@@ -43,6 +43,7 @@ CPU::CPU(bool _iscpu)
 	followThreshold = 500.0f;
 	time = 0;
 	CPUpos = 0;
+	prevR = -1;
 
 	isCpu = _iscpu;
 	isFollowing = true;
@@ -75,7 +76,7 @@ void CPU::Update()
 	ImGui::Checkbox("canReduceHp", &canReduceHp);
 	ImGui::Checkbox("hasHit", &hasHit);
 	ImGui::Checkbox("isActing", &isActing);
-	ImGui::Checkbox("animRetun", &animRetun);
+	// ImGui::Checkbox("animRetun", &animRetun);
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("Current state: %s", StateToString(state));
 	ImGui::InputInt("damage", &damage);
@@ -188,7 +189,7 @@ void CPU::UpdateCloseCombat()
 		// UpdateMove(20, 10, 100);
 	}
 	else if (r >= 20 && r < 90) { // 20～89 → 攻撃 70%
-		UpdateAttack(Close_attack);
+		if (r == prevR) { UpdateAttack(Close_attack, true); }
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
 		// UpdateGuard();
@@ -205,7 +206,7 @@ void CPU::UpdateMidCombat()
 		UpdateMove(50, 30, 100);
 	}
 	else if (r >= 45 && r < 90) { // 45〜89 → 攻撃 45%
-		//UpdateAttack(Mid_attack);
+		//UpdateAttack(Mid_attack, true);
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
 		//UpdateGuard();
@@ -221,7 +222,7 @@ void CPU::UpdateLongCombat()
 		UpdateMove(90, 100, 100);
 	}
 	else if (r < 85) { // 75～84 → 攻撃 10%
-		//UpdateAttack(Long_attack);
+		//UpdateAttack(Long_attack, true);
 	}
 	else { // 85～94 → ガード 10%
 		//UpdateGuard();
@@ -263,12 +264,13 @@ void CPU::UpdateDice()
 		NowMovement = false;
 		NowAttack = false;
 		Nowpos = false;
-		animRetun = false;
+		// animRetun = false;
 		time = 0;
+		prevR = -1;
 	}
 
 	// === 0～99 の乱数を作る ===
-	if (!NowDice) { r = rand() % 100; NowDice = true; }
+	if (!NowDice) { r = rand() % 100; prevR = r; NowDice = true; }
 }
 
 void CPU::UpdateMove(int _moving, int _ld, int _rd)
@@ -305,8 +307,12 @@ void CPU::UpdateMove(int _moving, int _ld, int _rd)
 	}
 }
 
-void CPU::UpdateAttack(int* _attack)
+void CPU::UpdateAttack(int* _attack, bool _acting)
 {
+	// 攻撃が終わっていたら何もしない
+	// if (!isActing || anim->IsFinish()) return;
+
+	isActing = _acting;
 	int* attackNumber = _attack;
 	int sum = 0;
 
@@ -321,7 +327,6 @@ void CPU::UpdateAttack(int* _attack)
 				state = attackStates[i];
 				canReduceHp = true;
 			}
-			isActing = true;
 			break;
 		}
 	}

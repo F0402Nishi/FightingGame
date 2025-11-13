@@ -42,6 +42,7 @@ private:
 	// int movingrandom;
 	int attackrandom;
 	// int attackNumber;
+	int prevR;
 
 	float targetDistance; // —‘z‚ÌŠÔ‡‚¢
 	float expandThreshold; // ‚±‚±‚Ü‚ÅL‚ª‚Á‚½‚ç‹l‚ß’¼‚·
@@ -92,7 +93,7 @@ private:
 	void UpdateLongCombat();
 	void UpdateDice();
 	void UpdateMove(int _moving, int _ld, int _rd);
-	void UpdateAttack(int* _attack);
+	void UpdateAttack(int* _attack, bool _acting);
 	void UpdateGuard();
 
 };
