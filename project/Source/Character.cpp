@@ -496,7 +496,7 @@ void Character::UpdateJump()
 
 void Character::UpdateDamage(int dmg, AttackType type)
 {
-	// dmg = 0; // デバック用
+	dmg = 0; // デバック用
 
 	if (dmg <= 0) return; // ダメージが0なら何もしない
 

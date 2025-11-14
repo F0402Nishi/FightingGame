@@ -68,7 +68,7 @@ private:
 	bool GuardNow;
 	bool isBusy;
 
-	State attackStates[6] = {
+	Character::State attackStates[6] = {
 		S_PUNCH1, // ŽãP
 		S_PUNCH2, // ’†P
 		S_PUNCH3, // ‹­P
@@ -93,7 +93,7 @@ private:
 	void UpdateLongCombat();
 	void UpdateDice();
 	void UpdateMove(int _moving, int _ld, int _rd);
-	void UpdateAttack(int* _attack, bool _acting);
+	void UpdateAttack(int* _attack);
 	void UpdateGuard();
 
 };
