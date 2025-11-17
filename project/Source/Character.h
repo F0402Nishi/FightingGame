@@ -99,6 +99,7 @@ protected:
 	float correctionRange;
 	int debugCollisionCount;
 	int debugRetunCount;
+	float waitTimer;
 
 	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる
@@ -116,6 +117,7 @@ protected:
 	bool isActing;
 	bool animRetun;
 	bool hasHit = false;
+	bool waitForNextAction; // 攻撃直後の一時停止フラグ
 
 	// Playerの骨制御
 	int headBone;

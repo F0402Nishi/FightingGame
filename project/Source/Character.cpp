@@ -29,6 +29,7 @@ Character::Character()
 	framespeed = 0.2f;
 	xOffset = 0.0f;
 	correctionRange = 185.0f;
+	waitTimer = 0.0f;
 
 	debugCollisionCount = 0;
 	debugRetunCount = 0;
@@ -42,7 +43,8 @@ Character::Character()
 	isAlive = true;
 	GuardOn = false;
 	startPosSaved = false;
-	// animRetun = false;
+	animRetun = false;
+	waitForNextAction = false;
 
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
@@ -186,6 +188,8 @@ void Character::UpdateStop(float deltaTime)
 	if (!isAltIdle && !isHitPlaying) {
 		anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
 		// PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
+
+		animRetun = false;
 
 		if (!isAlive) return;
 
@@ -473,20 +477,29 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 
 void Character::InReturn()
 {
-	if (anim->IsFinish()) {
+	if (anim->IsFinish() && !animRetun) {
+		animRetun = true;
+		
 		debugRetunCount += 1;
 		state = S_STOP; // 状態を通常に戻す
+
+		// --- リセット処理 ---
 		startPosSaved = false; // 次回攻撃用にフラグリセット
 		canReduceHp = false;
 		isGuarding = false; // ガード終了
 		isMoveing = false; // 攻撃終了
 		isActing = false; // CPU行動終了
-		// animRetun = true;
 		hasHit = false;
+
+		if (GetisCpu()) {
+			waitForNextAction = true;
+			waitTimer = 0.0f;
+		}
+		
 		return;
 	}
 
-	// if (!anim->IsFinish()) { animRetun = false; }
+	if (!anim->IsFinish()) { animRetun = false; }
 }
 
 void Character::UpdateJump()

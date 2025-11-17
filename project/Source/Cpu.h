@@ -88,12 +88,12 @@ private:
 	};
 
 	Brain brain;
-	void UpdateCloseCombat();
-	void UpdateMidCombat();
-	void UpdateLongCombat();
 	void UpdateDice();
 	void UpdateMove(int _moving, int _ld, int _rd);
 	void UpdateAttack(int* _attack);
 	void UpdateGuard();
+	void UpdateCloseCombat();
+	void UpdateMidCombat();
+	void UpdateLongCombat();
 
 };
