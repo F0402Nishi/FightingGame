@@ -186,15 +186,13 @@ void Character::UpdateStop(float deltaTime)
 	idleTimer += deltaTime;
 
 	if (!isAltIdle && !isHitPlaying) {
-		anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
-		// PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
-
-		animRetun = false;
+		// anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
+		PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
 
 		if (!isAlive) return;
 
 		if (idleTimer > 10.0f) {
-			anim->Play("data/Character/Player/Taunt.mv1", false);
+			PlayAttack("data/Character/Player/Taunt.mv1", false);
 			isAltIdle = true;
 			idleTimer = 0.0f;
 
@@ -246,7 +244,7 @@ void Character::UpdatePunch2()
 			if (!hasHit) {
 				attacktype = AttackType::Punch;
 				colIndex = 7;
-			
+
 				CollisionDetection();
 			}
 		}
@@ -270,7 +268,7 @@ void Character::UpdatePunch3()
 			if (!hasHit) {
 				attacktype = AttackType::Punch;
 				colIndex = 4;
-			
+
 				CollisionDetection();
 			}
 		}
@@ -327,7 +325,7 @@ void Character::UpdateKick1()
 			if (!hasHit) {
 				attacktype = AttackType::Kick;
 				colIndex = 13;
-			
+
 				CollisionDetection();
 			}
 		}
@@ -380,7 +378,7 @@ void Character::UpdateKick2()
 			if (!hasHit) {
 				attacktype = AttackType::Kick;
 				colIndex = 10;
-			
+
 				CollisionDetection();
 			}
 		}
@@ -428,7 +426,7 @@ void Character::UpdateKick3()
 			if (!hasHit) {
 				attacktype = AttackType::Kick;
 				colIndex = 13;
-			
+
 				CollisionDetection();
 			}
 		}
@@ -447,9 +445,12 @@ void Character::UpdateProtect()
 
 	if (anim->IsFinish()) {
 		state = S_STOP;
+
 		canReduceHp = false;
 		isMoveing = false;
 		isActing = false;
+		animRetun = false;
+
 		return;
 	}
 
@@ -492,8 +493,6 @@ void Character::InReturn()
 		hasHit = false;
 
 		if (GetisCpu()) {
-			waitForNextAction = true;
-			waitTimer = 0.0f;
 		}
 		
 		return;

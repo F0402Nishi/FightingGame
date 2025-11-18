@@ -43,6 +43,7 @@ private:
 	int attackrandom;
 	// int attackNumber;
 	int prevR;
+	int sum;
 
 	float targetDistance; // —‘z‚ÌŠÔ‡‚¢
 	float expandThreshold; // ‚±‚±‚Ü‚ÅL‚ª‚Á‚½‚ç‹l‚ß’¼‚·
@@ -82,6 +83,7 @@ private:
 	int Long_attack[6] = { 5, 30, 30, 5, 20, 10 };
 
 	enum Brain {
+		WAIT,
 		CLOSE_COMBAT, // ‹ß‹——£
 		MID_COMBAT, // ’†‹——£
 		LONG_COMBAT // ’·‹——£
@@ -92,6 +94,7 @@ private:
 	void UpdateMove(int _moving, int _ld, int _rd);
 	void UpdateAttack(int* _attack);
 	void UpdateGuard();
+	void UpdateWAITCombat();
 	void UpdateCloseCombat();
 	void UpdateMidCombat();
 	void UpdateLongCombat();

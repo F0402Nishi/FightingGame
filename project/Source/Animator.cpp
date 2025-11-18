@@ -38,7 +38,7 @@ void Animator::Update()
 		}
 	}
 	else {
-		if (animTime > animMaxTime) {
+		if (!finished && animTime > animMaxTime) {
 			animTime = animMaxTime;
 			finished = true;
 		}
@@ -65,12 +65,13 @@ void Animator::Play(std::string filename, bool loop) // , bool force ‚Ì‚¿‚É’Ç‰Á
 	animMaxTime = MV1GetAnimTotalTime(handle, 0);
 	currentFile = filename;
 	loopMode = loop;
+	finished = false;
 }
 
 bool Animator::IsFinish()
 {
 	if (loopMode == false) {
-		if (animTime >= animMaxTime) { return true; }
+		if (animTime >= animMaxTime) { return finished = true; }
 	}
 
 	return finished;

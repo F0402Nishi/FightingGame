@@ -23,6 +23,12 @@
 // === メモ ===
 // 攻撃は、種類が多くて打つのが大変なので、配列で処理する
 
+// === 構想の考え直し ===
+// ゲーム開始時は、WAITで座標習得、brainの決定、UpdateDice() を回す
+// Update～Combat に移行
+// Update 系の処理
+// 行動終了後、WAITにもどる
+
 CPU::CPU(bool _iscpu)
 {
 	player = FindGameObject<Player>();
@@ -31,6 +37,9 @@ CPU::CPU(bool _iscpu)
 	transform.rotation = VGet(0, DegToRad(90.0f), 0);
 
 	previousStop = transform.position;
+	
+	brain = WAIT;
+	state = S_STOP;
 
 	r = 0;
 	m = 0;
@@ -57,9 +66,6 @@ CPU::CPU(bool _iscpu)
 	actionFinished = false;
 	GuardNow = false;
 	
-
-	brain = MID_COMBAT;
-
 	// === 確率（合計100）===
 	attackCount = sizeof(Mid_attack) / sizeof(int);
 }
@@ -70,18 +76,6 @@ CPU::~CPU()
 
 void CPU::Update()
 {	
-	// === 攻撃終了後のクールタイム処理 ===
-	if (waitForNextAction) {
-		waitTimer += 1.0f;
-		if (waitTimer > 30.0f) { // 30フレーム待つ
-			waitForNextAction = false;
-			time = 0; // 次の行動判定をリセット
-		}
-		else {
-			return; // 行動停止
-		}
-	}
-
 	Character::Always();
 
 	ImGui::Begin("CPU");
@@ -90,11 +84,12 @@ void CPU::Update()
 	ImGui::Checkbox("canReduceHp", &canReduceHp);
 	ImGui::Checkbox("animRetun", &animRetun);
 	ImGui::Checkbox("waitForNextAction", &waitForNextAction);
-	//ImGui::Checkbox("animFinish", (bool*)&anim->IsFinish());
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("Current state: %s", StateToString(state));
+	ImGui::Text("animFinish: %s", anim->IsFinish() ? "true" : "false");
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("attack", &a);
+	ImGui::InputInt("sum", &sum);
 	ImGui::InputInt("debugRetunCount", &debugRetunCount);
 	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
 	ImGui::InputFloat("waitTimer", &waitTimer);
@@ -120,6 +115,18 @@ void CPU::Update()
 	ImGui::InputFloat("float moved", &moved);
 	ImGui::InputFloat("float CPUpos", &CPUpos);
 	ImGui::Text("MyPosition：%d", (int) & mypos);
+
+	// === 攻撃終了後のクールタイム処理 ===
+	if (waitForNextAction) {
+		waitTimer += 1.0f;
+		if (waitTimer > 30.0f) { // 30フレーム待つ
+			waitForNextAction = false;
+			time = 0; // 次の行動判定をリセット
+		}
+		else {
+			return; // 行動停止
+		}
+	}
 #endif // 0
 
 	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
@@ -142,30 +149,11 @@ void CPU::Update()
 		return;
 	}
 
-	// === 座標取得 ===
-	mypos = transform.position;
-	playerpos = player->GetTransform().position;
-
-	// === 距離によるCPUの思考パターンの決定 ===
-	if (!isActing) {
-		// === 再行動までの時間 ===
-		time += 0.1f;
-
-		float ds = fabs(playerpos.x - mypos.x);
-		if (ds < 210.0f) {
-			brain = CLOSE_COMBAT;
-		}
-		else if (ds >= 210.0f && 500.0f >= ds)
-		{
-			brain = MID_COMBAT;
-		}
-		else if (ds > 500.0f) {
-			brain = LONG_COMBAT;
-		}
-	}
-
 	// === CPUの思考パターン別による関数に移動 ===
 	switch (brain) {
+	case WAIT:
+		UpdateWAITCombat();
+		break;
 	case CLOSE_COMBAT:
 		UpdateDice();
 		UpdateCloseCombat();
@@ -178,6 +166,11 @@ void CPU::Update()
 		UpdateDice();
 		UpdateLongCombat();
 		break;
+	}
+
+	// === 攻撃終了を検知したら WAIT に戻す ===
+	if (!isActing && state == S_STOP && brain != WAIT) {
+		brain = WAIT;
 	}
 
 	// 左右移動
@@ -199,12 +192,12 @@ void CPU::UpdateDice()
 {
 	// ===== 新しい行動を決める =====
 
-	if (state == S_STOP && !isActing && !waitForNextAction && time > 10.0f) {
+	if (state == S_STOP && !isActing) {
 		NowDice = false;
 		NowMovement = false;
 		NowAttack = false;
 		Nowpos = false;
-		// animRetun = false;
+		animRetun = false;
 		time = 0;
 	}
 
@@ -243,6 +236,7 @@ void CPU::UpdateMove(int _moving, int _ld, int _rd)
 	if ((inputDir.x > 0.0f && fabs(moved) >= Rightdirection) || (inputDir.x < 0.0f && fabs(moved) >= Leftdirection)) {
 		inputDir.x = 0.0f;
 		isActing = false;
+		brain = WAIT;
 	}
 }
 
@@ -252,20 +246,18 @@ void CPU::UpdateAttack(int* _attack)
 	// if (!isActing || anim->IsFinish()) return;
 	
 	// 攻撃直後なら何もしない
-	if (waitForNextAction) return;
+	// if (waitForNextAction) return;
 	
 	// 既に行動中なら再発火しない
-	if (isActing) return; 
+	// if (isActing) return; 
 	
 	isActing = true;
 
 	int* attackNumber = _attack;
 	int sum = 0;
 
-	state = S_PUNCH2;
-	canReduceHp = true;
+	brain = WAIT;
 
-#if 0
 	// === 0～99 の乱数を作る ===
 	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
 
@@ -274,14 +266,19 @@ void CPU::UpdateAttack(int* _attack)
 	for (int i = 0; i < attackCount; i++) {
 		sum += attackNumber[i];
 		if (a < sum) {
+			// if (!isActing || (state != attackStates[i])) {}
 			state = attackStates[i];
 			canReduceHp = true;
 			ImGui::Text("Current state: %s", StateToString(attackStates[i]));
-			// if (!isActing || (state != attackStates[i])) {}
 			break;
 		}
 	}
 	ImGui::End();
+
+#if 0
+	state = S_PUNCH2;
+	canReduceHp = true;
+	sum += 1;
 #endif // 0
 }
 
@@ -293,10 +290,37 @@ void CPU::UpdateGuard()
 	isActing = true;
 }
 
+void CPU::UpdateWAITCombat()
+{
+	state = S_STOP;
+
+	// === 座標取得 ===
+	mypos = transform.position;
+	playerpos = player->GetTransform().position;
+
+	// === 距離によるCPUの思考パターンの決定 ===
+	// === 再行動までの時間 ===
+	time += 0.1f;
+
+	float ds = fabs(playerpos.x - mypos.x);
+	if (ds < 210.0f && time > 10.0f) {
+		brain = CLOSE_COMBAT;
+	}
+	else if (ds >= 210.0f && 500.0f >= ds && time > 10.0f)
+	{
+		brain = MID_COMBAT;
+	}
+	else if (ds > 500.0f && time > 10.0f) {
+		brain = LONG_COMBAT;
+	}
+}
+
 void CPU::UpdateCloseCombat()
 {
 	// 移動や攻撃中は乱数を生成しない
 	// if (!isBusy) { UpdateDice(); }
+
+	time = 0.0f;
 
 	if (r >= 0 && r < 20) { // 0～19 → 移動 20%
 		// UpdateMove(20, 10, 100);
@@ -313,15 +337,17 @@ void CPU::UpdateMidCombat()
 {
 	// 移動や攻撃中は乱数を生成しない
 	// if (!isBusy) { UpdateDice(); }
+
+	time = 0.0f;
 	
 	if (r >= 0 && r < 45) { // 0〜44 → 移動 45%
-		//UpdateMove(50, 30, 100);
+		// UpdateMove(50, 30, 100);
 	}
 	else if (r >= 45 && r < 90) { // 45〜89 → 攻撃 45%
 		UpdateAttack(Mid_attack);
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
-		//UpdateGuard();
+		// UpdateGuard();
 	}
 }
 
@@ -330,14 +356,16 @@ void CPU::UpdateLongCombat()
 	// 移動や攻撃中は乱数を生成しない
 	// if (!isBusy) { UpdateDice(); }
 
+	time = 0.0f;
+
 	if (r < 75) { // 0～74 → 移動 75%
-		//UpdateMove(90, 100, 100);
+		// UpdateMove(90, 100, 100);
 	}
 	else if (r < 85) { // 75～84 → 攻撃 10%
 		UpdateAttack(Long_attack);
 	}
-	else { // 85～94 → ガード 10%
-		//UpdateGuard();
+	else { // 85～99 → ガード 10%
+		// UpdateGuard();
 	}
 
 #if 0
