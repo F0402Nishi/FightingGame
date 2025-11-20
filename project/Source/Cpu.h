@@ -30,7 +30,7 @@ private:
 	VECTOR mypos; // 自分の位置
 	VECTOR playerpos; // Playerの位置
 	VECTOR previousStop; // 前回の停止位置
-	VECTOR CPUvelocity;
+	// VECTOR CPUvelocity;
 
 	//  === 乱数 ===
 	int r;
@@ -65,9 +65,9 @@ private:
 	bool NowMovement;
 	bool NowAttack;
 	bool Nowpos;
-	bool actionFinished;
 	bool GuardNow;
 	bool isBusy;
+	bool hasStartedAction;
 
 	Character::State attackStates[6] = {
 		S_PUNCH1, // 弱P

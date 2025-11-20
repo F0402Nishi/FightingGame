@@ -63,8 +63,8 @@ CPU::CPU(bool _iscpu)
 	NowMovement = false;
 	NowAttack = false;
 	Nowpos = false;
-	actionFinished = false;
 	GuardNow = false;
+	hasStartedAction = false;
 	
 	// === 確率（合計100）===
 	attackCount = sizeof(Mid_attack) / sizeof(int);
@@ -78,12 +78,13 @@ void CPU::Update()
 {	
 	Character::Always();
 
+#if false "ImGui"
 	ImGui::Begin("CPU");
 	ImGui::Checkbox("hasHit", &hasHit);
 	ImGui::Checkbox("isActing", &isActing);
 	ImGui::Checkbox("canReduceHp", &canReduceHp);
 	ImGui::Checkbox("animRetun", &animRetun);
-	ImGui::Checkbox("waitForNextAction", &waitForNextAction);
+	ImGui::Checkbox("actionFinished", &actionFinished);
 	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("Current state: %s", StateToString(state));
 	ImGui::Text("animFinish: %s", anim->IsFinish() ? "true" : "false");
@@ -95,8 +96,6 @@ void CPU::Update()
 	ImGui::InputFloat("waitTimer", &waitTimer);
 	ImGui::InputFloat("time", &time);
 	ImGui::End();
-
-#if false "ImGui"
 	
 	ImGui::Checkbox("GuardOn", &GuardOn);
 	ImGui::Checkbox("GuardNow", &GuardNow);
@@ -169,17 +168,18 @@ void CPU::Update()
 	}
 
 	// === 攻撃終了を検知したら WAIT に戻す ===
-	if (!isActing && state == S_STOP && brain != WAIT) {
+	if (actionFinished && anim->IsFinish() && !isActing && state == S_STOP && brain != WAIT) {
 		brain = WAIT;
+		actionFinished = false; // 次の判定に備えてリセット
 	}
 
 	// 左右移動
-	if (VSize(inputDir) > 0) {
+	if (!isAttacking && VSize(inputDir) > 0) {
 		if (VSize(inputDir) >= 1.0f) {
 			inputDir = VNorm(inputDir);
 		}
-		CPUvelocity = inputDir * speed;
-		transform.position += CPUvelocity;
+		velocity = inputDir * speed;
+		transform.position += velocity;
 	}
 }
 
@@ -252,11 +252,10 @@ void CPU::UpdateAttack(int* _attack)
 	// if (isActing) return; 
 	
 	isActing = true;
+	isAttacking = true;
 
 	int* attackNumber = _attack;
 	int sum = 0;
-
-	brain = WAIT;
 
 	// === 0～99 の乱数を作る ===
 	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
@@ -323,13 +322,13 @@ void CPU::UpdateCloseCombat()
 	time = 0.0f;
 
 	if (r >= 0 && r < 20) { // 0～19 → 移動 20%
-		// UpdateMove(20, 10, 100);
+		UpdateMove(20, 10, 100);
 	}
 	else if (r >= 20 && r < 90) { // 20～89 → 攻撃 70%
 		UpdateAttack(Close_attack);
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
-		// UpdateGuard();
+		UpdateGuard();
 	}
 }
 
@@ -341,13 +340,13 @@ void CPU::UpdateMidCombat()
 	time = 0.0f;
 	
 	if (r >= 0 && r < 45) { // 0〜44 → 移動 45%
-		// UpdateMove(50, 30, 100);
+		UpdateMove(50, 30, 100);
 	}
 	else if (r >= 45 && r < 90) { // 45〜89 → 攻撃 45%
 		UpdateAttack(Mid_attack);
 	}
 	else if (r >= 90 && r < 100) { // 90〜99 → ガード（10%）
-		// UpdateGuard();
+		UpdateGuard();
 	}
 }
 
@@ -359,13 +358,13 @@ void CPU::UpdateLongCombat()
 	time = 0.0f;
 
 	if (r < 75) { // 0～74 → 移動 75%
-		// UpdateMove(90, 100, 100);
+		UpdateMove(90, 100, 100);
 	}
 	else if (r < 85) { // 75～84 → 攻撃 10%
 		UpdateAttack(Long_attack);
 	}
 	else { // 85～99 → ガード 10%
-		// UpdateGuard();
+		UpdateGuard();
 	}
 
 #if 0

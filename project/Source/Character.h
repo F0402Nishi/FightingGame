@@ -67,7 +67,7 @@ protected:
 	AttackType attacktype;
 
 	VECTOR inputDir; // 初期位置
-	// VECTOR velocity;
+	VECTOR velocity;
 	VECTOR basePos; // 現在位置
 	VECTOR worldCenter;  // Colliderの現在位置
 	VECTOR attackPos; // 攻撃の時に当たったColliderの位置
@@ -118,6 +118,9 @@ protected:
 	bool animRetun;
 	bool hasHit = false;
 	bool waitForNextAction; // 攻撃直後の一時停止フラグ
+	bool actionFinished;
+	bool isAttacking;
+
 
 	// Playerの骨制御
 	int headBone;

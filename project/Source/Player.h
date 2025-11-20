@@ -25,7 +25,7 @@ private:
 	CPU* cpu;
 	UI2D* ui2d;
 
-	VECTOR velocity;
+	// VECTOR velocity;
 	VECTOR stick; // 左スティックX軸取得用
 
 	XINPUT_STATE input;

@@ -18,6 +18,7 @@ Character::Character()
 	transform.position = VGet(-200.0f, 14.0f, 150.0f);
 	transform.rotation = VGet(0, DegToRad(-90.0f), 0);
 	transform.scale = VGet(2, 2, 2);
+	inputDir = VGet(0, 0, 0);
 	anim = new Animator(hModel);
 	// anim->Play("data/Character/Player/Fight_Idle.mv1", true, true);
 	E_collder = new EllipseCollider(VGet(0, 150, 0), VGet(0, 150, 0), 200);
@@ -45,6 +46,8 @@ Character::Character()
 	startPosSaved = false;
 	animRetun = false;
 	waitForNextAction = false;
+	actionFinished = false;
+	isAttacking = false;
 
 	Hp = PLAYER_HP;
 	MaxHp = PLAYER_HP;
@@ -493,6 +496,8 @@ void Character::InReturn()
 		hasHit = false;
 
 		if (GetisCpu()) {
+			actionFinished = true;
+			isAttacking = false;
 		}
 		
 		return;
@@ -508,13 +513,15 @@ void Character::UpdateJump()
 
 void Character::UpdateDamage(int dmg, AttackType type)
 {
-	dmg = 0; // デバック用
+	// dmg = 0; // デバック用
 
 	if (dmg <= 0) return; // ダメージが0なら何もしない
 
 	Hp -= dmg;
 
 	if (!isHitPlaying) { 
+		inputDir = VGet(0, 0, 0);
+
 		switch (type) {
 		case AttackType::Punch:
 			if (!isGuarding) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
