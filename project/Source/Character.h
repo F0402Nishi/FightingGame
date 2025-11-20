@@ -84,6 +84,7 @@ protected:
 	// int DrawValue;
 	// int TargetValue;
 	int speed; // 移動の速さ
+	int debugframe;
 
 	// float time = 0.0f;
 	float velocityY = 0.0f; // ジャンプ時のY座標
@@ -97,9 +98,8 @@ protected:
 	float xOffset;
 	float dist;
 	float correctionRange;
-	int debugCollisionCount;
-	int debugRetunCount;
 	float waitTimer;
+	float FrameCounter;
 
 	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる

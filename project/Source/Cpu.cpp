@@ -80,13 +80,14 @@ void CPU::Update()
 
 #if false "ImGui"
 	ImGui::Begin("CPU");
+	ImGui::Text("brain: %d", (int)brain);
+	ImGui::Text("Current state: %s", StateToString(state));
+	ImGui::End();
 	ImGui::Checkbox("hasHit", &hasHit);
 	ImGui::Checkbox("isActing", &isActing);
 	ImGui::Checkbox("canReduceHp", &canReduceHp);
 	ImGui::Checkbox("animRetun", &animRetun);
 	ImGui::Checkbox("actionFinished", &actionFinished);
-	ImGui::Text("brain: %d", (int)brain);
-	ImGui::Text("Current state: %s", StateToString(state));
 	ImGui::Text("animFinish: %s", anim->IsFinish() ? "true" : "false");
 	ImGui::InputInt("dice", &r);
 	ImGui::InputInt("attack", &a);
@@ -95,7 +96,6 @@ void CPU::Update()
 	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
 	ImGui::InputFloat("waitTimer", &waitTimer);
 	ImGui::InputFloat("time", &time);
-	ImGui::End();
 	
 	ImGui::Checkbox("GuardOn", &GuardOn);
 	ImGui::Checkbox("GuardNow", &GuardNow);
@@ -260,19 +260,19 @@ void CPU::UpdateAttack(int* _attack)
 	// === 0～99 の乱数を作る ===
 	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
 
-	ImGui::Begin("Attack");
+	// ImGui::Begin("Attack");
 	// === 攻撃系 ===
 	for (int i = 0; i < attackCount; i++) {
 		sum += attackNumber[i];
 		if (a < sum) {
 			// if (!isActing || (state != attackStates[i])) {}
+			// ImGui::Text("Current state: %s", StateToString(attackStates[i]));
 			state = attackStates[i];
 			canReduceHp = true;
-			ImGui::Text("Current state: %s", StateToString(attackStates[i]));
 			break;
 		}
 	}
-	ImGui::End();
+	// ImGui::End();
 
 #if 0
 	state = S_PUNCH2;
@@ -302,10 +302,10 @@ void CPU::UpdateWAITCombat()
 	time += 0.1f;
 
 	float ds = fabs(playerpos.x - mypos.x);
-	if (ds < 210.0f && time > 10.0f) {
+	if (ds < 210.0f && time > 20.0f) {
 		brain = CLOSE_COMBAT;
 	}
-	else if (ds >= 210.0f && 500.0f >= ds && time > 10.0f)
+	else if (ds >= 210.0f && 500.0f >= ds && time > 15.0f)
 	{
 		brain = MID_COMBAT;
 	}

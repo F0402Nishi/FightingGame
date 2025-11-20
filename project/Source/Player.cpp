@@ -42,17 +42,18 @@ void Player::Update()
 {
 	Character::Always();
 
-	ImGui::Begin("PLAYER");
+	//ImGui::Begin("PLAYER");
 	//ImGui::Checkbox("InputTypeP", &InputTypeP);
 	//ImGui::Checkbox("canReduceHp", &canReduceHp);
 	//ImGui::Checkbox("isMoving", &isMoveing);
 	//ImGui::Checkbox("animRetun", &animRetun);
 	//ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
-	ImGui::InputFloat("position.x", &transform.position.x);
+	//ImGui::InputInt("debugframe", &debugframe);
+	//ImGui::InputFloat("position.x", &transform.position.x);
 	//ImGui::InputFloat("position.y", &transform.position.y);
 	//ImGui::InputFloat("position.z", &transform.position.z);
-	ImGui::InputFloat("velocity.x", &velocity.x);
-	ImGui::InputFloat("inputDir.x", &inputDir.x);
+	//ImGui::InputFloat("velocity.x", &velocity.x);
+	//ImGui::InputFloat("inputDir.x", &inputDir.x);
 	//ImGui::InputFloat("IdleTimer", &idleTimer);
 	//ImGui::InputFloat("dist", &dist);
 	//ImGui::InputFloat("frame", &frame);
@@ -63,7 +64,7 @@ void Player::Update()
 	//ImGui::Text("push.y: %.2f", hit.y);
 	//ImGui::Text("Position: z=%.2f", startPos.z);
 	//ImGui::Text("HP: %d", (int)Hp);
-	ImGui::End();
+	//ImGui::End();
 
 	//ImGui::Begin("PAD DEBUG");
 	//ImGui::Text("joyInput: %d", joyInput);
@@ -151,6 +152,9 @@ void Player::Update()
 	if (CheckHitKey(KEY_INPUT_H) || input.Buttons[XINPUT_BUTTON_X]) {  // ガード
 		state = S_PROTECT; isGuarding = true;
 		currentKey = KEY_INPUT_H;
+	}
+	else if (!CheckHitKey(KEY_INPUT_H) || !input.Buttons[XINPUT_BUTTON_X]) {
+		InReturn();
 	}
 
 

@@ -32,9 +32,6 @@ Character::Character()
 	correctionRange = 185.0f;
 	waitTimer = 0.0f;
 
-	debugCollisionCount = 0;
-	debugRetunCount = 0;
-
 	canReduceHp = false;
 	canCancel = false;
 	isAltIdle = false;
@@ -288,11 +285,6 @@ void Character::UpdateKick1()
 	frame = anim->CurrentAnimTime();
 	total = anim->TotalTime();
 
-	if (!startPosSaved) {
-		startPos = transform.position;
-		startPosSaved = true;
-	}
-
 	// === 攻撃モーション補正（Z軸）===
 	baseOffset = ApplyAttackMotion(Kick1Data, frame, 'z');
 	
@@ -446,18 +438,15 @@ void Character::UpdateProtect()
 {
 	PlayAttack("data/Character/Player/Guard_Idle.mv1", false);
 
-	if (anim->IsFinish()) {
-		state = S_STOP;
-
-		canReduceHp = false;
-		isMoveing = false;
-		isActing = false;
-		animRetun = false;
-
-		return;
-	}
+	FrameCounter += 0.1;
+	frame = anim->CurrentAnimTime();
+	total = anim->TotalTime();
 
 	CollisionDetection();
+
+	if (GetisCpu() && FrameCounter > 10) {
+		InReturn();
+	}
 }
 
 /// <summary>
@@ -484,7 +473,6 @@ void Character::InReturn()
 	if (anim->IsFinish() && !animRetun) {
 		animRetun = true;
 		
-		debugRetunCount += 1;
 		state = S_STOP; // 状態を通常に戻す
 
 		// --- リセット処理 ---
@@ -498,6 +486,7 @@ void Character::InReturn()
 		if (GetisCpu()) {
 			actionFinished = true;
 			isAttacking = false;
+			FrameCounter = 0;
 		}
 		
 		return;
@@ -547,6 +536,11 @@ void Character::SetAlive(bool ali)
 
 VECTOR Character::ApplyAttackMotion(const AttackData& data, float _frame, char moveAxis)
 {
+	if (!startPosSaved) {
+		startPos = transform.position;
+		startPosSaved = true;
+	}
+
 	// === 攻撃開始時点での位置関係を取得 ===
 	myPos = transform.position;
 	opPos = opponent->GetTransform().position;
@@ -580,7 +574,6 @@ void Character::CollisionDetection()
 	attackRadius = hitSpheres[colIndex].radius;
 	hitPart = HitCheck::CheckHitToPart(*opponent, attackPos, attackRadius);
 	if (!hitPart.empty()) {
-		debugCollisionCount++;
 		switch (state) {
 		case S_PUNCH1:
 			if (hitPart == "Head") damage = 50;
