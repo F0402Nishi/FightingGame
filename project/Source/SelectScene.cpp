@@ -10,7 +10,7 @@ int SelectScene::gameType = 0;
 
 SelectScene::SelectScene()
 {
-	SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
+	SetCameraPositionAndTarget_UpVecY(VGet(-0.0f, 0.0f, -1100.0f), VGet(0.0f, 0.0f, 0));
 
 	// OperationImage = LoadGraph("data/2D/Ki-Bo-Do_4.png");
 	// assert(OperationImage >= 0);
@@ -114,7 +114,8 @@ void SelectScene::Draw()
 	DrawRotaGraph3D(Xkey, Ykey, 0, 1.0f, 0, SelectionArrowImage, TRUE);
 
 	// === タイトルシーンに移動 ===
-	DrawExtendString(30, 30, 2, 2, "[Tab] 戻る", GetColor(255, 255, 255));
+	DrawExtendString(10, 900, 2, 2, "[Tab] タイトルへ", GetColor(255, 255, 255));
+	DrawExtendString(350, 900, 2, 2, "[Enter] or [Bボタン] 決定 & 戻る", GetColor(255, 255, 255));
 
 	// === ゲームタイプの種類 ===
 	if (OpponentSelection) {

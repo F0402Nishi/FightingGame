@@ -1,5 +1,6 @@
 #pragma once
 #include "../Library/SceneBase.h"
+#include "Screen.h"
 
 /// <summary>
 /// タイトルシーン
@@ -15,7 +16,6 @@ public:
 	void Draw() override;
 
 private:
-	// int readVal;
 	int MechImage;
 	int BrawlersImage;
 	int PoseLeftImage;

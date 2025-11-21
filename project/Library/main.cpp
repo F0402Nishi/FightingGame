@@ -41,6 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	{
 		return -1;			// エラーが起きたら直ちに終了
 	}
+
 	SetDrawScreen(DX_SCREEN_BACK);
 	SetAlwaysRunFlag(TRUE);
 	SetUseZBuffer3D(TRUE);
