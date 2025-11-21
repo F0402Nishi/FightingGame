@@ -35,6 +35,22 @@ const char* KeyList[] = {
 	"Q",
 };
 
+// === ゲームパッドキーリスト ===
+const char* PadList[] = {
+	"→", 
+	"←", 
+	"B", 
+	"RB", 
+	"RT",
+	"A", 
+	"LB", 
+	"LT", 
+	"X",
+	"",
+	"メニューボタン",
+	"Y",
+};
+
 MiniWindow::MiniWindow()
 {
 	// selectScene = scene;
@@ -53,6 +69,7 @@ MiniWindow::MiniWindow()
 
 	commandCount = sizeof(commandList) / sizeof(commandList[0]);
 	KeyCount = sizeof(KeyList) / sizeof(KeyList[0]);
+	PadCount = sizeof(PadList) / sizeof(PadList[0]);
 
 	commandwindowOpen = false;
 	menuwindowOpen = false;
@@ -79,6 +96,7 @@ void MiniWindow::Update()
 {
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputCommand);
 	GetJoypadAnalogInputRight(&Mx, &My, DX_INPUT_PAD1);
+	
 	int DZ = 200; // デッドゾーン
 	stickUp = My < -DZ;
 	stickDown = My > DZ;
@@ -200,7 +218,12 @@ void MiniWindow::CommandWindow()
 
 	for (int k = 0; k < KeyCount; k++) {
 		int keY = 100 + k * 100 + scrollOffset;
-		DrawExtendString(800, keY, 2, 2, KeyList[k], GetColor(255, 255, 255));
+		DrawExtendString(600, keY, 2, 2, KeyList[k], GetColor(255, 255, 255));
+	}
+
+	for (int p = 0; p < PadCount; p++) {
+		int paY = 100 + p * 100 + scrollOffset;
+		DrawExtendString(900, paY, 2, 2, PadList[p], GetColor(255, 255, 255));
 	}
 
 	if (rightY >= y && rightY <= y + h) { listStat = true; }

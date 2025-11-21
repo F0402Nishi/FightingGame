@@ -16,7 +16,6 @@ public:
 	void Update() override;
 	void Draw() override;
 	void KeyMovement();
-	int GetConnectedPadCount();
 
 	static int gameType;
 	// bool GetMiniWindow() const { return isWindowOpen; }

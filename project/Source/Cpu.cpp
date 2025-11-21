@@ -131,8 +131,17 @@ void CPU::Update()
 	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
 	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 
-	if (!isCpu && CheckHitKey(KEY_INPUT_Q) && !GuardNow) { GuardOn = !GuardOn; GuardNow = true; }
-	else if (!CheckHitKey(KEY_INPUT_Q) && GuardNow) { GuardNow = false; }
+	GetJoypadXInputState(DX_INPUT_PAD1, &inputMode);
+	bool prevY = false;
+
+	if (!isCpu && (CheckHitKey(KEY_INPUT_Q) || inputMode.Buttons[XINPUT_BUTTON_Y]) && !GuardNow && !prevY) { 
+		GuardOn = !GuardOn;
+		GuardNow = true;
+	}
+	else if ((!CheckHitKey(KEY_INPUT_Q) || !inputMode.Buttons[XINPUT_BUTTON_Y]) && GuardNow) {
+		GuardNow = false;
+	}
+	prevY = inputMode.Buttons[XINPUT_BUTTON_Y];
 
 	if (GuardOn) { state = S_PROTECT; isGuarding = true; }
 	else { state = S_STOP; }

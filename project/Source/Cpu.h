@@ -30,20 +30,21 @@ private:
 	VECTOR mypos; // 自分の位置
 	VECTOR playerpos; // Playerの位置
 	VECTOR previousStop; // 前回の停止位置
-	// VECTOR CPUvelocity;
+
+	DxLib::XINPUT_STATE inputMode;
 
 	//  === 乱数 ===
 	int r;
 	int m;
 	int a;
-	// int sum;
+
+	int sum;
 	int attackCount;
 	int random;
 	// int movingrandom;
 	int attackrandom;
 	// int attackNumber;
 	int prevR;
-	int sum;
 
 	float targetDistance; // 理想の間合い
 	float expandThreshold; // ここまで広がったら詰め直す

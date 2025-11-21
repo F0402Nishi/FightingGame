@@ -36,13 +36,14 @@ private:
 
 	std::vector<int> Yposition;
 
-	XINPUT_STATE inputCommand;
+	DxLib::XINPUT_STATE inputCommand;
 
 	int scrollOffset;
 	int commandCount; // コマンドリストの項目数
+	int KeyCount; // コマンドキーリストの項目数
+	int PadCount; // ゲームパッドキーリストの項目数
 	int itemHeight; // 1項目の高さ
 	int windowHeight; // 枠の高さから余白を引く
-	int KeyCount; // コマンドキーリストの項目数
 	int optionBack;
 	int optionArrow;
 	int arrowX;

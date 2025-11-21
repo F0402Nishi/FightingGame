@@ -92,7 +92,9 @@
     <ClCompile Include="Source\ResultScene.cpp">
       <Filter>ResultScene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\InputManager.cpp" />
+    <ClCompile Include="Source\InputManager.cpp">
+      <Filter>PlayScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Screen.h" />

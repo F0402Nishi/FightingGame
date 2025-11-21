@@ -576,7 +576,7 @@ void Character::CollisionDetection()
 	if (!hitPart.empty()) {
 		switch (state) {
 		case S_PUNCH1:
-			if (hitPart == "Head") damage = 50;
+			if (hitPart == "Head" || hitPart == "Body") damage = 50;
 			else damage = 0;
 			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
 			break;

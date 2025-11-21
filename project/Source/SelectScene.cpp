@@ -66,8 +66,6 @@ SelectScene::~SelectScene()
 
 void SelectScene::Update()
 {
-	padCount = GetConnectedPadCount();
-
 	KeyMovement();
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
 	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
@@ -183,21 +181,9 @@ void SelectScene::KeyMovement()
 			changeScene = true;
 			break;
 		case 3:
-			if (padCount >= 2) {
-				gameType = YInit;
-				fade->FadeOut();
-				changeScene = true;
-			}
-			else {
-				miniwindow->TogglePad(true);
-				OpponentSelection = false;
-				padMiniwindowCount++;
-				if (padMiniwindowCount >= 10) {
-					miniwindow->TogglePad(false);
-					OpponentSelection = true;
-					padMiniwindowCount = 0;
-				}
-			}
+			gameType = YInit;
+			// fade->FadeOut();
+			// changeScene = true;
 			break;
 		}
 	}
@@ -242,34 +228,4 @@ void SelectScene::KeyMovement()
 	wasLeftPressed = nowLeft;
 	wasUpPressed = nowUp;
 	wasDownPressed = nowDown;
-}
-
-int SelectScene::GetConnectedPadCount()
-{
-	int count = 0;
-	XINPUT_STATE padstate;
-
-	const int pads[4] = { DX_INPUT_PAD1, DX_INPUT_PAD2, DX_INPUT_PAD3, DX_INPUT_PAD4 };
-
-	ImGui::Begin("Pad");
-	//ImGui::InputInt("padCount", &padCount);
-	//ImGui::InputInt("padMiniwindowCount", &padMiniwindowCount);
-
-	// 最大4台分チェック
-	for (int i = 0; i < 4; i++) {
-		//if (GetJoypadXInputState(pads[i], &padstate) == 0) {
-		//	count++;
-		//}
-		int result = GetJoypadXInputState(DX_INPUT_PAD1 + i, &padstate);
-		if (result == 0) {
-			ImGui::Text("PAD %d: Connected", i + 1);
-		}
-		else {
-			ImGui::Text("PAD %d: Not found", i + 1);
-		}
-	}
-
-	ImGui::End();
-	
-	return count;
 }

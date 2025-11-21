@@ -19,7 +19,7 @@ public:
 	virtual void Draw() {}
 
 	// === Sceneê—p‚ÌKeyCode ===
-	XINPUT_STATE inputScene;
+	DxLib::XINPUT_STATE inputScene;
 
 	int keyCounter[256];
 	int Gx;
