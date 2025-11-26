@@ -96,7 +96,7 @@ void TitleScene::Draw()
 	DrawRotaGraph3D(-600, 90, 0, 0.7f, 0, PoseLeftImage, TRUE);
 	DrawRotaGraph3D(-390, 90, 0, 0.7f, 0, PoseRightImage, TRUE);
 
-	// DrawExtendString(Screen::ToScreenX(450), Screen::ToScreenY(550), 2, 2, "Push [Enter] Key To Play", GetColor(255, 255, 255));
+	DrawExtendString(Screen::ToScreenX(450), Screen::ToScreenY(550), 2, 2, "Push [Enter] Key To Play", GetColor(255, 255, 255));
 	DrawExtendString(350, 900, 2, 2, "[Enter] or [Bボタン] Play", GetColor(255, 255, 255));
 	DrawExtendString(10, 900, 2, 2, "[Esc] ゲーム終了", GetColor(255, 255, 255));
 	// DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(64, 64, 64));
