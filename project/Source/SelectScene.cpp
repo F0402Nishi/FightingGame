@@ -108,14 +108,13 @@ void SelectScene::Draw()
 	SetBackgroundColor(0, 0, 0); //※背景の色変更に使用
 	
 	DrawRotaGraph3D(0, 0, 0, 1.2f, 0, SelectBackImage, TRUE);
-	//DrawRotaGraph3D(0, 0, 0, 2.8f, 0, SelectBackImage, TRUE);
 	DrawRotaGraph3D(-600, -200, 0, 1.5f, 0, CommandImage, TRUE);
 	DrawRotaGraph3D(600, 200, 0, 1.5f, 0, BattleImage, TRUE);
 	DrawRotaGraph3D(Xkey, Ykey, 0, 1.0f, 0, SelectionArrowImage, TRUE);
 
 	// === タイトルシーンに移動 ===
-	DrawExtendString(10, 900, 2, 2, "[Tab] タイトルへ", GetColor(255, 255, 255));
-	DrawExtendString(350, 900, 2, 2, "[Enter] or [Bボタン] 決定 & 戻る", GetColor(255, 255, 255));
+	DrawExtendString(10, 680, 1.5f, 1.5f, "[Tab] タイトルへ", GetColor(255, 255, 255));
+	DrawExtendString(250, 680, 1.5f, 1.5f, "[Enter] or [Bボタン] 決定 & 戻る", GetColor(255, 255, 255));
 
 	// === ゲームタイプの種類 ===
 	if (OpponentSelection) {

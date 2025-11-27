@@ -118,8 +118,10 @@ void ResultScene::Update()
 
 void ResultScene::Draw()
 {
+	SetBackgroundColor(0, 0, 0); //※背景の色変更に使用
+
 	DrawRotaGraph3D(0, 0, 0, 1.08f, 0, resultBackImage, TRUE);
-	DrawString(10, 10, "Result SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
+	//DrawString(10, 10, "Result SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
 
 	UpdateResultFont();
 	fade->Draw();

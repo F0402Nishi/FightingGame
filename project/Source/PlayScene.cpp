@@ -148,7 +148,7 @@ void PlayScene::Update()
 
 void PlayScene::Draw()
 {
-	SetBackgroundColor(199, 199, 199); //¦”wŒi‚ÌF•ÏX‚ÉŽg—p
+	SetBackgroundColor(0, 0, 0); //¦”wŒi‚ÌF•ÏX‚ÉŽg—p
 	
 	miniwindow->Draw();
 
