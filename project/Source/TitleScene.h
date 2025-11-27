@@ -18,7 +18,16 @@ public:
 private:
 	int MechImage;
 	int BrawlersImage;
-	int PoseLeftImage;
-	int PoseRightImage;
 	int TitleBackImage;
+	int MechSe;
+	int BrawlersSe;
+
+	float Mechscale; // 開始時の縮小率
+	float Brawlersscale; // 開始時の縮小率
+	float scaleSpeed; // 拡大スピード
+
+	bool SeCount;
+	bool ScaleCount;
+	bool playSe;
+	bool playedSecond;
 };
