@@ -51,7 +51,24 @@ void TitleScene::Update()
 	}
 	else {
 		Brawlersscale += scaleSpeed;
-		if (Brawlersscale > 3.0f) { Brawlersscale = 3.0f; ScaleCount = true; }
+		if (Brawlersscale > 3.0f) { Brawlersscale = 3.0f;}
+	}
+
+	// === SEの確認用 ===
+	if (Mechscale < 1.0f && !playSe) {
+		PlaySoundMem(MechSe, DX_PLAYTYPE_BACK);
+		playSe = true;
+	}
+
+	if (playSe && !playedSecond && CheckSoundMem(MechSe) == 0) {
+		PlaySoundMem(BrawlersSe, DX_PLAYTYPE_BACK);
+		playedSecond = true;
+	}
+
+	if (CheckSoundMem(BrawlersSe) == 0 && playSe && playedSecond) {
+		playSe = false;
+		playedSecond = false;
+		ScaleCount = true;
 	}
 
 	// === 今フレームの状態 ===
@@ -69,29 +86,11 @@ void TitleScene::Update()
 		firstFrame = false;
 	}
 
-	if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit && ScaleCount) {
+	if (ScaleCount && keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
 		SceneManager::ChangeScene("SELECT");
 	}
-	if (keyCounter[KEY_INPUT_ESCAPE] == 1 || backHit && ScaleCount) {
+	if (ScaleCount && keyCounter[KEY_INPUT_ESCAPE] == 1 || backHit) {
 		SceneManager::Exit();
-	}
-
-	// === SEの確認用 ===
-	if (keyCounter[KEY_INPUT_S] == 1 && !SeCount && !playSe) {
-		PlaySoundMem(MechSe, DX_PLAYTYPE_BACK);
-		playSe = true;
-		SeCount = true;
-	}
-	if (keyCounter[KEY_INPUT_S] == 0 && SeCount) { SeCount = false; }
-
-	if (playSe && CheckSoundMem(MechSe) == 0) {
-		PlaySoundMem(BrawlersSe, DX_PLAYTYPE_BACK);
-		playedSecond = true;
-	}
-
-	if (CheckSoundMem(BrawlersSe) == 0 && playSe && playedSecond) {
-		playSe = false;
-		playedSecond = false;
 	}
 
 	// === 前フレーム状態を更新 ===
