@@ -16,6 +16,10 @@ TitleScene::TitleScene()
 
 	MechSe = LoadSoundMem("data/sound/SE/Title/MECH.mp3");
 	BrawlersSe = LoadSoundMem("data/sound/SE/Title/BRAWLERS.mp3");
+	
+	TitleBgm = LoadSoundMem("data/sound/BGM/BGM_Title.mp3");
+	ChangeVolumeSoundMem(100, TitleBgm);
+	PlaySoundMem(TitleBgm, DX_PLAYTYPE_BACK);
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -37,6 +41,7 @@ TitleScene::~TitleScene()
 {
 	DeleteSoundMem(MechSe);
 	DeleteSoundMem(BrawlersSe);
+	DeleteSoundMem(TitleBgm);
 }
 
 void TitleScene::Update()
@@ -55,14 +60,20 @@ void TitleScene::Update()
 	}
 
 	// === SEの確認用 ===
+	static int mechTimer = 0;
+
 	if (Mechscale < 1.0f && !playSe) {
 		PlaySoundMem(MechSe, DX_PLAYTYPE_BACK);
 		playSe = true;
+		mechTimer = 0;
 	}
 
-	if (playSe && !playedSecond && CheckSoundMem(MechSe) == 0) {
-		PlaySoundMem(BrawlersSe, DX_PLAYTYPE_BACK);
-		playedSecond = true;
+	if (playSe && !playedSecond) {
+		mechTimer++;
+		if (mechTimer >= 24) {
+			PlaySoundMem(BrawlersSe, DX_PLAYTYPE_BACK);
+			playedSecond = true;
+		}
 	}
 
 	if (CheckSoundMem(BrawlersSe) == 0 && playSe && playedSecond) {

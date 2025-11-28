@@ -21,6 +21,7 @@ private:
 	int TitleBackImage;
 	int MechSe;
 	int BrawlersSe;
+	int TitleBgm;
 
 	float Mechscale; // 開始時の縮小率
 	float Brawlersscale; // 開始時の縮小率

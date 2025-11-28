@@ -86,7 +86,7 @@ PlayScene::PlayScene()
 	KoSe = LoadSoundMem("data/sound/SE/Battle/k.o.mp3");
 	BattleBgm = LoadSoundMem("data/sound/BGM/BGM_battle.mp3");
 
-	// 音量を半分に
+	// 音量を1/4に
 	ChangeVolumeSoundMem(64, BattleBgm);
 
 	// === スタート時 READY 表示 ===
