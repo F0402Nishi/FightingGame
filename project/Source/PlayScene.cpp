@@ -64,6 +64,9 @@ PlayScene::PlayScene()
 
 	resultType = Result::None;
 
+	Gx = 0;
+	Gy = 0;
+
 	PlayNow = false;
 	isMenu = false;
 	isWind = false;
@@ -74,12 +77,17 @@ PlayScene::PlayScene()
 	wasUpPressed = false;
 	wasDownPressed = false;
 	firstFrame = true;
-
-	Gx = 0;
-	Gy = 0;
+	BgmStat = false;
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
+
+	ReadySe = LoadSoundMem("data/sound/SE/Battle/Ready-Fight.mp3");
+	KoSe = LoadSoundMem("data/sound/SE/Battle/k.o.mp3");
+	BattleBgm = LoadSoundMem("data/sound/BGM/BGM_battle.mp3");
+
+	// 音量を半分に
+	ChangeVolumeSoundMem(64, BattleBgm);
 
 	// === スタート時 READY 表示 ===
 	if (opponentType == 1) { 
@@ -88,7 +96,7 @@ PlayScene::PlayScene()
 	}
 	else {
 		ui2d->SetMessage(Battle::Ready, 120); // 2秒
-		// h2->SetMessage(Battle::Ready, 120);
+		PlaySoundMem(ReadySe, DX_PLAYTYPE_BACK);
 		battlePhase = 1;
 	}
 
@@ -97,6 +105,9 @@ PlayScene::PlayScene()
 PlayScene::~PlayScene()
 {
 	if (instance == this) instance = nullptr;
+	DeleteSoundMem(ReadySe);
+	DeleteSoundMem(KoSe);
+	DeleteSoundMem(BattleBgm);
 }
 
 void PlayScene::Update()
@@ -105,6 +116,7 @@ void PlayScene::Update()
 	UpdateCamera();
 	UpdateBattleFont();
 	MenuKey();
+
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
 	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
 
@@ -124,6 +136,12 @@ void PlayScene::Update()
 		upHit = false;
 		downHit = false;
 		firstFrame = false;
+	}
+
+	if (!BgmStat) {
+		// 再生開始（ループ）
+		PlaySoundMem(BattleBgm, DX_PLAYTYPE_LOOP);
+		BgmStat = true;
 	}
 
 	// === デバッグ用：強制遷移 ===
@@ -215,7 +233,8 @@ void PlayScene::UpdateBattleFont()
 			if (opponentType == 2) { resultType = Result::Lose; }
 			else if (opponentType == 3) { resultType = Result::P2Win; }
 			PlayScene::lastResult = resultType;
-			ui2d->SetMessage(Battle::KO, 60);
+			ui2d->SetMessage(Battle::KO, 100);
+			PlaySoundMem(KoSe, DX_PLAYTYPE_BACK);
 			battlePhase = 4;
 		}
 		else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
@@ -226,7 +245,8 @@ void PlayScene::UpdateBattleFont()
 			if (opponentType == 2) { resultType = Result::Win; }
 			else if (opponentType == 3) { resultType = Result::P1Win; }
 			PlayScene::lastResult = resultType;
-			ui2d->SetMessage(Battle::KO, 60);
+			ui2d->SetMessage(Battle::KO, 100);
+			PlaySoundMem(KoSe, DX_PLAYTYPE_BACK);
 			battlePhase = 4;
 		}
 		else if (p1->GetHp() <= 0 && p2->GetHp() <= 0) {
@@ -236,7 +256,8 @@ void PlayScene::UpdateBattleFont()
 
 			resultType = Result::Draw;
 			PlayScene::lastResult = resultType;
-			ui2d->SetMessage(Battle::KO, 60);
+			ui2d->SetMessage(Battle::KO, 100);
+			PlaySoundMem(KoSe, DX_PLAYTYPE_BACK);
 			battlePhase = 4;
 		}
 	}
@@ -265,6 +286,9 @@ void PlayScene::MenuKey()
 
 	// === 矢印移動(上下) ===
 	if (openwind) {
+		// --- 一時停止の代わりに再生位置を記録して止める ---
+		StopSoundMem(BattleBgm);
+
 		p1->SetInputDisplay(false);
 		if (!miniwindow->IsCommandNow()) {
 			if (downHit) {
@@ -299,6 +323,11 @@ void PlayScene::MenuKey()
 	}
 	else if (!openwind && opponentType == 1){ 
 		p1->SetInputDisplay(true);
+
+		if (BgmStat && CheckSoundMem(BattleBgm) == 0) {
+			// --- 再開 ---
+			PlaySoundMem(BattleBgm, DX_PLAYTYPE_LOOP);
+		}
 	}
 	else
 	{

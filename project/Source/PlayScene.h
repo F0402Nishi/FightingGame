@@ -46,7 +46,9 @@ private:
 
 	int battlePhase; // 0=準備, 1=Ready表示中, 2=Fight表示中, 3=バトル中, 4=勝敗表示中
 	int opponentType;
-	// int Hpbar;
+	int BattleBgm;
+	int ReadySe;
+	int KoSe;
 
 	bool PlayNow; // 勝敗を表示したい時用
 	bool isMenu;
@@ -55,4 +57,5 @@ private:
 	bool wasStartPressed;
 	bool startPressed;
 	bool startHit;
+	bool BgmStat;
 };

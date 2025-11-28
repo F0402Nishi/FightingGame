@@ -107,8 +107,8 @@ void TitleScene::Draw()
 	DrawRotaGraph3D(220, 130, 0, Mechscale, 0, MechImage, TRUE);
 	DrawRotaGraph3D(0, -100, 0, Brawlersscale, 0, BrawlersImage, TRUE);
 	
-	DrawExtendString(250, 680, 1.5f, 1.5f, "[Enter] or [Bボタン] Play", GetColor(255, 255, 255));
-	DrawExtendString(10, 680, 1.5f, 1.5f, "[Esc] ゲーム終了", GetColor(255, 255, 255));
+	DrawExtendString(200, 680, 1.5f, 1.5f, "[Enter] or [Bボタン] 開始", GetColor(255, 255, 255));
+	DrawExtendString(10, 680, 1.5f, 1.5f, "[Esc] 終了", GetColor(255, 255, 255));
 	// DrawExtendString(450, 550, 2, 2, "Push [Enter] Key To Play", GetColor(255, 255, 255));
 	// DrawExtendString(Screen::ToScreenX(450), Screen::ToScreenY(550), 2, 2, "Push [Enter] Key To Play", GetColor(255, 255, 255));
 	
