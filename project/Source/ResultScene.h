@@ -3,7 +3,11 @@
 #include "PlayScene.h"
 #include "Fade.h"
 #include "MiniWindow.h"
+#include "SoundManager.h"
 
+/// <summary>
+/// リザルトシーン
+/// </summary>
 class ResultScene : public SceneBase
 {
 public:
@@ -24,6 +28,9 @@ private:
 	int loseImage;
 	int resultnumbers;
 	int sceneNumber;
+
+	float winScale;   // 勝者：最初は小さく
+	float loseScale;  // 敗者：後から出てくる
 
 	bool windowClose;
 };

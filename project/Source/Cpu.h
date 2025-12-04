@@ -13,7 +13,7 @@ class Animator;
 class CPU : public Character
 {
 public:
-	CPU(bool _iscpu);
+	CPU(bool _iscpu, CPUType _cputype);
 	~CPU();
 	void Update() override;
 	void Draw() override ;

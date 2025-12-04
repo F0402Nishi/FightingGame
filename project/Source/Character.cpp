@@ -32,6 +32,8 @@ Character::Character()
 	correctionRange = 185.0f;
 	waitTimer = 0.0f;
 
+	cputype = CPUType::NoCpu;
+
 	canReduceHp = false;
 	canCancel = false;
 	isAltIdle = false;
@@ -454,7 +456,7 @@ void Character::UpdateProtect()
 
 	CollisionDetection();
 
-	if (GetisCpu() && FrameCounter > 10) {
+	if (cputype != CPUType::NoCpu && FrameCounter > 10) {
 		InReturn();
 	}
 }

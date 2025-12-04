@@ -32,6 +32,10 @@ Player::Player(bool _isPlayer)
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
 
+	// 古い入力を削除
+	while (inputHistory.size() > maxHistory) {
+		inputHistory.erase(inputHistory.begin());
+	}
 }
 
 Player::~Player()

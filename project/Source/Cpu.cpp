@@ -29,7 +29,7 @@
 // Update 系の処理
 // 行動終了後、WAITにもどる
 
-CPU::CPU(bool _iscpu)
+CPU::CPU(bool _iscpu, CPUType _cputype)
 {
 	player = FindGameObject<Player>();
 	
@@ -41,7 +41,7 @@ CPU::CPU(bool _iscpu)
 	brain = WAIT;
 	state = S_STOP;
 
-	cputype = CPUType::NoCpu;
+	cputype = _cputype;
 
 	r = 0;
 	m = 0;
@@ -82,9 +82,13 @@ void CPU::Update()
 
 #if false "ImGui"
 	ImGui::Begin("CPU");
-	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Text("Current state: %s", StateToString(state));
+	ImGui::Checkbox("GuardOn", &GuardOn);
+	ImGui::Checkbox("GuardNow", &GuardNow);
+	ImGui::InputFloat("FrameCounter", &FrameCounter);
 	ImGui::End();
+
+	ImGui::Text("brain: %d", (int)brain);
 	ImGui::Checkbox("hasHit", &hasHit);
 	ImGui::Checkbox("isActing", &isActing);
 	ImGui::Checkbox("canReduceHp", &canReduceHp);
@@ -98,9 +102,6 @@ void CPU::Update()
 	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
 	ImGui::InputFloat("waitTimer", &waitTimer);
 	ImGui::InputFloat("time", &time);
-	
-	ImGui::Checkbox("GuardOn", &GuardOn);
-	ImGui::Checkbox("GuardNow", &GuardNow);
 	
 	ImGui::Checkbox("isAlive", &isAlive);
 	ImGui::Text("state: %d", (int)state);
@@ -134,16 +135,12 @@ void CPU::Update()
 	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputMode);
-	bool prevY = false;
+	bool currentGuardKey = CheckHitKey(KEY_INPUT_Q) || inputMode.Buttons[XINPUT_BUTTON_Y];
 
-	if (!isCpu && (CheckHitKey(KEY_INPUT_Q) || inputMode.Buttons[XINPUT_BUTTON_Y]) && !GuardNow && !prevY) { 
-		GuardOn = !GuardOn;
-		GuardNow = true;
+	if (!isCpu) {
+		if (currentGuardKey && !GuardNow) { GuardOn = !GuardOn; }
+		GuardNow = currentGuardKey;
 	}
-	else if ((!CheckHitKey(KEY_INPUT_Q) || !inputMode.Buttons[XINPUT_BUTTON_Y]) && GuardNow) {
-		GuardNow = false;
-	}
-	prevY = inputMode.Buttons[XINPUT_BUTTON_Y];
 
 	if (GuardOn) { state = S_PROTECT; isGuarding = true; }
 	else { state = S_STOP; }

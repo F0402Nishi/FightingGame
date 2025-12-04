@@ -26,11 +26,11 @@ PlayScene::PlayScene()
 	p1 = new Player(true);
 
 	if (opponentType == 1) { // トレーニングモード
-		p2 = new CPU(false);
+		p2 = new CPU(false, CPUType::TrainingCpu);
 		p1->SetInputDisplay(true);
 	}
 	else if (opponentType == 2) { // CPU戦モード
-		p2 = new CPU(true);
+		p2 = new CPU(true, CPUType::BattleCpu);
 		p1->SetInputDisplay(false);
 	}
 	else if (opponentType == 3) { // Player戦モード
@@ -82,12 +82,15 @@ PlayScene::PlayScene()
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
 
-	ReadySe = LoadSoundMem("data/sound/SE/Battle/Ready-Fight.mp3");
-	KoSe = LoadSoundMem("data/sound/SE/Battle/k.o.mp3");
-	BattleBgm = LoadSoundMem("data/sound/BGM/BGM_battle.mp3");
+	SoundManager::Load("ReadySe", "data/sound/SE/Battle/Ready-Fight.mp3");
+	SoundManager::Load("KoSe", "data/sound/SE/Battle/k.o.mp3");
+	SoundManager::Load("BattleBgm", "data/sound/BGM/BGM_battle.mp3");
+
+	SoundManager::Load("SelectSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-13(Select).mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
 
 	// 音量を1/4に
-	ChangeVolumeSoundMem(64, BattleBgm);
+	SoundManager::ChangeVolume("BattleBgm", 64);
 
 	// === スタート時 READY 表示 ===
 	if (opponentType == 1) { 
@@ -96,7 +99,7 @@ PlayScene::PlayScene()
 	}
 	else {
 		ui2d->SetMessage(Battle::Ready, 120); // 2秒
-		PlaySoundMem(ReadySe, DX_PLAYTYPE_BACK);
+		SoundManager::Play("ReadySe", DX_PLAYTYPE_BACK);
 		battlePhase = 1;
 	}
 
@@ -104,10 +107,8 @@ PlayScene::PlayScene()
 
 PlayScene::~PlayScene()
 {
-	if (instance == this) instance = nullptr;
-	DeleteSoundMem(ReadySe);
-	DeleteSoundMem(KoSe);
-	DeleteSoundMem(BattleBgm);
+	if (instance == this) { instance = nullptr; }
+	SoundManager::DeleteAll();
 }
 
 void PlayScene::Update()
@@ -140,7 +141,7 @@ void PlayScene::Update()
 
 	if (!BgmStat) {
 		// 再生開始（ループ）
-		PlaySoundMem(BattleBgm, DX_PLAYTYPE_LOOP);
+		SoundManager::Play("BattleBgm", DX_PLAYTYPE_LOOP);
 		BgmStat = true;
 	}
 
@@ -179,6 +180,9 @@ void PlayScene::Draw()
 #endif // false
 }
 
+/// <summary>
+/// プレイヤー間の距離に応じてカメラ位置とズームを調整する。
+/// </summary>
 void PlayScene::UpdateCamera()
 {
 	float x1 = p1->GetTransform().position.x;
@@ -204,6 +208,9 @@ void PlayScene::UpdateCamera()
 	//ImGui::End();
 }
 
+/// <summary>
+/// バトルのフェーズ管理とUI表示、勝敗判定を行う。
+/// </summary>
 void PlayScene::UpdateBattleFont()
 {
 	// === READY が終わったら FIGHT ===
@@ -234,7 +241,7 @@ void PlayScene::UpdateBattleFont()
 			else if (opponentType == 3) { resultType = Result::P2Win; }
 			PlayScene::lastResult = resultType;
 			ui2d->SetMessage(Battle::KO, 100);
-			PlaySoundMem(KoSe, DX_PLAYTYPE_BACK);
+			SoundManager::Play("KoSe", DX_PLAYTYPE_BACK);
 			battlePhase = 4;
 		}
 		else if (p2->GetHp() <= 0 && p1->GetHp() > 0) {
@@ -246,7 +253,7 @@ void PlayScene::UpdateBattleFont()
 			else if (opponentType == 3) { resultType = Result::P1Win; }
 			PlayScene::lastResult = resultType;
 			ui2d->SetMessage(Battle::KO, 100);
-			PlaySoundMem(KoSe, DX_PLAYTYPE_BACK);
+			SoundManager::Play("KoSe", DX_PLAYTYPE_BACK);
 			battlePhase = 4;
 		}
 		else if (p1->GetHp() <= 0 && p2->GetHp() <= 0) {
@@ -257,7 +264,7 @@ void PlayScene::UpdateBattleFont()
 			resultType = Result::Draw;
 			PlayScene::lastResult = resultType;
 			ui2d->SetMessage(Battle::KO, 100);
-			PlaySoundMem(KoSe, DX_PLAYTYPE_BACK);
+			SoundManager::Play("KoSe", DX_PLAYTYPE_BACK);
 			battlePhase = 4;
 		}
 	}
@@ -269,6 +276,9 @@ void PlayScene::UpdateBattleFont()
 	}
 }
 
+/// <summary>
+/// バトル中のメニュー開閉と操作を管理する。
+/// </summary>
 void PlayScene::MenuKey()
 {
 	if (isWind && !miniwindow->IsCommandNow()) {
@@ -286,21 +296,23 @@ void PlayScene::MenuKey()
 
 	// === 矢印移動(上下) ===
 	if (openwind) {
-		// --- 一時停止の代わりに再生位置を記録して止める ---
-		StopSoundMem(BattleBgm);
+		SoundManager::Stop("BattleBgm");
 
 		p1->SetInputDisplay(false);
 		if (!miniwindow->IsCommandNow()) {
 			if (downHit) {
+				SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 				miniwindow->MoveBox(1); // 下移動
 			}
 			if (upHit) {
+				SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 				miniwindow->MoveBox(-1); // 上移動
 			}
 		}
 
 		if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
 			int option = miniwindow->GetMenuOption();
+			SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
 
 			switch (option) {
 			case 0: // コマンド表示
@@ -326,7 +338,7 @@ void PlayScene::MenuKey()
 
 		if (BgmStat && CheckSoundMem(BattleBgm) == 0) {
 			// --- 再開 ---
-			PlaySoundMem(BattleBgm, DX_PLAYTYPE_LOOP);
+			SoundManager::Play("BattleBgm", DX_PLAYTYPE_LOOP);
 		}
 	}
 	else

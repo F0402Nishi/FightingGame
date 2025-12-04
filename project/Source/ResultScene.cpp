@@ -34,10 +34,14 @@ ResultScene::ResultScene()
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
+
+	SoundManager::Load("SelectSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-13(Select).mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
 }
 
 ResultScene::~ResultScene()
 {
+	SoundManager::DeleteAll();
 }
 
 void ResultScene::Update()
@@ -66,13 +70,16 @@ void ResultScene::Update()
 
 	if (miniwindow->IsResultNow()) {
 		if (downHit) {
+			SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 			miniwindow->MoveBox(1); // 下移動
 		}
 		if (upHit) {
+			SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 			miniwindow->MoveBox(-1); // 上移動
 		}
 		if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
 			int option = miniwindow->GetMenuOption();
+			SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
 
 			switch (option) {
 			case 0:
@@ -107,13 +114,15 @@ void ResultScene::Update()
 	if (sceneNumber == 2 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("SELECT"); }
 	if (sceneNumber == 3 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("TITLE"); }
 
-	// ImGui::Begin("Result");
+	ImGui::Begin("Result");
+	ImGui::InputFloat("winScale", &winScale);
+	ImGui::InputFloat("loseScale", &loseScale);
 	// ImGui::Checkbox("window", &windowClose);
 	// ImGui::Checkbox("resultwindowOpen", &miniwindow->resultwindowOpen);
 	// ImGui::Text("boxY = %d", miniwindow->boxY);
 	// ImGui::Text("resultNumber = %d", (int)resultNumber);
 	// ImGui::Text("resultnumbers = %d", (int)resultnumbers);
-	// ImGui::End();
+	ImGui::End();
 }
 
 void ResultScene::Draw()
@@ -128,6 +137,9 @@ void ResultScene::Draw()
 	miniwindow->Draw();
 }
 
+/// <summary>
+/// 勝敗結果に応じてリザルト画面の文字と画像を描画する。
+/// </summary>
 void ResultScene::UpdateResultFont()
 {
 	const char* resultFontTextP = "";
@@ -136,6 +148,9 @@ void ResultScene::UpdateResultFont()
 	int resultFontColor = GetColor(255, 255, 255);
 	int winx = 0;
 	int losex = 0;
+
+	// --- スケール（拡大率） ---
+	static bool winFinished = false;
 
 	switch (resultNumber) {
 	case Result::Win:
@@ -172,11 +187,30 @@ void ResultScene::UpdateResultFont()
 		break;
 	}
 
+	// --- 拡大アニメーション ---
+	if (winScale < 3.0f) {
+		winScale += (3.0f - winScale) * 0.1f;
+		if (winScale >= 3.0f) {
+			winScale = 3.0f;
+			winFinished = true;
+		}
+	}
+	else if (winFinished && loseScale < 3.0f) {
+		loseScale += 0.05f;
+		if (loseScale > 3.0f) loseScale = 3.0f;
+	}
+
 	DrawExtendString(150, 100, resultFontSize, resultFontSize, resultFontTextP, resultFontColor);
 	DrawExtendString(950, 100, resultFontSize, resultFontSize, resultFontTextC, resultFontColor);
 
-	DrawRotaGraph3D(winx, 160, 0, 3.0f, 0, winImage, TRUE);
-	DrawRotaGraph3D(losex, 160, 0, 3.0f, 0, loseImage, TRUE);
+	// --- 勝者から出てくる ---
+	DrawRotaGraph3D(winx, 160, 0, winScale, 0, winImage, TRUE);
 
-	if (!windowClose) { miniwindow->ToggleReslut(true); }
+	// --- 負けた方は勝者が出てきてから出現 ---
+	if (winFinished)
+	{
+		DrawRotaGraph3D(losex, 160, 0, loseScale, 0, loseImage, TRUE);
+	}
+
+	if (!windowClose && winScale >= 3.0f && loseScale >= 3.0f) { miniwindow->ToggleReslut(true); }
 }

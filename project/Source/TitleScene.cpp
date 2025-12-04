@@ -115,7 +115,6 @@ void TitleScene::Update()
 	wasBackPressed = backPressed;
 }
 
-
 void TitleScene::Draw()
 {
 	SetBackgroundColor(0, 0, 0); //※背景の色変更に使用
