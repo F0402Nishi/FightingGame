@@ -13,6 +13,12 @@ enum class AttackType {
 	Kick
 };
 
+enum class CPUType {
+	NoCpu,
+	TrainingCpu,
+	BattleCpu
+};
+
 struct AttackData {
 	int hitStartFrame; // 当たり判定が「出る」最初のフレーム
 	int hitEndFrame; // 当たり判定が「消える」最後のフレーム
@@ -33,12 +39,22 @@ public:
 	Character();
 	~Character();
 	void Always();
-	void SetHitSpheres();
-	void SetOpponent(Character* other);
+
+	/// <summary>
+	/// 生死判定
+	/// </summary>
+	/// <param name="ali"></param>
 	void SetAlive(bool ali);
+
+	/// <summary>
+	/// Colliderのサイズを調整
+	/// </summary>
+	void SetHitSpheres();
+
+	void SetOpponent(Character* other);
+
 	void SetHp(int value) { Hp = value; }
 	void SetInputDisplay(bool _display) { InputTypeP = _display; }
-
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
@@ -65,6 +81,7 @@ protected:
 	std::string hitPart;
 
 	AttackType attacktype;
+	CPUType cputype;
 
 	VECTOR inputDir; // 初期位置
 	VECTOR velocity;
@@ -176,11 +193,11 @@ protected:
 	void UpdateKick2();
 	void UpdateKick3();
 	void UpdateProtect();
+	void UpdateJump();
 	void PlayAttack(const std::string& animFile, bool loop);
 	void InReturn();
-	void UpdateJump();
-	void UpdateDamage(int dmg, AttackType type);
-	void CollisionDetection();
 	void ResolvePlayerCollision();
 	void BoneCollision();
+	void CollisionDetection();
+	void UpdateDamage(int dmg, AttackType type);
 };

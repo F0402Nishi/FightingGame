@@ -1,14 +1,13 @@
 #pragma once
 
-/// <summary>
-/// シーンの基底クラス
-/// </summary>
-/// <author>N.Hanai</author>
-
 #include <list>
 #include "SceneManager.h"
 #include "GameObject.h"
 
+/// <summary>
+/// シーンの基底クラス
+/// </summary>
+/// <author>N.Hanai</author>
 class SceneBase
 {
 public:
@@ -24,6 +23,16 @@ public:
 	int keyCounter[256];
 	int Gx;
 	int Gy;
+
+	/// <summary>
+	/// セレクト音
+	/// </summary>
+	int SelectSe;
+
+	/// <summary>
+	/// セレクト決定音
+	/// </summary>
+	int DecideSe;
 
 	bool changeScene;
 
@@ -52,6 +61,9 @@ public:
 	bool upHit;
 	bool downHit;
 
+	/// <summary>
+	/// Key状態のリセット＆取得
+	/// </summary>
 	void UpdateKey() {
 		char keys[256]; // 今のキー状態
 		GetHitKeyStateAll(keys); // 今のキー状態を取得

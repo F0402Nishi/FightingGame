@@ -154,6 +154,16 @@ void Character::Draw()
 	if (h >= 0) { MV1DrawModel(h); }
 }
 
+void Character::SetAlive(bool ali)
+{
+	isAlive = ali;
+
+	if (!isAlive) {
+		state = S_STOP;
+		inputDir = VGet(0, 0, 0);
+	}
+}
+
 void Character::SetHitSpheres()
 {
 	hitSpheres.clear();
@@ -449,6 +459,11 @@ void Character::UpdateProtect()
 	}
 }
 
+void Character::UpdateJump()
+{
+	transform.position.y += velocityY;
+}
+
 /// <summary>
 /// 攻撃キャンセル処理の試作
 /// 時間が足りないため、一時保留
@@ -468,6 +483,9 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 	anim->Play(animFile, loop); // , true のちに追加
 }
 
+/// <summary>
+/// アニメーション終了
+/// </summary>
 void Character::InReturn()
 {
 	if (anim->IsFinish() && !animRetun) {
@@ -495,45 +513,80 @@ void Character::InReturn()
 	if (!anim->IsFinish()) { animRetun = false; }
 }
 
-void Character::UpdateJump()
+/// <summary>
+/// Player同士の衝突判定
+/// </summary>
+void Character::ResolvePlayerCollision()
 {
-	transform.position.y += velocityY;
-}
+	Character* c = FindGameObject<Character>();
+	if (c == nullptr || c == this) { return; }
 
-void Character::UpdateDamage(int dmg, AttackType type)
-{
-	// dmg = 0; // デバック用
+	// カプセルの中心線（今回は left〜right の midpoint）
+	VECTOR center = (E_collder->left + E_collder->right) * 0.5f + transform.position;
+	VECTOR center2 = (c->E_collder->left + c->E_collder->right) * 0.5f + c->GetTransform().position;
 
-	if (dmg <= 0) return; // ダメージが0なら何もしない
+	// 距離ベクトルと長さ
+	VECTOR diff = center2 - center;
+	diff.z = 0.0f; // Z軸を無視
+	float dist = VSize(diff);
+	float minDist = E_collder->radius * 0.7f; // 半径に係数をかける(もっと近づける)
 
-	Hp -= dmg;
+	// 重なっている（当たり判定）
+	if (dist < minDist && dist > 0.0001f)
+	{
+		float overlap = minDist - dist;
+		VECTOR dir = VNorm(diff); // 押し返し方向（単位ベクトル）
 
-	if (!isHitPlaying) { 
-		inputDir = VGet(0, 0, 0);
-
-		switch (type) {
-		case AttackType::Punch:
-			if (!isGuarding) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
-			else { anim->Play("data/Character/Player/Hit_F.mv1", false); }
-			break;
-		case AttackType::Kick:
-			anim->Play("data/Character/Player/Hit_B.mv1", false);
-			break;
-		}
-		isHitPlaying = true;
+		// 双方を均等に押し返す
+		transform.position -= dir * (overlap * 0.5f);
+		c->transform.position += dir * (overlap * 0.5f);
 	}
 }
 
-void Character::SetAlive(bool ali)
+/// <summary>
+/// 攻撃判定用Colliderを骨に合わせる
+/// </summary>
+void Character::BoneCollision()
 {
-	isAlive = ali;
-
-	if (!isAlive) {
-		state = S_STOP;
-		inputDir = VGet(0, 0, 0);
-	}
+	// Playerの攻撃判定用Colliderの位置を調整
+	heardWorldPos = MV1GetFramePosition(hModel, headBone);
+	bodyWorldPos = MV1GetFramePosition(hModel, bodyBone);
+	left_UpperArmWorldPos = MV1GetFramePosition(hModel, left_UpperArmBone);
+	left_LowerArmWorldPos = MV1GetFramePosition(hModel, left_LowerArmBone);
+	left_HandWorldPos = MV1GetFramePosition(hModel, left_HandBone);
+	right_UpperArmWorldPos = MV1GetFramePosition(hModel, right_UpperArmBone);
+	right_LowerArmWorldPos = MV1GetFramePosition(hModel, right_LowerArmBone);
+	right_HandWorldPos = MV1GetFramePosition(hModel, right_HandBone);
+	left_UpperLegWorldPos = MV1GetFramePosition(hModel, left_UpperLegBone);
+	left_LowerLegWorldPos = MV1GetFramePosition(hModel, left_LowerLegBone);
+	left_FootWorldPos = MV1GetFramePosition(hModel, left_FootBone);
+	right_UpperLegWorldPos = MV1GetFramePosition(hModel, right_UpperLegBone);
+	right_LowerLegWorldPos = MV1GetFramePosition(hModel, right_LowerLegBone);
+	right_FootWorldPos = MV1GetFramePosition(hModel, right_FootBone);
+	
+	hitSpheres[0].localOffset = (heardWorldPos - basePos) + VGet(0, 10.0f, 0);
+	hitSpheres[1].localOffset = bodyWorldPos - basePos;
+	hitSpheres[2].localOffset = left_UpperArmWorldPos - basePos;
+	hitSpheres[3].localOffset = left_LowerArmWorldPos - basePos;
+	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(8.0f, 3.5f, -10.0f);
+	hitSpheres[5].localOffset = right_UpperArmWorldPos - basePos;
+	hitSpheres[6].localOffset = right_LowerArmWorldPos - basePos;
+	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(5.0f, 7.0f, 0.0f);
+	hitSpheres[8].localOffset = left_UpperLegWorldPos - basePos;
+	hitSpheres[9].localOffset = left_LowerLegWorldPos - basePos;
+	hitSpheres[10].localOffset = left_FootWorldPos - basePos;
+	hitSpheres[11].localOffset = right_UpperLegWorldPos - basePos;
+	hitSpheres[12].localOffset = right_LowerLegWorldPos - basePos;
+	hitSpheres[13].localOffset = right_FootWorldPos - basePos;
 }
 
+/// <summary>
+/// キック攻撃の時のみ位置に補正
+/// </summary>
+/// <param name="data"></param>
+/// <param name="_frame"></param>
+/// <param name="moveAxis"></param>
+/// <returns></returns>
 VECTOR Character::ApplyAttackMotion(const AttackData& data, float _frame, char moveAxis)
 {
 	if (!startPosSaved) {
@@ -566,6 +619,9 @@ VECTOR Character::ApplyAttackMotion(const AttackData& data, float _frame, char m
 	return offset;
 }
 
+/// <summary>
+/// 攻撃のHit判定＆ダメージの割り振り
+/// </summary>
 void Character::CollisionDetection()
 {
 	if (opponent == nullptr || !canReduceHp || hasHit) return; // すでに当たっていたらスキップ
@@ -613,63 +669,31 @@ void Character::CollisionDetection()
 	}
 }
 
-void Character::ResolvePlayerCollision()
+/// <summary>
+/// ダメージを与える処理
+/// </summary>
+/// <param name="dmg"></param>
+/// <param name="type"></param>
+void Character::UpdateDamage(int dmg, AttackType type)
 {
-	Character* c = FindGameObject<Character>();
-	if (c == nullptr || c == this) { return; }
+	// dmg = 0; // デバック用
 
-	// カプセルの中心線（今回は left〜right の midpoint）
-	VECTOR center = (E_collder->left + E_collder->right) * 0.5f + transform.position;
-	VECTOR center2 = (c->E_collder->left + c->E_collder->right) * 0.5f + c->GetTransform().position;
+	if (dmg <= 0) return; // ダメージが0なら何もしない
 
-	// 距離ベクトルと長さ
-	VECTOR diff = center2 - center;
-	diff.z = 0.0f; // Z軸を無視
-	float dist = VSize(diff);
-	float minDist = E_collder->radius * 0.7f; // 半径に係数をかける(もっと近づける)
+	Hp -= dmg;
 
-	// 重なっている（当たり判定）
-	if (dist < minDist && dist > 0.0001f)
-	{
-		float overlap = minDist - dist;
-		VECTOR dir = VNorm(diff); // 押し返し方向（単位ベクトル）
+	if (!isHitPlaying) { 
+		inputDir = VGet(0, 0, 0);
 
-		// 双方を均等に押し返す
-		transform.position -= dir * (overlap * 0.5f);
-		c->transform.position += dir * (overlap * 0.5f);
+		switch (type) {
+		case AttackType::Punch:
+			if (!isGuarding) { anim->Play("data/Character/Player/Hit_A.mv1", false); }
+			else { anim->Play("data/Character/Player/Hit_F.mv1", false); }
+			break;
+		case AttackType::Kick:
+			anim->Play("data/Character/Player/Hit_B.mv1", false);
+			break;
+		}
+		isHitPlaying = true;
 	}
-}
-
-void Character::BoneCollision()
-{
-	// Playerの攻撃判定用Colliderの位置を調整
-	heardWorldPos = MV1GetFramePosition(hModel, headBone);
-	bodyWorldPos = MV1GetFramePosition(hModel, bodyBone);
-	left_UpperArmWorldPos = MV1GetFramePosition(hModel, left_UpperArmBone);
-	left_LowerArmWorldPos = MV1GetFramePosition(hModel, left_LowerArmBone);
-	left_HandWorldPos = MV1GetFramePosition(hModel, left_HandBone);
-	right_UpperArmWorldPos = MV1GetFramePosition(hModel, right_UpperArmBone);
-	right_LowerArmWorldPos = MV1GetFramePosition(hModel, right_LowerArmBone);
-	right_HandWorldPos = MV1GetFramePosition(hModel, right_HandBone);
-	left_UpperLegWorldPos = MV1GetFramePosition(hModel, left_UpperLegBone);
-	left_LowerLegWorldPos = MV1GetFramePosition(hModel, left_LowerLegBone);
-	left_FootWorldPos = MV1GetFramePosition(hModel, left_FootBone);
-	right_UpperLegWorldPos = MV1GetFramePosition(hModel, right_UpperLegBone);
-	right_LowerLegWorldPos = MV1GetFramePosition(hModel, right_LowerLegBone);
-	right_FootWorldPos = MV1GetFramePosition(hModel, right_FootBone);
-	
-	hitSpheres[0].localOffset = (heardWorldPos - basePos) + VGet(0, 10.0f, 0);
-	hitSpheres[1].localOffset = bodyWorldPos - basePos;
-	hitSpheres[2].localOffset = left_UpperArmWorldPos - basePos;
-	hitSpheres[3].localOffset = left_LowerArmWorldPos - basePos;
-	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(8.0f, 3.5f, -10.0f);
-	hitSpheres[5].localOffset = right_UpperArmWorldPos - basePos;
-	hitSpheres[6].localOffset = right_LowerArmWorldPos - basePos;
-	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(5.0f, 7.0f, 0.0f);
-	hitSpheres[8].localOffset = left_UpperLegWorldPos - basePos;
-	hitSpheres[9].localOffset = left_LowerLegWorldPos - basePos;
-	hitSpheres[10].localOffset = left_FootWorldPos - basePos;
-	hitSpheres[11].localOffset = right_UpperLegWorldPos - basePos;
-	hitSpheres[12].localOffset = right_LowerLegWorldPos - basePos;
-	hitSpheres[13].localOffset = right_FootWorldPos - basePos;
 }

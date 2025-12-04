@@ -41,6 +41,8 @@ CPU::CPU(bool _iscpu)
 	brain = WAIT;
 	state = S_STOP;
 
+	cputype = CPUType::NoCpu;
+
 	r = 0;
 	m = 0;
 	a = 0;

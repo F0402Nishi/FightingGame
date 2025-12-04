@@ -1,11 +1,10 @@
 #pragma once
 #include "../Library/SceneBase.h"
 #include "Screen.h"
+#include "SoundManager.h"
 
 /// <summary>
 /// タイトルシーン
-/// 
-/// タイトルを表示して、キーを押したらプレイシーンに移行する。
 /// </summary>
 class TitleScene : public SceneBase
 {
@@ -19,9 +18,6 @@ private:
 	int MechImage;
 	int BrawlersImage;
 	int TitleBackImage;
-	int MechSe;
-	int BrawlersSe;
-	int TitleBgm;
 
 	float Mechscale; // 開始時の縮小率
 	float Brawlersscale; // 開始時の縮小率

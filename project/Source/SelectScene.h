@@ -2,6 +2,7 @@
 #include "../Library/SceneBase.h"
 #include "Fade.h"
 #include "MiniWindow.h"
+#include "SoundManager.h"
 
 /// <summary>
 /// セレクトシーン

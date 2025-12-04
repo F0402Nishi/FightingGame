@@ -14,12 +14,13 @@ TitleScene::TitleScene()
 	TitleBackImage = LoadGraph("data/2D/Title_Back00.png");
 	assert(TitleBackImage >= 0);
 
-	MechSe = LoadSoundMem("data/sound/SE/Title/MECH.mp3");
-	BrawlersSe = LoadSoundMem("data/sound/SE/Title/BRAWLERS.mp3");
+	SoundManager::Load("MechSe", "data/sound/SE/Title/MECH.mp3");
+	SoundManager::Load("BrawlersSe", "data/sound/SE/Title/BRAWLERS.mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
 	
-	TitleBgm = LoadSoundMem("data/sound/BGM/BGM_Title.mp3");
-	ChangeVolumeSoundMem(100, TitleBgm);
-	PlaySoundMem(TitleBgm, DX_PLAYTYPE_BACK);
+	SoundManager::Load("TitleBgm", "data/sound/BGM/BGM_Title.mp3");
+	SoundManager::ChangeVolume("TitleBgm", 100);
+	SoundManager::Play("TitleBgm", DX_PLAYTYPE_BACK);
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
@@ -39,9 +40,7 @@ TitleScene::TitleScene()
 
 TitleScene::~TitleScene()
 {
-	DeleteSoundMem(MechSe);
-	DeleteSoundMem(BrawlersSe);
-	DeleteSoundMem(TitleBgm);
+	SoundManager::DeleteAll();
 }
 
 void TitleScene::Update()
@@ -63,7 +62,7 @@ void TitleScene::Update()
 	static int mechTimer = 0;
 
 	if (Mechscale < 1.0f && !playSe) {
-		PlaySoundMem(MechSe, DX_PLAYTYPE_BACK);
+		SoundManager::Play("MechSe", DX_PLAYTYPE_BACK);
 		playSe = true;
 		mechTimer = 0;
 	}
@@ -71,12 +70,12 @@ void TitleScene::Update()
 	if (playSe && !playedSecond) {
 		mechTimer++;
 		if (mechTimer >= 24) {
-			PlaySoundMem(BrawlersSe, DX_PLAYTYPE_BACK);
+			SoundManager::Play("BrawlersSe", DX_PLAYTYPE_BACK);
 			playedSecond = true;
 		}
 	}
 
-	if (CheckSoundMem(BrawlersSe) == 0 && playSe && playedSecond) {
+	if (SoundManager::IsPlaying("BrawlersSe") == 0 && playSe && playedSecond) {
 		playSe = false;
 		playedSecond = false;
 		ScaleCount = true;
@@ -98,6 +97,13 @@ void TitleScene::Update()
 	}
 
 	if (ScaleCount && keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
+		SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
+
+		// 音が鳴り終わるまでループで待機
+		while (SoundManager::IsPlaying("DecideSe")) {
+			WaitTimer(3);
+		}
+
 		SceneManager::ChangeScene("SELECT");
 	}
 	if (ScaleCount && keyCounter[KEY_INPUT_ESCAPE] == 1 || backHit) {

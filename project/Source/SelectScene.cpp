@@ -23,6 +23,9 @@ SelectScene::SelectScene()
 	SelectBackImage = LoadGraph("data/2D/Title_Back01.png");
 	assert(SelectBackImage >= 0);
 
+	SoundManager::Load("SelectSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-13(Select).mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
+
 	operation = false;
 	SelectKeyInput = false;
 	atInit = true;
@@ -62,6 +65,7 @@ SelectScene::SelectScene()
 
 SelectScene::~SelectScene()
 {
+	SoundManager::DeleteAll();
 }
 
 void SelectScene::Update()
@@ -99,8 +103,6 @@ void SelectScene::Update()
 	}
 
 	wasBackPressed = backPressed;
-
-
 }
 
 void SelectScene::Draw()
@@ -129,24 +131,15 @@ void SelectScene::Draw()
 	fade->Draw();
 	miniwindow->Draw();
 
-	// === グラデーション付き赤ボックス（外側ほど濃い） ===
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 15); // 透明度50%
-	//DrawBox(50, 530, 450, 430, GetColor(255, 0, 0), TRUE);
-	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	//SetDrawBlendMode(DX_BLENDMODE_ALPHA, 30); // 透明度50%
-	//DrawBox(50, 530, 100, 430, GetColor(255, 0, 0), TRUE);
-	//SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	//DrawBox(50, 530, 450, 430, GetColor(255, 255, 255), FALSE);
-
-	// DrawBox(0, 0, 640, 240, GetColor(0, 0, 255), TRUE); // 上半分を青で塗りつぶし
-	// DrawBox(0, 240, 640, 480, GetColor(255, 0, 0), TRUE); // 下半分を赤で塗りつぶし
-
 	// DrawString(0, 0, "SELECT SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
 	// DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(255, 255, 255));
 
 	// if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
 }
 
+/// <summary>
+/// セレクトシーン内でのKey操作一覧
+/// </summary>
 void SelectScene::KeyMovement()
 {
 	UpdateKey();
@@ -157,6 +150,8 @@ void SelectScene::KeyMovement()
 		isSetting = !isSetting;
 		InputPossible = !InputPossible;
 
+		SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
+
 		miniwindow->ToggleCommand();
 
 		SelectKeyInput = true;
@@ -164,6 +159,8 @@ void SelectScene::KeyMovement()
 
 	// === ゲームタイプ選択用 ===
 	if (!atInit && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) && !SelectKeyInput) {
+		SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
+
 		switch (YInit) {
 		case 0:
 			OpponentSelection = !OpponentSelection;
@@ -195,6 +192,7 @@ void SelectScene::KeyMovement()
 	// === 矢印移動(左右) ===
 	if (InputPossible) {
 		if (rightHit || leftHit) {
+			SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 			if (atInit) { // 初期位置にいたなら → 移動先へ
 				Xkey = BATTLE_X;
 				Ykey = BATTLE_Y;
@@ -211,11 +209,13 @@ void SelectScene::KeyMovement()
 	// === 矢印移動(上下) ===
 	if (OpponentSelection) {
 		if (downHit) {
+			SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 			YInit++; // 次の段階へ
 			if (YInit > 3) { YInit = 0; } // 4回目で戻る
 			Ykey = YPosition[YInit];
 		}
 		if (upHit) {
+			SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 			YInit--; // 前の段階へ
 			if (YInit < 0) { YInit = 3; } // 最初より前なら最後に戻る
 			Ykey = YPosition[YInit];
