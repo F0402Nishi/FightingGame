@@ -8,9 +8,6 @@
 /// </summary>
 class SoundManager
 {
-private:
-    static std::map<std::string, int> soundHandles;
-
 public:
 /// <summary>
 /// 音を読み込む
@@ -33,6 +30,19 @@ public:
     static void Stop(const std::string& key);
 
 /// <summary>
+/// 停止 + 途中位置を記録
+/// </summary>
+/// <param name="key"></param>
+    static void Pause(const std::string& key);
+
+/// <summary>
+/// 記録した位置から再生
+/// </summary>
+/// <param name="key"></param>
+/// <param name="playType"></param>
+    static void Resume(const std::string& key, int playType);
+
+/// <summary>
 /// 音量を変更する (0〜255)
 /// </summary>
 /// <param name="key"></param>
@@ -50,4 +60,8 @@ public:
 /// すべての音を削除する
 /// </summary>
     static void DeleteAll();
+
+private:
+    static std::map<std::string, int> soundHandles;
+    static std::map<std::string, int> pausedPos;
 };

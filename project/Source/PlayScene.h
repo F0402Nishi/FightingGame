@@ -24,8 +24,20 @@ public:
 	~PlayScene();
 	void Update() override;
 	void Draw() override;
+
+/// <summary>
+/// プレイヤー間の距離に応じてカメラ位置とズームを調整する。
+/// </summary>
 	void UpdateCamera();
+
+/// <summary>
+/// バトルのフェーズ管理とUI表示、勝敗判定を行う。
+/// </summary>
 	void UpdateBattleFont();
+
+/// <summary>
+/// バトル中のメニュー開閉と操作を管理する。
+/// </summary>
 	void MenuKey();
 
 	static PlayScene* instance;
@@ -49,6 +61,7 @@ private:
 	int BattleBgm;
 	int ReadySe;
 	int KoSe;
+	int option;
 
 	bool PlayNow; // 勝敗を表示したい時用
 	bool isMenu;

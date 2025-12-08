@@ -64,6 +64,13 @@ public:
 	std::vector<SphereCollder> hitSpheres;
 	std::string GetHit() { return hitPart; }
 
+/// <summary>
+/// キック攻撃の時のみ位置に補正
+/// </summary>
+/// <param name="data"></param>
+/// <param name="_frame"></param>
+/// <param name="moveAxis"></param>
+/// <returns></returns>
 	VECTOR ApplyAttackMotion(const AttackData& data, float frame, char moveAxis);
 	
 	int GetHp() const { return Hp; }
@@ -194,10 +201,39 @@ protected:
 	void UpdateKick3();
 	void UpdateProtect();
 	void UpdateJump();
+
+/// <summary>
+/// 攻撃キャンセル処理の試作
+/// 時間が足りないため、一時保留
+/// </summary>
+/// <param name="animFile"></param>
+/// <param name="loop"></param>
 	void PlayAttack(const std::string& animFile, bool loop);
+
+/// <summary>
+/// アニメーション終了
+/// </summary>
 	void InReturn();
+
+/// <summary>
+/// Player同士の衝突判定
+/// </summary>
 	void ResolvePlayerCollision();
+
+/// <summary>
+/// 攻撃判定用Colliderを骨に合わせる
+/// </summary>
 	void BoneCollision();
+
+/// <summary>
+/// 攻撃のHit判定＆ダメージの割り振り
+/// </summary>
 	void CollisionDetection();
+
+/// <summary>
+/// ダメージを与える処理
+/// </summary>
+/// <param name="dmg"></param>
+/// <param name="type"></param>
 	void UpdateDamage(int dmg, AttackType type);
 };

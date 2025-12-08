@@ -5,6 +5,11 @@
 /// </summary>
 std::map<std::string, int> SoundManager::soundHandles;
 
+/// <summary>
+/// 再生位置を保存
+/// </summary>
+std::map<std::string, int> SoundManager::pausedPos;
+
 void SoundManager::Load(const std::string& key, const std::string& path)
 {
     // 既にロード済みなら何もしない
@@ -22,6 +27,28 @@ void SoundManager::Play(const std::string& key, int playType)
 void SoundManager::Stop(const std::string& key)
 {
     if (soundHandles.count(key) > 0) { StopSoundMem(soundHandles[key]); }
+}
+
+void SoundManager::Pause(const std::string& key)
+{
+    if (soundHandles.count(key) > 0) {
+        // 再生位置を記録
+        pausedPos[key] = GetCurrentPositionSoundMem(soundHandles[key]);
+        // 停止
+        StopSoundMem(soundHandles[key]);
+    }
+}
+
+void SoundManager::Resume(const std::string& key, int playType)
+{
+    if (soundHandles.count(key) > 0) {
+        // 保存した位置にセット
+        if (pausedPos.count(key) > 0) {
+            SetCurrentPositionSoundMem(pausedPos[key], soundHandles[key]);
+        }
+        // 再生開始
+        PlaySoundMem(soundHandles[key], playType);
+    }
 }
 
 void SoundManager::ChangeVolume(const std::string& key, int volume)

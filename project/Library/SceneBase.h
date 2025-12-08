@@ -25,16 +25,24 @@ public:
 	int Gy;
 
 	/// <summary>
-	/// セレクト音
+	/// カウントアップ方式でシーン移動
 	/// </summary>
-	int SelectSe;
+	int decideTimer;
 
 	/// <summary>
-	/// セレクト決定音
+	/// シーンの移動承認用
 	/// </summary>
-	int DecideSe;
-
 	bool changeScene;
+
+	/// <summary>
+	/// ゲームパッドの接続状況取得用
+	/// </summary>
+	bool padNow;
+
+	/// <summary>
+	/// 決定音がなっているか
+	/// </summary>
+	bool decideSoundPlayed;
 
 	// === 前フレームの状態を保持 ===
 	bool firstFrame;

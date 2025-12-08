@@ -32,7 +32,9 @@ SelectScene::SelectScene()
 	InputPossible = true;
 	OpponentSelection = false;
 	isSetting = false;
+
 	changeScene = false;
+	padNow = false;
 
 	firstFrame = true;
 	wasBPressed = false;
@@ -71,8 +73,11 @@ SelectScene::~SelectScene()
 void SelectScene::Update()
 {
 	KeyMovement();
+
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
 	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
+	padNow = (GetJoypadXInputState(DX_INPUT_PAD1, &inputScene) == 0);
+
 	fade->Update();
 
 	// === コントローラー用のKey一覧 ===
@@ -115,14 +120,21 @@ void SelectScene::Draw()
 	DrawRotaGraph3D(Xkey, Ykey, 0, 1.0f, 0, SelectionArrowImage, TRUE);
 
 	// === タイトルシーンに移動 ===
-	DrawExtendString(10, 680, 1.5f, 1.5f, "[Tab] タイトルへ", GetColor(255, 255, 255));
-	DrawExtendString(250, 680, 1.5f, 1.5f, "[Enter] or [Bボタン] 決定 & 戻る", GetColor(255, 255, 255));
+
+	if (padNow) {
+		DrawExtendString(200, 680, 1.2f, 1.2f, "[B] 決定 & 戻る", GetColor(255, 255, 255));
+		DrawExtendString(30, 680, 1.2f, 1.2f, "[Back] タイトル", GetColor(255, 255, 255));
+	}
+	else {
+		DrawExtendString(200, 680, 1.2f, 1.2f, "[Enter] 決定 & 戻る", GetColor(255, 255, 255));
+		DrawExtendString(30, 680, 1.2f, 1.2f, "[Tab] タイトル", GetColor(255, 255, 255));
+	}
 
 	// === ゲームタイプの種類 ===
 	if (OpponentSelection) {
 		DrawExtendString(930, 300, 2, 2, "TRAINING", GetColor(255, 255, 255));
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
-		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(192, 192, 192));
+		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(255, 255, 255));
 		if (padCount > 2) {
 			DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(255, 255, 255));
 		}
@@ -179,8 +191,8 @@ void SelectScene::KeyMovement()
 			break;
 		case 3:
 			gameType = YInit;
-			// fade->FadeOut();
-			// changeScene = true;
+			fade->FadeOut();
+			changeScene = true;
 			break;
 		}
 	}

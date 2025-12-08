@@ -96,6 +96,7 @@ void MiniWindow::Update()
 {
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputCommand);
 	GetJoypadAnalogInputRight(&Mx, &My, DX_INPUT_PAD1);
+	changefont = (GetJoypadXInputState(DX_INPUT_PAD1, &inputCommand) == 0);
 	
 	int DZ = 200; // デッドゾーン
 	stickUp = My < -DZ;
@@ -168,6 +169,15 @@ void MiniWindow::Draw()
 		DrawExtendString(500, 150, 5, 5, "コマンド", GetColor(255, 255, 255));
 		DrawExtendString(500, 350, 5, 5, "セレクト", GetColor(255, 255, 255));
 		DrawExtendString(500, 550, 5, 5, "タイトル", GetColor(255, 255, 255));
+
+		if (changefont) {
+			DrawExtendString(200, 680, 1.2f, 1.2f, "[B] 決定 & 戻る", GetColor(255, 255, 255));
+			DrawExtendString(30, 680, 1.2f, 1.2f, "[≡] ゲームへ", GetColor(255, 255, 255));
+		}
+		else {
+			DrawExtendString(200, 680, 1.2f, 1.2f, "[Enter] 決定 & 戻る", GetColor(255, 255, 255));
+			DrawExtendString(30, 680, 1.2f, 1.2f, "[Tab] ゲームへ", GetColor(255, 255, 255));
+		}
 	}
 
 	if (resultwindowOpen) {

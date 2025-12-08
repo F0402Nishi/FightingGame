@@ -24,8 +24,13 @@ ResultScene::ResultScene()
 
 	resultnumbers = 0;
 	sceneNumber = 0;
+
+	winScale = 0;
+	loseScale = 0;
+
 	changeScene = false;
 	windowClose = false;
+	winFinished = false;
 
 	firstFrame = true;
 	wasBPressed = false;
@@ -46,7 +51,20 @@ ResultScene::~ResultScene()
 
 void ResultScene::Update()
 {
+	// ImGui::Begin("Result");
+	// ImGui::Checkbox("winFinished", &winFinished);
+	// ImGui::InputFloat("winScale", &winScale);
+	// ImGui::InputFloat("loseScale", &loseScale);
+	// ImGui::Checkbox("window", &windowClose);
+	// ImGui::Checkbox("resultwindowOpen", &miniwindow->resultwindowOpen);
+	// ImGui::Text("boxY = %d", miniwindow->boxY);
+	// ImGui::Text("resultNumber = %d", (int)resultNumber);
+	// ImGui::Text("resultnumbers = %d", (int)resultnumbers);
+	// ImGui::End();
+
 	UpdateKey();
+	UpdateResultFont();
+
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
 	GetJoypadAnalogInput(&Gx, &Gy, DX_INPUT_PAD1);
 	fade->Update();
@@ -114,15 +132,6 @@ void ResultScene::Update()
 	if (sceneNumber == 2 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("SELECT"); }
 	if (sceneNumber == 3 && changeScene && fade->IsFadeOutEnd()) { SceneManager::ChangeScene("TITLE"); }
 
-	ImGui::Begin("Result");
-	ImGui::InputFloat("winScale", &winScale);
-	ImGui::InputFloat("loseScale", &loseScale);
-	// ImGui::Checkbox("window", &windowClose);
-	// ImGui::Checkbox("resultwindowOpen", &miniwindow->resultwindowOpen);
-	// ImGui::Text("boxY = %d", miniwindow->boxY);
-	// ImGui::Text("resultNumber = %d", (int)resultNumber);
-	// ImGui::Text("resultnumbers = %d", (int)resultnumbers);
-	ImGui::End();
 }
 
 void ResultScene::Draw()
@@ -132,15 +141,39 @@ void ResultScene::Draw()
 	DrawRotaGraph3D(0, 0, 0, 1.08f, 0, resultBackImage, TRUE);
 	//DrawString(10, 10, "Result SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
 
-	UpdateResultFont();
+	DrawResultFont();
 	fade->Draw();
 	miniwindow->Draw();
 }
 
 /// <summary>
-/// 勝敗結果に応じてリザルト画面の文字と画像を描画する。
+/// 勝敗結果に応じてスケールや状態を更新する。
 /// </summary>
 void ResultScene::UpdateResultFont()
+{
+	// --- 拡大アニメーション ---
+	if (winScale < 3.0f) {
+		winScale += 0.05f;
+		if (winScale >= 3.0f) {
+			winScale = 3.0f;
+			winFinished = true;
+		}
+	}
+
+	// --- 勝者が完了したら敗者を拡大 ---
+	if (winFinished && loseScale < 3.0f) {
+		loseScale += 0.02f;
+		if (loseScale > 3.0f)
+			loseScale = 3.0f;
+	}
+
+	if (!windowClose && winScale >= 3.0f && loseScale >= 3.0f) { miniwindow->ToggleReslut(true); }
+}
+
+/// <summary>
+/// 勝敗結果に応じてリザルト画面の文字と画像を描画する。
+/// </summary>
+void ResultScene::DrawResultFont()
 {
 	const char* resultFontTextP = "";
 	const char* resultFontTextC = "";
@@ -148,9 +181,6 @@ void ResultScene::UpdateResultFont()
 	int resultFontColor = GetColor(255, 255, 255);
 	int winx = 0;
 	int losex = 0;
-
-	// --- スケール（拡大率） ---
-	static bool winFinished = false;
 
 	switch (resultNumber) {
 	case Result::Win:
@@ -187,19 +217,6 @@ void ResultScene::UpdateResultFont()
 		break;
 	}
 
-	// --- 拡大アニメーション ---
-	if (winScale < 3.0f) {
-		winScale += (3.0f - winScale) * 0.1f;
-		if (winScale >= 3.0f) {
-			winScale = 3.0f;
-			winFinished = true;
-		}
-	}
-	else if (winFinished && loseScale < 3.0f) {
-		loseScale += 0.05f;
-		if (loseScale > 3.0f) loseScale = 3.0f;
-	}
-
 	DrawExtendString(150, 100, resultFontSize, resultFontSize, resultFontTextP, resultFontColor);
 	DrawExtendString(950, 100, resultFontSize, resultFontSize, resultFontTextC, resultFontColor);
 
@@ -211,6 +228,4 @@ void ResultScene::UpdateResultFont()
 	{
 		DrawRotaGraph3D(losex, 160, 0, loseScale, 0, loseImage, TRUE);
 	}
-
-	if (!windowClose && winScale >= 3.0f && loseScale >= 3.0f) { miniwindow->ToggleReslut(true); }
 }

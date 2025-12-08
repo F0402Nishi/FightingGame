@@ -16,6 +16,7 @@ public:
 	void Update() override;
 	void Draw() override;
 	void UpdateResultFont();
+	void DrawResultFont();
 
 private:
 	PlayScene* playscene;
@@ -33,4 +34,5 @@ private:
 	float loseScale;  // îsé“ÅFå„Ç©ÇÁèoÇƒÇ≠ÇÈ
 
 	bool windowClose;
+	bool winFinished;
 };

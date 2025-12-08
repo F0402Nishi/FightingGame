@@ -19,7 +19,7 @@ TitleScene::TitleScene()
 	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
 	
 	SoundManager::Load("TitleBgm", "data/sound/BGM/BGM_Title.mp3");
-	SoundManager::ChangeVolume("TitleBgm", 100);
+	SoundManager::ChangeVolume("TitleBgm", 80);
 	SoundManager::Play("TitleBgm", DX_PLAYTYPE_BACK);
 
 	memset(keyCounter, 0, sizeof(keyCounter));
@@ -28,10 +28,15 @@ TitleScene::TitleScene()
 	Mechscale = 0;
 	Brawlersscale = 0;
 	scaleSpeed = 0.15f;
+	statFontScale = 0;
 
 	ScaleCount = false;
 	playSe = false;
 	playedSecond = false;
+	scaleOk = false;
+	decideSoundPlayed = false;
+	
+	padNow = false;
 
 	// === 前フレームの状態を保持 ===
 	wasBPressed = false;
@@ -47,6 +52,7 @@ void TitleScene::Update()
 {
 	UpdateKey();
 	GetJoypadXInputState(DX_INPUT_PAD1, &inputScene);
+	padNow = (GetJoypadXInputState(DX_INPUT_PAD1, &inputScene) == 0);
 
 	// --- 拡大率を更新 ---
 	if (Mechscale < 3.0f) {
@@ -55,7 +61,14 @@ void TitleScene::Update()
 	}
 	else {
 		Brawlersscale += scaleSpeed;
-		if (Brawlersscale > 3.0f) { Brawlersscale = 3.0f;}
+		if (Brawlersscale > 3.0f) { Brawlersscale = 3.0f; scaleOk = true; }
+	}
+
+	if (scaleOk) {
+		if (statFontScale < 2.0f) {
+			statFontScale += 0.02f;
+			if (statFontScale > 2.0f) { statFontScale = 2.0f; ScaleCount = true; }
+		}
 	}
 
 	// === SEの確認用 ===
@@ -78,7 +91,6 @@ void TitleScene::Update()
 	if (SoundManager::IsPlaying("BrawlersSe") == 0 && playSe && playedSecond) {
 		playSe = false;
 		playedSecond = false;
-		ScaleCount = true;
 	}
 
 	// === 今フレームの状態 ===
@@ -96,17 +108,18 @@ void TitleScene::Update()
 		firstFrame = false;
 	}
 
-	if (ScaleCount && keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
+	if (ScaleCount && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit)) {
 		SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
-
-		// 音が鳴り終わるまでループで待機
-		while (SoundManager::IsPlaying("DecideSe")) {
-			WaitTimer(3);
-		}
-
-		SceneManager::ChangeScene("SELECT");
+		decideSoundPlayed = true;
+		decideTimer = 0;
 	}
-	if (ScaleCount && keyCounter[KEY_INPUT_ESCAPE] == 1 || backHit) {
+
+	if (decideSoundPlayed) {
+		decideTimer++;
+		if (decideTimer > 42) { SceneManager::ChangeScene("SELECT"); }
+	}
+
+	if (keyCounter[KEY_INPUT_ESCAPE] == 1 || backHit) {
 		SceneManager::Exit();
 	}
 
@@ -122,10 +135,18 @@ void TitleScene::Draw()
 	DrawRotaGraph3D(0, 0, 0, 1.2f, 0, TitleBackImage, TRUE);
 	DrawRotaGraph3D(220, 130, 0, Mechscale, 0, MechImage, TRUE);
 	DrawRotaGraph3D(0, -100, 0, Brawlersscale, 0, BrawlersImage, TRUE);
-	
-	DrawExtendString(200, 680, 1.5f, 1.5f, "[Enter] or [Bボタン] 開始", GetColor(255, 255, 255));
-	DrawExtendString(10, 680, 1.5f, 1.5f, "[Esc] 終了", GetColor(255, 255, 255));
-	// DrawExtendString(450, 550, 2, 2, "Push [Enter] Key To Play", GetColor(255, 255, 255));
+
+	if (scaleOk) {
+		if (padNow) {
+			DrawExtendString(450, 550, 2, statFontScale, "Push [B] To Play", GetColor(255, 255, 255));
+			DrawExtendString(30, 680, 1.2f, 1.2f, "[Back] 終了", GetColor(255, 255, 255));
+		}
+		else {
+			DrawExtendString(450, 550, 2, statFontScale, "Push [Enter] Key To Play", GetColor(255, 255, 255));
+			DrawExtendString(30, 680, 1.2f, 1.2f, "[Esc] 終了", GetColor(255, 255, 255));
+		}
+	}
+
 	// DrawExtendString(Screen::ToScreenX(450), Screen::ToScreenY(550), 2, 2, "Push [Enter] Key To Play", GetColor(255, 255, 255));
 	
 	// DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64)); //※Sceneの確認に使用

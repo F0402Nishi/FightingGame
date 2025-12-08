@@ -13,11 +13,36 @@ public:
 	~MiniWindow();
 	void Update() override;
 	void Draw() override;
+
+/// <summary>
+/// バトル中のコマンドウィンドウを描画する。
+/// commandList、KeyList、PadList の各項目をスクロール対応で表示し、
+/// ウィンドウ枠と背景も描画する。
+/// </summary>
 	void CommandWindow();
+
+/// <summary>
+/// メニュー項目のY座標リストを設定し、
+/// 選択バーの初期位置を最初の項目に合わせる。
+/// </summary>
 	void SetLayout(const std::vector<int>& _postionY);
+
+/// <summary>
+/// メニュー選択バーを上下に移動させる。
+/// 範囲外の場合は循環させる。
+/// </summary>
+/// <param name="_box"></param>
 	void MoveBox(int _box);
+
+/// <summary>
+/// 勝敗結果に応じてリザルト用バーの色を設定する。
+/// </summary>
 	void DrawResultBox(int _rnumbers);
 
+/// <summary>
+/// 現在の選択バー位置に対応するメニュー項目のインデックスを返す。
+/// </summary>
+/// <returns></returns>
 	int GetMenuOption() const;
 
 	void ToggleCommand() { commandwindowOpen = !commandwindowOpen; }
@@ -28,8 +53,6 @@ public:
 	bool IsMenuNow() { return menuwindowOpen; }
 	bool IsResultNow() { return resultwindowOpen; }
 
-	bool stickUp;
-	bool stickDown;
 private:
 	SelectScene* selectScene;
 	PlayScene* playScene;
@@ -68,5 +91,8 @@ private:
 	bool nowCUp;
 	bool nowCDown;
 	bool upCHit;
+	bool stickUp;
+	bool stickDown;
 	bool downCHit;
+	bool changefont;
 };

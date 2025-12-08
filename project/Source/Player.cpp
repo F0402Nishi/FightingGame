@@ -76,8 +76,10 @@ void Player::Update()
 	//ImGui::End();
 	
 	// === 入力を取得 ===
-	GetJoypadXInputState(padNo, &input);
-	GetJoypadAnalogInput(&lx, &ly, padNo);
+	if (isPlayer) { // PLAYER1 = ゲームパッド
+		GetJoypadXInputState(padNo, &input);
+		GetJoypadAnalogInput(&lx, &ly, padNo);
+	}
 
 	if (!isPlayer) { // !isPlayerの攻撃判定用Colliderの位置を調整
 		hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);

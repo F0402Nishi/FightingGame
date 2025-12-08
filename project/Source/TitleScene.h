@@ -22,9 +22,10 @@ private:
 	float Mechscale; // 開始時の縮小率
 	float Brawlersscale; // 開始時の縮小率
 	float scaleSpeed; // 拡大スピード
+	float statFontScale;
 
-	bool SeCount;
 	bool ScaleCount;
 	bool playSe;
 	bool playedSecond;
+	bool scaleOk;
 };

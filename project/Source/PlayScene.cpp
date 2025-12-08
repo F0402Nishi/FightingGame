@@ -79,6 +79,8 @@ PlayScene::PlayScene()
 	firstFrame = true;
 	BgmStat = false;
 
+	decideSoundPlayed = false;
+
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
 
@@ -180,9 +182,6 @@ void PlayScene::Draw()
 #endif // false
 }
 
-/// <summary>
-/// プレイヤー間の距離に応じてカメラ位置とズームを調整する。
-/// </summary>
 void PlayScene::UpdateCamera()
 {
 	float x1 = p1->GetTransform().position.x;
@@ -208,9 +207,6 @@ void PlayScene::UpdateCamera()
 	//ImGui::End();
 }
 
-/// <summary>
-/// バトルのフェーズ管理とUI表示、勝敗判定を行う。
-/// </summary>
 void PlayScene::UpdateBattleFont()
 {
 	// === READY が終わったら FIGHT ===
@@ -276,9 +272,6 @@ void PlayScene::UpdateBattleFont()
 	}
 }
 
-/// <summary>
-/// バトル中のメニュー開閉と操作を管理する。
-/// </summary>
 void PlayScene::MenuKey()
 {
 	if (isWind && !miniwindow->IsCommandNow()) {
@@ -296,7 +289,7 @@ void PlayScene::MenuKey()
 
 	// === 矢印移動(上下) ===
 	if (openwind) {
-		SoundManager::Stop("BattleBgm");
+		SoundManager::Pause("BattleBgm");
 
 		p1->SetInputDisplay(false);
 		if (!miniwindow->IsCommandNow()) {
@@ -311,22 +304,33 @@ void PlayScene::MenuKey()
 		}
 
 		if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
-			int option = miniwindow->GetMenuOption();
+			option = miniwindow->GetMenuOption();
 			SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
+			decideSoundPlayed = true;
+			decideTimer = 0;
 
+			// === case 0 は即時に処理 ===
+			if (option == 0) {
+				miniwindow->ToggleCommand();
+				decideSoundPlayed = false; // トグルしたらフラグ戻す
+			}
+		}
+
+		if (decideSoundPlayed) {
+			decideTimer++;
 			switch (option) {
 			case 0: // コマンド表示
-				miniwindow->ToggleCommand();
 				break;
 			case 1:
 				fade->ExclusiveFadeOut();
-				SceneManager::ChangeScene("SELECT");
+				if (decideTimer > 42) { SceneManager::ChangeScene("SELECT"); }
 				break;
 			case 2:
 				fade->ExclusiveFadeOut();
-				SceneManager::ChangeScene("TITLE");
+				if (decideTimer > 42) { SceneManager::ChangeScene("TITLE"); }
 				break;
 			}
+
 		}
 
 		wasBPressed = bPressed;
@@ -336,9 +340,9 @@ void PlayScene::MenuKey()
 	else if (!openwind && opponentType == 1){ 
 		p1->SetInputDisplay(true);
 
-		if (BgmStat && CheckSoundMem(BattleBgm) == 0) {
+		if (BgmStat && !SoundManager::IsPlaying("BattleBgm")) {
 			// --- 再開 ---
-			SoundManager::Play("BattleBgm", DX_PLAYTYPE_LOOP);
+			SoundManager::Resume("BattleBgm", DX_PLAYTYPE_LOOP);
 		}
 	}
 	else

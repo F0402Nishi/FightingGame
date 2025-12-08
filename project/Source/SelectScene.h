@@ -37,7 +37,7 @@ private:
 	int BATTLE_X;
 	int BATTLE_Y;
 	int YInit;
-	int YPosition[4] = {200, 75, -85, -250};
+	int YPosition[4] = {200, 75, -95, -270};
 	int padCount;
 	int padMiniwindowCount;
 

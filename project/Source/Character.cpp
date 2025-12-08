@@ -466,12 +466,6 @@ void Character::UpdateJump()
 	transform.position.y += velocityY;
 }
 
-/// <summary>
-/// 攻撃キャンセル処理の試作
-/// 時間が足りないため、一時保留
-/// </summary>
-/// <param name="animFile"></param>
-/// <param name="loop"></param>
 void Character::PlayAttack(const std::string& animFile, bool loop)
 {
 	if (!anim) { return; } // 安全対策
@@ -485,9 +479,6 @@ void Character::PlayAttack(const std::string& animFile, bool loop)
 	anim->Play(animFile, loop); // , true のちに追加
 }
 
-/// <summary>
-/// アニメーション終了
-/// </summary>
 void Character::InReturn()
 {
 	if (anim->IsFinish() && !animRetun) {
@@ -515,9 +506,6 @@ void Character::InReturn()
 	if (!anim->IsFinish()) { animRetun = false; }
 }
 
-/// <summary>
-/// Player同士の衝突判定
-/// </summary>
 void Character::ResolvePlayerCollision()
 {
 	Character* c = FindGameObject<Character>();
@@ -545,9 +533,6 @@ void Character::ResolvePlayerCollision()
 	}
 }
 
-/// <summary>
-/// 攻撃判定用Colliderを骨に合わせる
-/// </summary>
 void Character::BoneCollision()
 {
 	// Playerの攻撃判定用Colliderの位置を調整
@@ -582,13 +567,6 @@ void Character::BoneCollision()
 	hitSpheres[13].localOffset = right_FootWorldPos - basePos;
 }
 
-/// <summary>
-/// キック攻撃の時のみ位置に補正
-/// </summary>
-/// <param name="data"></param>
-/// <param name="_frame"></param>
-/// <param name="moveAxis"></param>
-/// <returns></returns>
 VECTOR Character::ApplyAttackMotion(const AttackData& data, float _frame, char moveAxis)
 {
 	if (!startPosSaved) {
@@ -621,9 +599,6 @@ VECTOR Character::ApplyAttackMotion(const AttackData& data, float _frame, char m
 	return offset;
 }
 
-/// <summary>
-/// 攻撃のHit判定＆ダメージの割り振り
-/// </summary>
 void Character::CollisionDetection()
 {
 	if (opponent == nullptr || !canReduceHp || hasHit) return; // すでに当たっていたらスキップ
@@ -671,11 +646,6 @@ void Character::CollisionDetection()
 	}
 }
 
-/// <summary>
-/// ダメージを与える処理
-/// </summary>
-/// <param name="dmg"></param>
-/// <param name="type"></param>
 void Character::UpdateDamage(int dmg, AttackType type)
 {
 	// dmg = 0; // デバック用
