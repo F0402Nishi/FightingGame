@@ -303,7 +303,7 @@ void PlayScene::MenuKey()
 			}
 		}
 
-		if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
+		if (!decideSoundPlayed && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit)) {
 			option = miniwindow->GetMenuOption();
 			SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
 			decideSoundPlayed = true;

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <assert.h>
 
+
 TitleScene::TitleScene()
 {
 	SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1100.0f), VGet(0.0f, 0.0f, 0));
@@ -108,7 +109,7 @@ void TitleScene::Update()
 		firstFrame = false;
 	}
 
-	if (ScaleCount && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit)) {
+	if (!decideSoundPlayed && ScaleCount && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit)) {
 		SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
 		decideSoundPlayed = true;
 		decideTimer = 0;

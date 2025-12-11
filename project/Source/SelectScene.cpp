@@ -134,10 +134,8 @@ void SelectScene::Draw()
 	if (OpponentSelection) {
 		DrawExtendString(930, 300, 2, 2, "TRAINING", GetColor(255, 255, 255));
 		DrawExtendString(930, 400, 2, 2, "PLAYER vs CPU", GetColor(255, 255, 255));
-		DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(255, 255, 255));
-		if (padCount > 2) {
-			DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(255, 255, 255));
-		}
+		if (padNow) { DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(255, 255, 255)); }
+		else { DrawExtendString(930, 500, 2, 2, "PLAYER vs PLAYER", GetColor(192, 192, 192)); }
 	}
 
 	fade->Draw();
@@ -170,7 +168,7 @@ void SelectScene::KeyMovement()
 	}
 
 	// === ゲームタイプ選択用 ===
-	if (!atInit && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) && !SelectKeyInput) {
+	if (!changeScene && !atInit && !SelectKeyInput && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit)) {
 		SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
 
 		switch (YInit) {
@@ -190,9 +188,11 @@ void SelectScene::KeyMovement()
 			changeScene = true;
 			break;
 		case 3:
-			gameType = YInit;
-			fade->FadeOut();
-			changeScene = true;
+			if (padNow) {
+				gameType = YInit;
+				fade->FadeOut();
+				changeScene = true;
+			}
 			break;
 		}
 	}

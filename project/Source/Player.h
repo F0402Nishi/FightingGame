@@ -15,9 +15,10 @@ class Player : public Character
 public:
 	Player(bool _isPlayer);
 	~Player();
-
 	void Update() override;
 	void Draw() override;
+	void PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum);
+
 	virtual bool GetisPlayey() const override { return isPlayer; }
 	virtual bool GetisCpu() const override { return false; }
 

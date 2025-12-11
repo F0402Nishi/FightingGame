@@ -15,7 +15,15 @@ public:
 	~ResultScene();
 	void Update() override;
 	void Draw() override;
+
+/// <summary>
+/// 勝敗結果に応じてスケールや状態を更新する。
+/// </summary>
 	void UpdateResultFont();
+
+/// <summary>
+/// 勝敗結果に応じてリザルト画面の文字と画像を描画する。
+/// </summary>
 	void DrawResultFont();
 
 private:
@@ -35,4 +43,6 @@ private:
 
 	bool windowClose;
 	bool winFinished;
+	bool playedWinSe;
+	bool playedLoseSe;
 };

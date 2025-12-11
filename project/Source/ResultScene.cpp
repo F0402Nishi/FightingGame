@@ -31,6 +31,8 @@ ResultScene::ResultScene()
 	changeScene = false;
 	windowClose = false;
 	winFinished = false;
+	playedWinSe = false;
+	playedLoseSe = false;
 
 	firstFrame = true;
 	wasBPressed = false;
@@ -42,6 +44,8 @@ ResultScene::ResultScene()
 
 	SoundManager::Load("SelectSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-13(Select).mp3");
 	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
+	SoundManager::Load("WinSe", "data/sound/SE/SNES-Fighting03/SNES-Fighting03-5(You_Win).mp3");
+	SoundManager::Load("LoseSe", "data/sound/SE/SNES-Fighting03/SNES-Fighting03-6(You_Lose).mp3");
 }
 
 ResultScene::~ResultScene()
@@ -95,7 +99,7 @@ void ResultScene::Update()
 			SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
 			miniwindow->MoveBox(-1); // 上移動
 		}
-		if (keyCounter[KEY_INPUT_RETURN] == 1 || bHit) {
+		if (!changeScene && (keyCounter[KEY_INPUT_RETURN] == 1 || bHit)) {
 			int option = miniwindow->GetMenuOption();
 			SoundManager::Play("DecideSe", DX_PLAYTYPE_BACK);
 
@@ -146,14 +150,15 @@ void ResultScene::Draw()
 	miniwindow->Draw();
 }
 
-/// <summary>
-/// 勝敗結果に応じてスケールや状態を更新する。
-/// </summary>
 void ResultScene::UpdateResultFont()
 {
 	// --- 拡大アニメーション ---
 	if (winScale < 3.0f) {
 		winScale += 0.05f;
+		if (!playedWinSe && (resultNumber == Result::Win || resultNumber == Result::P1Win || resultNumber == Result::P2Win)) {
+			SoundManager::Play("WinSe", DX_PLAYTYPE_BACK);
+			playedWinSe = true;
+		}
 		if (winScale >= 3.0f) {
 			winScale = 3.0f;
 			winFinished = true;
@@ -163,6 +168,9 @@ void ResultScene::UpdateResultFont()
 	// --- 勝者が完了したら敗者を拡大 ---
 	if (winFinished && loseScale < 3.0f) {
 		loseScale += 0.02f;
+		if (!playedLoseSe && (resultNumber == Result::Lose)) {
+			SoundManager::Play("LoseSe", DX_PLAYTYPE_BACK);
+		}
 		if (loseScale > 3.0f)
 			loseScale = 3.0f;
 	}
@@ -170,9 +178,6 @@ void ResultScene::UpdateResultFont()
 	if (!windowClose && winScale >= 3.0f && loseScale >= 3.0f) { miniwindow->ToggleReslut(true); }
 }
 
-/// <summary>
-/// 勝敗結果に応じてリザルト画面の文字と画像を描画する。
-/// </summary>
 void ResultScene::DrawResultFont()
 {
 	const char* resultFontTextP = "";

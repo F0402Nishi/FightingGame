@@ -3,6 +3,7 @@
 #include "Screen.h"
 #include "SoundManager.h"
 
+
 /// <summary>
 /// タイトルシーン
 /// </summary>
