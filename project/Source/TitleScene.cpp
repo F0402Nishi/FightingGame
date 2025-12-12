@@ -17,11 +17,11 @@ TitleScene::TitleScene()
 
 	SoundManager::Load("MechSe", "data/sound/SE/Title/MECH.mp3");
 	SoundManager::Load("BrawlersSe", "data/sound/SE/Title/BRAWLERS.mp3");
-	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/Choice/SNES-Fighting06-14.mp3");
 	
-	SoundManager::Load("TitleBgm", "data/sound/BGM/BGM_Title.mp3");
-	SoundManager::ChangeVolume("TitleBgm", 80);
-	SoundManager::Play("TitleBgm", DX_PLAYTYPE_BACK);
+	SoundManager::Load("TitleBgm", "data/sound/BGM/GB-Fighting-A01.mp3");
+	SoundManager::ChangeVolume("TitleBgm", 126);
+	SoundManager::Play("TitleBgm", DX_PLAYTYPE_LOOP);
 
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();

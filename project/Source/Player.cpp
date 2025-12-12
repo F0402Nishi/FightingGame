@@ -54,6 +54,10 @@ void Player::Update()
 
 	if (!isAlive) return;
 
+	// 攻撃入力
+	if (isPlayer) { PlayerAttack(DX_INPUT_PAD1, true, 1); }
+	else { PlayerAttack(DX_INPUT_PAD2, true, 2); }
+
 	// 左右移動
 	if (VSize(inputDir) > 0) {
 		if (VSize(inputDir) >= 1.0f) {
@@ -82,9 +86,6 @@ void Player::Update()
 
 #if false "のちに戻す" 
 
-	// 攻撃入力
-	if (isPlayer) { PlayerAttack(); }
-	else { PlayerAttack(); }
 
 	//ImGui::Begin("PLAYER");
 	//ImGui::Checkbox("InputTypeP", &InputTypeP);
@@ -154,7 +155,7 @@ void Player::PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum)
 	// キャンセル用の関数または変数を定義
 	// 例.Uのアニメーション中にIを押されたら、、、
 
-	if (GetJoypadNum() > padIndex) {
+	if (GetJoypadNum() >= padIndex) {
 		GetJoypadXInputState(padIndex, &input);
 		GetJoypadAnalogInput(&lx, &ly, padIndex);
 
@@ -162,10 +163,12 @@ void Player::PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum)
 			if (lx < -200 || input.Buttons[XINPUT_BUTTON_DPAD_LEFT]) {
 				inputDir.x = -10.0f;
 				currentKey = KEY_INPUT_A;
+				// anim->Play("data/Character/Player/Walk_B.mv1", true);
 			}
 			else if (lx > 200 || input.Buttons[XINPUT_BUTTON_DPAD_RIGHT]) {
 				inputDir.x = 10.0f;
 				currentKey = KEY_INPUT_D;
+				// anim->Play("data/Character/Player/Walk_F.mv1", true);
 			}
 			else {
 				anim->Play("data/Character/Player/Fight_Idle.mv1", true);
@@ -177,58 +180,87 @@ void Player::PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum)
 			state = S_PUNCH1; canReduceHp = true; isMoveing = true; //animRetun = true;
 			currentKey = KEY_INPUT_U;
 		}
+		if (input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER] && !isMoveing) {
+			state = S_PUNCH2; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_I;
+		}
+		if (input.RightTrigger > 50 && !isMoveing) {
+			state = S_PUNCH3; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_O;
+		}
+		if (input.Buttons[XINPUT_BUTTON_A] && !isMoveing) {
+			state = S_KICK1; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_J;
+		}
+		if (input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER] && !isMoveing) {
+			state = S_KICK2; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_K;
+		}
+		if (input.LeftTrigger > 50 && !isMoveing) {
+			state = S_KICK3; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_L;
+		}
+		if (input.Buttons[XINPUT_BUTTON_X]) {
+			state = S_PROTECT; isGuarding = true;
+			currentKey = KEY_INPUT_H;
+		}
+		else if (!input.Buttons[XINPUT_BUTTON_X]) {
+			InReturn();
+		}
 
+		return;
 	}
 
 	if (useKeyboardFallback) {
 		if (state == S_STOP && !isHitPlaying) {
-			if (CheckHitKey(KEY_INPUT_A)) {
+			if (CheckHitKey(KEY_INPUT_A)) { // 後ろ歩き
 				inputDir.x = -10.0f;
 				currentKey = KEY_INPUT_A;
-				// anim->Play("data/Character/Player/Walk_B.mv1", true); // 後ろ歩き
+				// anim->Play("data/Character/Player/Walk_B.mv1", true);
 			}
-			else if (CheckHitKey(KEY_INPUT_D)) {
+			else if (CheckHitKey(KEY_INPUT_D)) { // 前歩き
 				inputDir.x = 10.0f;
 				currentKey = KEY_INPUT_D;
-				// anim->Play("data/Character/Player/Walk_F.mv1", true); // 前歩き
+				// anim->Play("data/Character/Player/Walk_F.mv1", true);
 			}
 			else {
 				anim->Play("data/Character/Player/Fight_Idle.mv1", true);
 				currentKey = NEUTRAL;
 			}
 		}
+
+		if (CheckHitKey(KEY_INPUT_U) && !isMoveing) { // パンチ1
+			state = S_PUNCH1; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_U;
+		}
+		if (CheckHitKey(KEY_INPUT_I) && !isMoveing) { // パンチ2
+			state = S_PUNCH2; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_I;
+		}
+		if (CheckHitKey(KEY_INPUT_O) && !isMoveing) { // パンチ3
+			state = S_PUNCH3; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_O;
+		}
+		if (CheckHitKey(KEY_INPUT_J) && !isMoveing) { // キック1
+			state = S_KICK1; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_J;
+		}
+		if (CheckHitKey(KEY_INPUT_K) && !isMoveing) {  // キック2
+			state = S_KICK2; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_K;
+		}
+		if (CheckHitKey(KEY_INPUT_L) && !isMoveing) { // キック3
+			state = S_KICK3; canReduceHp = true; isMoveing = true; //animRetun = true;
+			currentKey = KEY_INPUT_L;
+		}
+
+		if (CheckHitKey(KEY_INPUT_H)) {  // ガード
+			state = S_PROTECT; isGuarding = true;
+			currentKey = KEY_INPUT_H;
+		}
+		else if (!CheckHitKey(KEY_INPUT_H)) {
+			InReturn();
+		}
 	}
 
-	if ((CheckHitKey(KEY_INPUT_U) || input.Buttons[XINPUT_BUTTON_B]) && !isMoveing) { // パンチ1
-		state = S_PUNCH1; canReduceHp = true; isMoveing = true; //animRetun = true;
-		currentKey = KEY_INPUT_U;
-	}
-	if ((CheckHitKey(KEY_INPUT_I) || input.Buttons[XINPUT_BUTTON_RIGHT_SHOULDER]) && !isMoveing) { // パンチ2
-		state = S_PUNCH2; canReduceHp = true; isMoveing = true; //animRetun = true;
-		currentKey = KEY_INPUT_I;
-	}
-	if ((CheckHitKey(KEY_INPUT_O) || input.RightTrigger > 50) && !isMoveing) { // パンチ3
-		state = S_PUNCH3; canReduceHp = true; isMoveing = true; //animRetun = true;
-		currentKey = KEY_INPUT_O;
-	}
-	if ((CheckHitKey(KEY_INPUT_J) || input.Buttons[XINPUT_BUTTON_A]) && !isMoveing) { // キック1
-		state = S_KICK1; canReduceHp = true; isMoveing = true; //animRetun = true;
-		currentKey = KEY_INPUT_J;
-	}
-	if ((CheckHitKey(KEY_INPUT_K) || input.Buttons[XINPUT_BUTTON_LEFT_SHOULDER]) && !isMoveing) {  // キック2
-		state = S_KICK2; canReduceHp = true; isMoveing = true; //animRetun = true;
-		currentKey = KEY_INPUT_K;
-	}
-	if ((CheckHitKey(KEY_INPUT_L) || input.LeftTrigger > 50) && !isMoveing) { // キック3
-		state = S_KICK3; canReduceHp = true; isMoveing = true; //animRetun = true;
-		currentKey = KEY_INPUT_L;
-	}
-
-	if (CheckHitKey(KEY_INPUT_H) || input.Buttons[XINPUT_BUTTON_X]) {  // ガード
-		state = S_PROTECT; isGuarding = true;
-		currentKey = KEY_INPUT_H;
-	}
-	else if (!CheckHitKey(KEY_INPUT_H) || !input.Buttons[XINPUT_BUTTON_X]) {
-		InReturn();
-	}
 }

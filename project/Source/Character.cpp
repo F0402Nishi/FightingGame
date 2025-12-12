@@ -463,6 +463,7 @@ void Character::UpdateProtect()
 
 void Character::UpdateJump()
 {
+	velocityY = PLAYER_JUMP;
 	transform.position.y += velocityY;
 }
 

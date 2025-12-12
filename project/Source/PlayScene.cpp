@@ -86,13 +86,16 @@ PlayScene::PlayScene()
 
 	SoundManager::Load("ReadySe", "data/sound/SE/Battle/Ready-Fight.mp3");
 	SoundManager::Load("KoSe", "data/sound/SE/Battle/k.o.mp3");
-	SoundManager::Load("BattleBgm", "data/sound/BGM/BGM_battle.mp3");
 
-	SoundManager::Load("SelectSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-13(Select).mp3");
-	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
+	SoundManager::Load("SelectSe", "data/sound/SE/Choice/SNES-Fighting06-13.mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/Choice/SNES-Fighting06-14.mp3");
 
-	// 音量を1/4に
-	SoundManager::ChangeVolume("BattleBgm", 64);
+	// 音量を1/2に
+	SoundManager::Load("BattleBgm", "data/sound/BGM/GB-Fighting-A03.mp3");
+	SoundManager::ChangeVolume("BattleBgm", 126);
+
+	SoundManager::Load("OptionBgm", "data/sound/BGM/GB-Fighting-B04.mp3");
+	SoundManager::ChangeVolume("OptionBgm", 126);
 
 	// === スタート時 READY 表示 ===
 	if (opponentType == 1) { 
@@ -289,9 +292,13 @@ void PlayScene::MenuKey()
 
 	// === 矢印移動(上下) ===
 	if (openwind) {
+		p1->SetInputDisplay(false);
 		SoundManager::Pause("BattleBgm");
 
-		p1->SetInputDisplay(false);
+		if (!SoundManager::IsPlaying("OptionBgm")) {
+			SoundManager::Play("OptionBgm", DX_PLAYTYPE_LOOP);
+		}
+
 		if (!miniwindow->IsCommandNow()) {
 			if (downHit) {
 				SoundManager::Play("SelectSe", DX_PLAYTYPE_BACK);
@@ -339,6 +346,10 @@ void PlayScene::MenuKey()
 	}
 	else if (!openwind && opponentType == 1){ 
 		p1->SetInputDisplay(true);
+
+		if (SoundManager::IsPlaying("OptionBgm")) {
+			SoundManager::Stop("OptionBgm");
+		}
 
 		if (BgmStat && !SoundManager::IsPlaying("BattleBgm")) {
 			// --- 再開 ---

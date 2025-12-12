@@ -23,8 +23,12 @@ SelectScene::SelectScene()
 	SelectBackImage = LoadGraph("data/2D/Title_Back01.png");
 	assert(SelectBackImage >= 0);
 
-	SoundManager::Load("SelectSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-13(Select).mp3");
-	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
+	SoundManager::Load("SelectSe", "data/sound/SE/Choice/SNES-Fighting06-13.mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/Choice/SNES-Fighting06-14.mp3");
+
+	SoundManager::Load("SelectBgm", "data/sound/BGM/GB-Fighting-A02.mp3");
+	SoundManager::ChangeVolume("SelectBgm", 126);
+	SoundManager::Play("SelectBgm", DX_PLAYTYPE_LOOP);
 
 	operation = false;
 	SelectKeyInput = false;

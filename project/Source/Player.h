@@ -29,7 +29,7 @@ private:
 	// VECTOR velocity;
 	VECTOR stick; // 左スティックX軸取得用
 
-	DxLib::XINPUT_STATE input;
+	XINPUT_STATE input;
 
 	int joyInput;
 	int lastKey;

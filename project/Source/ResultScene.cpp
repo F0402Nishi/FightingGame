@@ -42,10 +42,15 @@ ResultScene::ResultScene()
 	memset(keyCounter, 0, sizeof(keyCounter));
 	UpdateKey();
 
-	SoundManager::Load("SelectSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-13(Select).mp3");
-	SoundManager::Load("DecideSe", "data/sound/SE/SNES-Fighting06/SNES-Fighting06-14(Select).mp3");
+	SoundManager::Load("SelectSe", "data/sound/SE/Choice/SNES-Fighting06-13.mp3");
+	SoundManager::Load("DecideSe", "data/sound/SE/Choice/SNES-Fighting06-14.mp3");
+	
 	SoundManager::Load("WinSe", "data/sound/SE/SNES-Fighting03/SNES-Fighting03-5(You_Win).mp3");
 	SoundManager::Load("LoseSe", "data/sound/SE/SNES-Fighting03/SNES-Fighting03-6(You_Lose).mp3");
+
+	SoundManager::Load("SelectBgm", "data/sound/BGM/GB-Fighting-A04.mp3");
+	SoundManager::ChangeVolume("SelectBgm", 126);
+	SoundManager::Play("SelectBgm", DX_PLAYTYPE_LOOP);
 }
 
 ResultScene::~ResultScene()
@@ -196,8 +201,8 @@ void ResultScene::DrawResultFont()
 		resultnumbers = 1;
 		break;
 	case Result::Lose:
-		resultFontTextC = "CPU";
 		resultFontTextP = "PLAYER";
+		resultFontTextC = "CPU";
 		winx = 600;
 		losex = -600;
 		resultnumbers = 2;
@@ -213,12 +218,14 @@ void ResultScene::DrawResultFont()
 		resultFontTextC = "PLAYER2";
 		winx = -600;
 		losex = 600;
+		resultnumbers = 3;
 		break;
 	case Result::P2Win:
-		resultFontTextP = "PLAYER2";
-		resultFontTextC = "PLAYER1";
+		resultFontTextP = "PLAYER1";
+		resultFontTextC = "PLAYER2";
 		winx = 600;
 		losex = -600;
+		resultnumbers = 3;
 		break;
 	}
 
