@@ -3,7 +3,6 @@
 #include <fstream>
 #include <assert.h>
 
-
 TitleScene::TitleScene()
 {
 	SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1100.0f), VGet(0.0f, 0.0f, 0));

@@ -45,8 +45,8 @@ ResultScene::ResultScene()
 	SoundManager::Load("SelectSe", "data/sound/SE/Choice/SNES-Fighting06-13.mp3");
 	SoundManager::Load("DecideSe", "data/sound/SE/Choice/SNES-Fighting06-14.mp3");
 	
-	SoundManager::Load("WinSe", "data/sound/SE/SNES-Fighting03/SNES-Fighting03-5(You_Win).mp3");
-	SoundManager::Load("LoseSe", "data/sound/SE/SNES-Fighting03/SNES-Fighting03-6(You_Lose).mp3");
+	SoundManager::Load("WinSe", "data/sound/SE/Battle/SNES-Fighting03.mp3");
+	SoundManager::Load("LoseSe", "data/sound/SE/Battle/SNES-Fighting03-1.mp3");
 
 	SoundManager::Load("SelectBgm", "data/sound/BGM/GB-Fighting-A04.mp3");
 	SoundManager::ChangeVolume("SelectBgm", 126);

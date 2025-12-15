@@ -67,11 +67,34 @@ Character::Character()
 	right_UpperLegBone = MV1SearchFrame(hModel, "Right_UpperLeg");
 	right_LowerLegBone = MV1SearchFrame(hModel, "Right_LowerLeg");
 	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
+
+	SoundManager::Load("Punch1Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-01.mp3"); // パンチ１
+	SoundManager::ChangeVolume("Punch1Se", 126);
+	SoundManager::Load("Punch2Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-02.mp3"); // パンチ２
+	SoundManager::ChangeVolume("Punch2Se", 126);
+	SoundManager::Load("Punch3Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-03.mp3"); // パンチ３
+	SoundManager::ChangeVolume("Punch3Se", 126);
+	SoundManager::Load("Kick1Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-04.mp3"); // キック１
+	SoundManager::ChangeVolume("Kick1Se", 126);
+	SoundManager::Load("Kick2Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-05.mp3"); // キック２
+	SoundManager::ChangeVolume("Kick2Se", 126);
+	SoundManager::Load("Kick3Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-06.mp3"); // キック３
+	SoundManager::ChangeVolume("Kick3Se", 126);
+	SoundManager::Load("ProtectSe", "data/sound/SE/SNES-Fighting/SNES-Fighting06-07.mp3"); // 防御
+	SoundManager::ChangeVolume("ProtectSe", 126);
+	SoundManager::Load("Swing1Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-08.mp3"); // スイング弱
+	SoundManager::ChangeVolume("Swing1Se", 126);
+	SoundManager::Load("Swing2Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-09.mp3"); // スイング中
+	SoundManager::ChangeVolume("Swing2Se", 126);
+	SoundManager::Load("Swing3Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-10.mp3"); // スイング強
+	SoundManager::ChangeVolume("Swing3Se", 126);
 }
 
 Character::~Character()
 {
 	delete anim;
+	SoundManager::DeleteAll();
+
 }
 
 void Character::Always()
@@ -610,40 +633,93 @@ void Character::CollisionDetection()
 	if (!hitPart.empty()) {
 		switch (state) {
 		case S_PUNCH1:
-			if (hitPart == "Head" || hitPart == "Body") damage = 50;
-			else damage = 0;
-			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			if (opponent->isGuarding) { // ガード中はダメージを0に
+				damage = 0;
+				SoundManager::Play("ProtectSe", DX_PLAYTYPE_BACK);
+			}
+			else if (hitPart == "Head" || hitPart == "Body") {
+				damage = 50;
+				SoundManager::Play("Punch1Se", DX_PLAYTYPE_BACK);
+			}
 			break;
 		case S_PUNCH2:
-			if (hitPart == "Head") damage = 100;
-			else damage = 0;
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			if (opponent->isGuarding) { // ガード中はダメージが5割に
+				damage = static_cast<int>(100 * 0.5f);
+				SoundManager::Play("ProtectSe", DX_PLAYTYPE_BACK);
+			}
+			else if (hitPart == "Head") {
+				damage = 100;
+				SoundManager::Play("Punch2Se", DX_PLAYTYPE_BACK);
+			}
 			break;
 		case S_PUNCH3:
-			if (hitPart == "Head") damage = 150;
-			else damage = 0;
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			if (opponent->isGuarding) { // ガード中はダメージが7割に
+				damage = static_cast<int>(150 * 0.7f);
+				SoundManager::Play("ProtectSe", DX_PLAYTYPE_BACK);
+			}
+			else if (hitPart == "Head") {
+				damage = 150;
+				SoundManager::Play("Punch3Se", DX_PLAYTYPE_BACK);
+			}
 			break;
 		case S_KICK1:
-			if (hitPart == "Body") damage = 50;
-			else damage = 0;
-			if (opponent->isGuarding) { damage = 0; } // ガード中はダメージを0に
+			if (opponent->isGuarding) { // ガード中はダメージを0に
+				damage = 0;
+				SoundManager::Play("ProtectSe", DX_PLAYTYPE_BACK);
+			}
+			else if (hitPart == "Body") {
+				damage = 50;
+				SoundManager::Play("Kick1Se", DX_PLAYTYPE_BACK);
+			}
 			break;
 		case S_KICK2:
-			if (hitPart == "Body") damage = 100;
-			else damage = 0;
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.2f); } // ガード中はダメージが2割に
+			if (opponent->isGuarding) { // ガード中はダメージが5割に
+				damage = static_cast<int>(100 * 0.5f);
+				SoundManager::Play("ProtectSe", DX_PLAYTYPE_BACK);
+			}
+			else if (hitPart == "Body") {
+				damage = 100;
+				SoundManager::Play("Kick2Se", DX_PLAYTYPE_BACK);
+			}
 			break;
 		case S_KICK3: 
-			if (hitPart == "Body") damage = 150;
-			else damage = 0;
-			if (opponent->isGuarding) { damage = static_cast<int>(damage * 0.5f); } // ガード中はダメージが5割に
+			if (opponent->isGuarding) { // ガード中はダメージが7割に
+				damage = static_cast<int>(150 * 0.7f);
+				SoundManager::Play("ProtectSe", DX_PLAYTYPE_BACK);
+			}
+			else if (hitPart == "Body") {
+				damage = 150;
+				SoundManager::Play("Kick3Se", DX_PLAYTYPE_BACK);
+			}
 			break;
 		}
 		opponent->UpdateDamage(damage, attacktype);
 		canReduceHp = false;
 		hasHit = true;
 		return;
+	}
+	else {
+		// --- 空振り時の処理 ---
+		switch (state) {
+		case S_PUNCH1:
+			SoundManager::Play("Swing1Se", DX_PLAYTYPE_BACK);
+			break;
+		case S_PUNCH2:
+			SoundManager::Play("Swing2Se", DX_PLAYTYPE_BACK);
+			break;
+		case S_PUNCH3:
+			SoundManager::Play("Swing3Se", DX_PLAYTYPE_BACK);
+			break;
+		case S_KICK1:
+			SoundManager::Play("Swing1Se", DX_PLAYTYPE_BACK);
+			break;
+		case S_KICK2:
+			SoundManager::Play("Swing2Se", DX_PLAYTYPE_BACK);
+			break;
+		case S_KICK3:
+			SoundManager::Play("Swing3Se", DX_PLAYTYPE_BACK);
+			break;
+		}
 	}
 }
 

@@ -1,6 +1,6 @@
-/// <summary>
-/// CoGƒtƒŒ[ƒ€ƒ[ƒN
-/// WinMain()‚©‚çn‚Ü‚è‚Ü‚·
+ï»¿/// <summary>
+/// CoGãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¯ãƒ¼ã‚¯
+/// WinMain()ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 /// </summary>
 /// <author>N.Hanai</author>
 /// 
@@ -22,22 +22,23 @@
 
 #define CoGVersion (4.1)
 
-// ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚è‚Ü‚·
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯ WinMain ã‹ã‚‰å§‹ã¾ã‚Šã¾ã™
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	SetGraphMode(Screen::WIDTH, Screen::HEIGHT, 32);
-	SetOutApplicationLogValidFlag(FALSE); // ƒƒO‚ğo‚³‚È‚¢
+	SetOutApplicationLogValidFlag(FALSE); // ãƒ­ã‚°ã‚’å‡ºã•ãªã„
 
 	SetMainWindowText(Screen::WINDOW_NAME);
 	SetWindowSizeExtendRate(Screen::WINDOW_EXTEND);
-	ChangeWindowMode(Screen::WINDOW_MODE); // Windowƒ‚[ƒh‚Ìê‡
+	ChangeWindowMode(Screen::WINDOW_MODE); // Windowãƒ¢ãƒ¼ãƒ‰ã®å ´åˆ
 
-	// š‚±‚±‚É’Ç‰ÁI
-	SetUseXInputFlag(TRUE);   // © XboxƒRƒ“ƒgƒ[ƒ‰[‘Î‰‚ğ—LŒø‰»id—vIj
+	// â˜…ã“ã“ã«è¿½åŠ ï¼
+	SetUseXInputFlag(TRUE);  // â† Xboxã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼å¯¾å¿œã‚’æœ‰åŠ¹åŒ–ï¼ˆé‡è¦ï¼ï¼‰
+	SetWaitVSyncFlag(TRUE); // å‚ç›´åŒæœŸONï¼ˆ60Hzç’°å¢ƒã§ã´ã£ãŸã‚Šåˆã†ï¼‰
 
-	if (DxLib_Init() == -1)		// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
+	if (DxLib_Init() == -1)		// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ–å‡¦ç†
 	{
-		return -1;			// ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+		return -1;			// ã‚¨ãƒ©ãƒ¼ãŒèµ·ããŸã‚‰ç›´ã¡ã«çµ‚äº†
 	}
 
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -45,17 +46,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetUseZBuffer3D(TRUE);
 	SetWriteZBuffer3D(TRUE);
 
-	// © ‚±‚±‚Å—”‰Šú‰»
-	srand((unsigned int)time(NULL));  // —”‚Ì‰Šú‰»i1‰ñ‚¾‚¯j
+	// â† ã“ã“ã§ä¹±æ•°åˆæœŸåŒ–
+	srand((unsigned int)time(NULL));  // ä¹±æ•°ã®åˆæœŸåŒ–ï¼ˆ1å›ã ã‘ï¼‰
 
 	SetHookWinProc([](HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT /*CALLBACK*/
 	{
-		// DxLib‚ÆImGui‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚ğ—¼—§‚³‚¹‚é
+		// DxLibã¨ImGuiã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã‚’ä¸¡ç«‹ã•ã›ã‚‹
 		SetUseHookWinProcReturnValue(FALSE);
 		return ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam);
 	});
 #if IMGUI
-	// ImGUI‰Šú‰»
+	// ImGUIåˆæœŸåŒ–
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
@@ -70,6 +71,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		ImGui_ImplDXlib_NewFrame();
 		ImGui::NewFrame();
 #endif
+
+
+		// â† ã“ã“ã«è¿½åŠ ï¼ï¼ˆFPSåˆ¶å¾¡ï¼‰
+		static int prevTime = GetNowCount();
+		const int FPS = 60;
+		const int FRAME_TIME = 1000 / FPS;
+		int nowTime = GetNowCount();
+		int deltaTime = nowTime - prevTime;
+		if (deltaTime < FRAME_TIME) WaitTimer(FRAME_TIME - deltaTime);
+		prevTime = GetNowCount();
 
 		AppUpdate();
 
@@ -98,10 +109,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	ImGui_ImplDXlib_Shutdown();
 	ImGui::DestroyContext();
 #endif
-	DxLib_End();				// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠg—p‚ÌI—¹ˆ—
+	DxLib_End();				// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªä½¿ç”¨ã®çµ‚äº†å‡¦ç†
 #ifdef _DEBUG
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 	_CrtDumpMemoryLeaks();
 #endif
-	return 0;				// ƒ\ƒtƒg‚ÌI—¹ 
+	return 0;				// ã‚½ãƒ•ãƒˆã®çµ‚äº† 
 }

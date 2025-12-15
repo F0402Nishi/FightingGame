@@ -2,6 +2,7 @@
 #include "Object3D.h"
 #include "Animator.h"
 #include "Field.h"
+#include "SoundManager.h"
 #include <string>
 #include <vector>
 #include <iostream>
