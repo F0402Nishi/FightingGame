@@ -24,8 +24,6 @@ UI2D::UI2D()
     assert(HPImage >= 0);
     HPImageLeft = LoadGraph("data/2D/HP_FrontImage_Left.png");
     assert(HPImageLeft >= 0);
-    WinImage = LoadGraph("data/2D/WIN.png");
-    assert(WinImage >= 0);
 
     battle = Battle::None;
     uitype = UIType::HP;

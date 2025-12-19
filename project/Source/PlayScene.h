@@ -55,6 +55,7 @@ private:
 	Fade* fade;
 	MiniWindow* miniwindow;
 	Result resultType;
+	Player* player;
 
 	int battlePhase; // 0=準備, 1=Ready表示中, 2=Fight表示中, 3=バトル中, 4=勝敗表示中
 	int opponentType;

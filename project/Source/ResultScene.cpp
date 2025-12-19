@@ -49,7 +49,7 @@ ResultScene::ResultScene()
 	SoundManager::Load("LoseSe", "data/sound/SE/Battle/SNES-Fighting03-1.mp3");
 
 	SoundManager::Load("SelectBgm", "data/sound/BGM/GB-Fighting-A04.mp3");
-	SoundManager::ChangeVolume("SelectBgm", 126);
+	SoundManager::ChangeVolume("SelectBgm", 180);
 	SoundManager::Play("SelectBgm", DX_PLAYTYPE_LOOP);
 }
 

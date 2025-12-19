@@ -25,7 +25,7 @@ SelectScene::SelectScene()
 	SoundManager::Load("DecideSe", "data/sound/SE/Choice/SNES-Fighting06-14.mp3");
 
 	SoundManager::Load("SelectBgm", "data/sound/BGM/GB-Fighting-A02.mp3");
-	SoundManager::ChangeVolume("SelectBgm", 126);
+	SoundManager::ChangeVolume("SelectBgm", 180);
 	SoundManager::Play("SelectBgm", DX_PLAYTYPE_LOOP);
 
 	operation = false;

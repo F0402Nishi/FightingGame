@@ -19,7 +19,7 @@ TitleScene::TitleScene()
 	SoundManager::Load("DecideSe", "data/sound/SE/Choice/SNES-Fighting06-14.mp3");
 	
 	SoundManager::Load("TitleBgm", "data/sound/BGM/GB-Fighting-A01.mp3");
-	SoundManager::ChangeVolume("TitleBgm", 126);
+	SoundManager::ChangeVolume("TitleBgm", 180);
 	SoundManager::Play("TitleBgm", DX_PLAYTYPE_LOOP);
 
 	memset(keyCounter, 0, sizeof(keyCounter));

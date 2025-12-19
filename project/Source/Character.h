@@ -56,6 +56,7 @@ public:
 
 	void SetHp(int value) { Hp = value; }
 	void SetInputDisplay(bool _display) { InputTypeP = _display; }
+	void PlayOption(bool _option) { inoption = _option; }
 	
 	virtual void Update() override = 0;
 	virtual void Draw() override;
@@ -140,7 +141,7 @@ protected:
 	bool waitForNextAction; // UŒ‚’¼Œã‚Ìˆê’â~ƒtƒ‰ƒO
 	bool actionFinished;
 	bool isAttacking;
-
+	bool inoption;
 
 	// Player‚Ìœ§Œä
 	int headBone;

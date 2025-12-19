@@ -61,7 +61,6 @@ private:
 	int graphW;
 	int graphH;
 	int displayHp;
-	int WinImage;
 	int blueY;  // 画面上端からスタート
 	int blueSpeed; // 降下速度
 	int fullTank;

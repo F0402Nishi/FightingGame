@@ -91,10 +91,10 @@ PlayScene::PlayScene()
 
 	// 音量を1/2に
 	SoundManager::Load("BattleBgm", "data/sound/BGM/GB-Fighting-A03.mp3");
-	SoundManager::ChangeVolume("BattleBgm", 126);
+	SoundManager::ChangeVolume("BattleBgm", 180);
 
 	SoundManager::Load("OptionBgm", "data/sound/BGM/GB-Fighting-B04.mp3");
-	SoundManager::ChangeVolume("OptionBgm", 126);
+	SoundManager::ChangeVolume("OptionBgm", 180);
 
 	// === スタート時 READY 表示 ===
 	if (opponentType == 1) { 
@@ -260,6 +260,7 @@ void PlayScene::MenuKey()
 	// === 矢印移動(上下) ===
 	if (openwind) {
 		p1->SetInputDisplay(false);
+		p1->PlayOption(true);
 		SoundManager::Pause("BattleBgm");
 
 		if (!SoundManager::IsPlaying("OptionBgm")) {

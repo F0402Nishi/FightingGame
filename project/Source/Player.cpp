@@ -52,7 +52,7 @@ void Player::Update()
 	if (!isAlive) return;
 
 	// 攻撃入力
-	if (isPlayer) { PlayerAttack(DX_INPUT_PAD1, true, 1); }
+	if (isPlayer && !inoption) { PlayerAttack(DX_INPUT_PAD1, true, 1); }
 	else { PlayerAttack(DX_INPUT_PAD2, true, 2); }
 
 	// 左右移動

@@ -69,25 +69,25 @@ Character::Character()
 	right_FootBone = MV1SearchFrame(hModel, "Right_Foot");
 
 	SoundManager::Load("Punch1Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-01.mp3"); // パンチ１
-	SoundManager::ChangeVolume("Punch1Se", 126);
+	SoundManager::ChangeVolume("Punch1Se", 192);
 	SoundManager::Load("Punch2Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-02.mp3"); // パンチ２
-	SoundManager::ChangeVolume("Punch2Se", 126);
+	SoundManager::ChangeVolume("Punch2Se", 192);
 	SoundManager::Load("Punch3Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-03.mp3"); // パンチ３
-	SoundManager::ChangeVolume("Punch3Se", 126);
+	SoundManager::ChangeVolume("Punch3Se", 192);
 	SoundManager::Load("Kick1Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-04.mp3"); // キック１
-	SoundManager::ChangeVolume("Kick1Se", 126);
+	SoundManager::ChangeVolume("Kick1Se", 192);
 	SoundManager::Load("Kick2Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-05.mp3"); // キック２
-	SoundManager::ChangeVolume("Kick2Se", 126);
+	SoundManager::ChangeVolume("Kick2Se", 192);
 	SoundManager::Load("Kick3Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-06.mp3"); // キック３
-	SoundManager::ChangeVolume("Kick3Se", 126);
+	SoundManager::ChangeVolume("Kick3Se", 192);
 	SoundManager::Load("ProtectSe", "data/sound/SE/SNES-Fighting/SNES-Fighting06-07.mp3"); // 防御
-	SoundManager::ChangeVolume("ProtectSe", 126);
+	SoundManager::ChangeVolume("ProtectSe", 192);
 	SoundManager::Load("Swing1Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-08.mp3"); // スイング弱
-	SoundManager::ChangeVolume("Swing1Se", 126);
+	SoundManager::ChangeVolume("Swing1Se", 192);
 	SoundManager::Load("Swing2Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-09.mp3"); // スイング中
-	SoundManager::ChangeVolume("Swing2Se", 126);
+	SoundManager::ChangeVolume("Swing2Se", 192);
 	SoundManager::Load("Swing3Se", "data/sound/SE/SNES-Fighting/SNES-Fighting06-10.mp3"); // スイング強
-	SoundManager::ChangeVolume("Swing3Se", 126);
+	SoundManager::ChangeVolume("Swing3Se", 192);
 }
 
 Character::~Character()
