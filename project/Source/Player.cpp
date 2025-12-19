@@ -13,7 +13,7 @@ const int maxHistory = 10;
 Player::Player(bool _isPlayer)
 {
 	isPlayer = _isPlayer;
-	isJumping = false;
+	walking = false;
 
 	lastKey = NEUTRAL;
 	currentKey = NEUTRAL;
@@ -28,10 +28,8 @@ Player::Player(bool _isPlayer)
 		transform.rotation = VGet(0, DegToRad(90.0f), 0);
 	}
 
-	// 古い入力を削除
-	while (inputHistory.size() > maxHistory) {
-		inputHistory.erase(inputHistory.begin());
-	}
+	// 初めに入力を削除
+	inputHistory.clear();
 }
 
 Player::~Player()
@@ -41,7 +39,6 @@ Player::~Player()
 void Player::Update()
 {
 	Character::Always();
-	// PlayerAttack();
 	
 	// === 入力を取得 ===
 	if (isPlayer) { // PLAYER1 = ゲームパッド
@@ -83,60 +80,6 @@ void Player::Update()
 	if (InputTypeP) {
 		ui2d->DrawInputHistory(inputHistory);
 	}
-
-#if false "のちに戻す" 
-
-
-	//ImGui::Begin("PLAYER");
-	//ImGui::Checkbox("InputTypeP", &InputTypeP);
-	//ImGui::Checkbox("canReduceHp", &canReduceHp);
-	//ImGui::Checkbox("isMoving", &isMoveing);
-	//ImGui::Checkbox("animRetun", &animRetun);
-	//ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
-	//ImGui::InputInt("debugframe", &debugframe);
-	//ImGui::InputFloat("position.x", &transform.position.x);
-	//ImGui::InputFloat("position.y", &transform.position.y);
-	//ImGui::InputFloat("position.z", &transform.position.z);
-	//ImGui::InputFloat("velocity.x", &velocity.x);
-	//ImGui::InputFloat("inputDir.x", &inputDir.x);
-	//ImGui::InputFloat("IdleTimer", &idleTimer);
-	//ImGui::InputFloat("dist", &dist);
-	//ImGui::InputFloat("frame", &frame);
-	//ImGui::InputFloat("totalframe", &total);
-	//ImGui::InputFloat("ratioframe", &ratio);
-	//ImGui::Text("state: %d", (int)state);
-	//ImGui::Text("push.x: %.2f", hit.x);
-	//ImGui::Text("push.y: %.2f", hit.y);
-	//ImGui::Text("Position: z=%.2f", startPos.z);
-	//ImGui::Text("HP: %d", (int)Hp);
-	//ImGui::End();
-
-	//ImGui::Begin("PAD DEBUG");
-	//ImGui::Text("joyInput: %d", joyInput);
-	//ImGui::Text("lx: %d, ly: %d", lx, ly);
-	//ImGui::End();
-
-	if (CheckHitKey(KEY_INPUT_SPACE)) {
-		velocityY = PLAYER_JUMP;
-		transform.position.y += velocityY;
-		state = S_JUMP;
-	}
-
-	// 途中キャンセルを試してみた
-
-	if (state == S_PUNCH1 && canCancel) {
-		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
-		if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; canReduceHp = true; isMoveing = true; }
-	}
-	if (state == S_PUNCH2 && canCancel) {
-		if (CheckHitKey(KEY_INPUT_O)) { state = S_PUNCH3; canReduceHp = true; isMoveing = true; }
-		if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; canReduceHp = true; isMoveing = true; }
-	}
-	if (state == S_PUNCH3 && canCancel) {
-		if (CheckHitKey(KEY_INPUT_U)) { state = S_PUNCH1; canReduceHp = true; isMoveing = true; }
-		if (CheckHitKey(KEY_INPUT_I)) { state = S_PUNCH2; canReduceHp = true; isMoveing = true; }
-	}
-#endif
 }
 
 void Player::Draw()
@@ -162,16 +105,19 @@ void Player::PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum)
 		if (state == S_STOP && !isHitPlaying) {
 			if (lx < -200 || input.Buttons[XINPUT_BUTTON_DPAD_LEFT]) {
 				inputDir.x = -10.0f;
+				walking = true;
 				currentKey = KEY_INPUT_A;
 				// anim->Play("data/Character/Player/Walk_B.mv1", true);
 			}
 			else if (lx > 200 || input.Buttons[XINPUT_BUTTON_DPAD_RIGHT]) {
 				inputDir.x = 10.0f;
+				walking = true;
 				currentKey = KEY_INPUT_D;
 				// anim->Play("data/Character/Player/Walk_F.mv1", true);
 			}
 			else {
 				anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+				walking = false;
 				currentKey = NEUTRAL;
 			}
 		}
@@ -200,7 +146,7 @@ void Player::PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum)
 			state = S_KICK3; canReduceHp = true; isMoveing = true; //animRetun = true;
 			currentKey = KEY_INPUT_L;
 		}
-		if (input.Buttons[XINPUT_BUTTON_X]) {
+		if (input.Buttons[XINPUT_BUTTON_X] && !walking) {
 			state = S_PROTECT; isGuarding = true;
 			currentKey = KEY_INPUT_H;
 		}
@@ -215,16 +161,19 @@ void Player::PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum)
 		if (state == S_STOP && !isHitPlaying) {
 			if (CheckHitKey(KEY_INPUT_A)) { // 後ろ歩き
 				inputDir.x = -10.0f;
+				walking = true;
 				currentKey = KEY_INPUT_A;
 				// anim->Play("data/Character/Player/Walk_B.mv1", true);
 			}
 			else if (CheckHitKey(KEY_INPUT_D)) { // 前歩き
 				inputDir.x = 10.0f;
+				walking = true;
 				currentKey = KEY_INPUT_D;
 				// anim->Play("data/Character/Player/Walk_F.mv1", true);
 			}
 			else {
 				anim->Play("data/Character/Player/Fight_Idle.mv1", true);
+				walking = false;
 				currentKey = NEUTRAL;
 			}
 		}
@@ -254,7 +203,7 @@ void Player::PlayerAttack(int padIndex, bool useKeyboardFallback, int playerNum)
 			currentKey = KEY_INPUT_L;
 		}
 
-		if (CheckHitKey(KEY_INPUT_H)) {  // ガード
+		if (CheckHitKey(KEY_INPUT_H) && !walking) {  // ガード
 			state = S_PROTECT; isGuarding = true;
 			currentKey = KEY_INPUT_H;
 		}

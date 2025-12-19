@@ -2,10 +2,6 @@
 #include "Character.h"
 #include <string>
 #include <vector>
-// #include "Animator.h"
-// #include "Field.h"
-// #include "Player.h"
-// #include <iostream>  // © ‚±‚ê‚ª•K{
 
 class Player;
 class Animator;
@@ -41,9 +37,7 @@ private:
 	int sum;
 	int attackCount;
 	int random;
-	// int movingrandom;
 	int attackrandom;
-	// int attackNumber;
 	int prevR;
 
 	float targetDistance; // —‘z‚ÌŠÔ‡‚¢

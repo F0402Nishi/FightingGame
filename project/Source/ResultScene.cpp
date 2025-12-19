@@ -60,17 +60,6 @@ ResultScene::~ResultScene()
 
 void ResultScene::Update()
 {
-	// ImGui::Begin("Result");
-	// ImGui::Checkbox("winFinished", &winFinished);
-	// ImGui::InputFloat("winScale", &winScale);
-	// ImGui::InputFloat("loseScale", &loseScale);
-	// ImGui::Checkbox("window", &windowClose);
-	// ImGui::Checkbox("resultwindowOpen", &miniwindow->resultwindowOpen);
-	// ImGui::Text("boxY = %d", miniwindow->boxY);
-	// ImGui::Text("resultNumber = %d", (int)resultNumber);
-	// ImGui::Text("resultnumbers = %d", (int)resultnumbers);
-	// ImGui::End();
-
 	UpdateKey();
 	UpdateResultFont();
 
@@ -148,7 +137,6 @@ void ResultScene::Draw()
 	SetBackgroundColor(0, 0, 0); //※背景の色変更に使用
 
 	DrawRotaGraph3D(0, 0, 0, 1.08f, 0, resultBackImage, TRUE);
-	//DrawString(10, 10, "Result SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
 
 	DrawResultFont();
 	fade->Draw();

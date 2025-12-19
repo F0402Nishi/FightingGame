@@ -132,17 +132,6 @@ void MiniWindow::Update()
 		commandUpPressed = nowCUp;
 		commandDownPressed = nowCDown;
 	}
-
-	//ImGui::Begin("Mini");
-	//ImGui::Checkbox("stickUp", &stickUp);
-	//ImGui::Checkbox("stickDown", &stickDown);
-	//ImGui::InputInt("My", &My);
-	//ImGui::End();
-
-	// === スクロール範囲の制限 ===
-	//int minOffset = -(commandCount * itemHeight - windowHeight); // 一番下まで
-	//if (scrollOffset < minOffset) scrollOffset = minOffset;
-	//if (scrollOffset > 0) scrollOffset = 0; // 一番上まで
 }
 
 void MiniWindow::Draw()
@@ -158,7 +147,6 @@ void MiniWindow::Draw()
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(50, 50, 50), TRUE); // 背景（濃い灰色）
 		DrawBox(mx, my, mx + mw, my + mh, GetColor(255, 255, 255), FALSE); // 枠線（白）
 		DrawGraph(mx, my, optionBack, TRUE);
-		// DrawRotaGraph(arrowX, arrowY, 1.0f, 0, optionArrow, TRUE);
 
 		int boxHeight = 120;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 96);
@@ -188,11 +176,7 @@ void MiniWindow::Draw()
 		int boxHeight = 70;
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 126);
 		DrawBox(420, boxY - boxHeight / 2, 880, boxY + boxHeight / 2, GetColor(r, g, b), TRUE);
-		// DrawBox(420, 380, 880, 450, GetColor(0, 80, 255), TRUE); // 再戦
-		// DrawBox(420, 480, 880, 550, GetColor(0, 80, 255), TRUE); // セレクト
-		// DrawBox(420, 580, 880, 650, GetColor(0, 80, 255), TRUE); // タイトル
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-		// DrawBox(420, 380, 880, 450, GetColor(255, 255, 255), FALSE);
 
 		DrawExtendString(590, 390, 3, 3, "再戦", GetColor(255, 255, 255));
 		DrawExtendString(550, 490, 3, 3, "セレクト", GetColor(255, 255, 255));
@@ -260,9 +244,6 @@ void MiniWindow::MoveBox(int _box)
 
 	// === コマンド表示中なら動かさない！ ===
 	if (commandwindowOpen) return; 
-
-	// const int step = 200;
-	// const int MenuFont[3] = { 200,400,600 };
 
 	// === 現在の index を求める ===
 	int index = 0;

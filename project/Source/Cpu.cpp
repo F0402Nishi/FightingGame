@@ -80,57 +80,6 @@ void CPU::Update()
 {	
 	Character::Always();
 
-#if false "ImGui"
-	ImGui::Begin("CPU");
-	ImGui::Text("Current state: %s", StateToString(state));
-	ImGui::Checkbox("GuardOn", &GuardOn);
-	ImGui::Checkbox("GuardNow", &GuardNow);
-	ImGui::InputFloat("FrameCounter", &FrameCounter);
-	ImGui::End();
-
-	ImGui::Text("brain: %d", (int)brain);
-	ImGui::Checkbox("hasHit", &hasHit);
-	ImGui::Checkbox("isActing", &isActing);
-	ImGui::Checkbox("canReduceHp", &canReduceHp);
-	ImGui::Checkbox("animRetun", &animRetun);
-	ImGui::Checkbox("actionFinished", &actionFinished);
-	ImGui::Text("animFinish: %s", anim->IsFinish() ? "true" : "false");
-	ImGui::InputInt("dice", &r);
-	ImGui::InputInt("attack", &a);
-	ImGui::InputInt("sum", &sum);
-	ImGui::InputInt("debugRetunCount", &debugRetunCount);
-	ImGui::InputInt("debugCollisionCount", &debugCollisionCount);
-	ImGui::InputFloat("waitTimer", &waitTimer);
-	ImGui::InputFloat("time", &time);
-	
-	ImGui::Checkbox("isAlive", &isAlive);
-	ImGui::Text("state: %d", (int)state);
-	ImGui::InputInt("damage", &damage);
-	ImGui::InputInt("movement", &m);
-	ImGui::InputInt("speed", &speed);
-	ImGui::InputFloat("position.x", &transform.position.x);
-	ImGui::InputFloat("position.y", &transform.position.y);
-	ImGui::InputFloat("inputDir.x", &inputDir.x);
-	ImGui::InputFloat("dx", &dx);
-	ImGui::InputFloat("dist", &dist);
-	ImGui::InputFloat("playerMoveDir", &playerMoveDir);
-	ImGui::InputFloat("float moved", &moved);
-	ImGui::InputFloat("float CPUpos", &CPUpos);
-	ImGui::Text("MyPosition：%d", (int) & mypos);
-
-	// === 攻撃終了後のクールタイム処理 ===
-	if (waitForNextAction) {
-		waitTimer += 1.0f;
-		if (waitTimer > 30.0f) { // 30フレーム待つ
-			waitForNextAction = false;
-			time = 0; // 次の行動判定をリセット
-		}
-		else {
-			return; // 行動停止
-		}
-	}
-#endif // 0
-
 	hitSpheres[4].localOffset = left_HandWorldPos - basePos + VGet(-8.0f, 3.5f, -10.0f);
 	hitSpheres[7].localOffset = right_HandWorldPos - basePos + VGet(-5.0f, 7.0f, 0.0f);
 
@@ -250,15 +199,6 @@ void CPU::UpdateMove(int _moving, int _ld, int _rd)
 
 void CPU::UpdateAttack(int* _attack)
 {
-	// 攻撃が終わっていたら何もしない
-	// if (!isActing || anim->IsFinish()) return;
-	
-	// 攻撃直後なら何もしない
-	// if (waitForNextAction) return;
-	
-	// 既に行動中なら再発火しない
-	// if (isActing) return; 
-	
 	isActing = true;
 	isAttacking = true;
 
@@ -268,25 +208,15 @@ void CPU::UpdateAttack(int* _attack)
 	// === 0～99 の乱数を作る ===
 	if (!NowAttack) { a = rand() % 100; NowAttack = true; }
 
-	// ImGui::Begin("Attack");
 	// === 攻撃系 ===
 	for (int i = 0; i < attackCount; i++) {
 		sum += attackNumber[i];
 		if (a < sum) {
-			// if (!isActing || (state != attackStates[i])) {}
-			// ImGui::Text("Current state: %s", StateToString(attackStates[i]));
 			state = attackStates[i];
 			canReduceHp = true;
 			break;
 		}
 	}
-	// ImGui::End();
-
-#if 0
-	state = S_PUNCH2;
-	canReduceHp = true;
-	sum += 1;
-#endif // 0
 }
 
 void CPU::UpdateGuard()
@@ -324,9 +254,6 @@ void CPU::UpdateWAITCombat()
 
 void CPU::UpdateCloseCombat()
 {
-	// 移動や攻撃中は乱数を生成しない
-	// if (!isBusy) { UpdateDice(); }
-
 	time = 0.0f;
 
 	if (r >= 0 && r < 20) { // 0～19 → 移動 20%
@@ -342,9 +269,6 @@ void CPU::UpdateCloseCombat()
 
 void CPU::UpdateMidCombat()
 {
-	// 移動や攻撃中は乱数を生成しない
-	// if (!isBusy) { UpdateDice(); }
-
 	time = 0.0f;
 	
 	if (r >= 0 && r < 45) { // 0〜44 → 移動 45%
@@ -360,9 +284,6 @@ void CPU::UpdateMidCombat()
 
 void CPU::UpdateLongCombat()
 {
-	// 移動や攻撃中は乱数を生成しない
-	// if (!isBusy) { UpdateDice(); }
-
 	time = 0.0f;
 
 	if (r < 75) { // 0～74 → 移動 75%
@@ -374,32 +295,6 @@ void CPU::UpdateLongCombat()
 	else { // 85～99 → ガード 10%
 		UpdateGuard();
 	}
-
-#if 0
-		if (!Nowpos) { CPUpos = mypos.x; Nowpos = true; } // 移動開始位置を保存
-		isMoveing = true;
-		NowAttack = true;
-
-		// 移動方向の決定
-		if (m < 10) {
-			// inputDir.x = 1.0f; // 右
-		}
-		else {
-			// inputDir.x = -1.0f;  // 左
-		}
-
-		// フレームごとに移動
-		mypos.x += inputDir.x;
-
-		// 開始位置からの移動距離を計算
-		moved = mypos.x - CPUpos;
-
-		// 方向と距離に応じて停止判定
-		if ((inputDir.x != 0.0f && fabs(moved) >= 100.0f)) {
-			inputDir.x = 0.0f;
-			Nowpos = false;
-		}
-#endif // 0
 }
 
 void CPU::EffectiveRange()
@@ -437,85 +332,6 @@ void CPU::EffectiveRange()
 	else { mypos.x -= speed;} // 2
 	
 	transform.position = mypos;
-
-#if 0
-	// === Player の移動方向を判定 ===
-	// static float prevPlayerX = playerpos.x; // 前のフレームの Player の X 座標
-	// playerMoveDir = playerpos.x - prevPlayerX; // >0:右に動いた, <0:左に動いた
-	// prevPlayerX = playerpos.x;
-
-	if (playerMoveDir > 0) {
-		// Player が右に移動 → CPU も右に下がる
-		mypos.x += speed + 1.0f;
-	}
-
-	if (playerMoveDir < 0) {
-		// Player が左に移動 → CPU も左に詰める
-		mypos.x -= speed + 1.0f;
-	}
-
-	if (!reachedTarget)
-	{
-		// Player が移動したときの追従
-		if (playerMoveDir > 0) { //  && dx < -targetDistance
-			// Player が右に移動 → CPU も右に下がる
-			mypos.x += speed + 1.0f;
-
-		}
-		
-		if (playerMoveDir < 0) {
-			mypos.x -= speed + 1.0f;
-		}
-
-
-		if (dist > followThreshold) {
-			reachedTarget = true;
-			isFollowing = true;
-		}
-		if (isFollowing) {
-		}
-
-
-		if (dx == expandThreshold) {
-			reachedTarget = true;
-		}
-	}
-	
-	if (!reachedTarget) {
-		if (dist > targetDistance + expandThreshold) {
-			// 相手の方へ移動
-			mypos.x -= speed;
-		}
-		else if (dist < targetDistance) {
-			// 相手から離れる
-			mypos.x += speed;
-		}
-		else {
-			// 距離が許容範囲内なら基本的に止まる
-			// ただしプレイヤーが大きく動いたときのみ追従
-			reachedTarget = true;
-		}
-	}
-
-	// 追尾開始判定
-	if (!isFollowing && dist > followThreshold)
-	{
-		// isFollowing = true; // Player が遠すぎる → 追尾開始
-		// Player に近づく（targetDistance + expandThreshold まで）
-		if (dist > targetDistance + expandThreshold)
-		{
-			mypos.x += -speed;
-		}
-		else
-		{
-			isFollowing = false; // 目標距離まで詰めたら追尾終了
-		}
-		if (fabsf(playerpos.x - prevPlayerX) > expandThreshold)
-		{
-			mypos.x -= speed + 1.0f;
-		}
-	}
-#endif // 0
 }
 
 const char* CPU::StateToString(Character::State s)

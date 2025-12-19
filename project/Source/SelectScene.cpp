@@ -12,8 +12,6 @@ SelectScene::SelectScene()
 {
 	SetCameraPositionAndTarget_UpVecY(VGet(-0.0f, 0.0f, -1100.0f), VGet(0.0f, 0.0f, 0));
 
-	// OperationImage = LoadGraph("data/2D/Ki-Bo-Do_4.png");
-	// assert(OperationImage >= 0);
 	CommandImage = LoadGraph("data/2D/command.png");
 	assert(CommandImage >= 0);
 	BattleImage = LoadGraph("data/2D/battle.png");
@@ -144,11 +142,6 @@ void SelectScene::Draw()
 
 	fade->Draw();
 	miniwindow->Draw();
-
-	// DrawString(0, 0, "SELECT SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
-	// DrawString(520, 600, "Push [Tab]Key To Setting", GetColor(255, 255, 255));
-
-	// if (operation) { DrawRotaGraph3D(0, 0, 0, 1.5f, 0, OperationImage, TRUE); isSetting = true; }
 }
 
 /// <summary>

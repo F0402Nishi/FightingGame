@@ -221,7 +221,6 @@ void Character::UpdateStop(float deltaTime)
 	idleTimer += deltaTime;
 
 	if (!isAltIdle && !isHitPlaying) {
-		// anim->Play("data/Character/Player/Fight_Idle.mv1", true); // , false のちに追加
 		PlayAttack("data/Character/Player/Fight_Idle.mv1", true);
 
 		if (!isAlive) return;
@@ -258,11 +257,7 @@ void Character::UpdatePunch1()
 				CollisionDetection();
 			}
 		}
-
-		// if (frame >= Punch1Data.cancelStartFrame && frame <= Punch1Data.cancelEndFrame) { canCancel = true; }
-		// else { canCancel = false; }
 	}
-
 
 	InReturn();
 }
@@ -283,9 +278,6 @@ void Character::UpdatePunch2()
 				CollisionDetection();
 			}
 		}
-
-		// if (frame >= Punch2Data.cancelStartFrame && frame <= Punch2Data.cancelEndFrame) { canCancel = true; }
-		// else { canCancel = false; }
 	}
 
 	InReturn();
@@ -307,9 +299,6 @@ void Character::UpdatePunch3()
 				CollisionDetection();
 			}
 		}
-
-		// if (frame >= Punch3Data.cancelStartFrame && frame <= Punch3Data.cancelEndFrame) { canCancel = true; }
-		// else { canCancel = false; }
 	}
 
 	InReturn();
@@ -359,18 +348,9 @@ void Character::UpdateKick1()
 				CollisionDetection();
 			}
 		}
-
-		// if (frame >= Kick1Data.cancelStartFrame && frame <= Kick1Data.cancelEndFrame) { canCancel = true; }
-		// else { canCancel = false; }
 	}
 
 	InReturn();
-
-	//ImGui::Begin("KickAttack");
-	//ImGui::Text("Current Animation: %s", cur.c_str());
-	//ImGui::Text("isFromIdle: %s", isFromIdle ? "true" : "false");
-	//ImGui::Text("force: %s", force ? "true" : "false");
-	//ImGui::End();
 }
 
 void Character::UpdateKick2()
@@ -412,10 +392,6 @@ void Character::UpdateKick2()
 				CollisionDetection();
 			}
 		}
-
-		// if (frame >= Kick2Data.cancelStartFrame && frame <= Kick2Data.cancelEndFrame) { canCancel = true; }
-		// else { canCancel = false; }
-
 	}
 
 	InReturn();
@@ -460,10 +436,6 @@ void Character::UpdateKick3()
 				CollisionDetection();
 			}
 		}
-
-		// if (frame >= Kick3Data.cancelStartFrame && frame <= Kick3Data.cancelEndFrame) { canCancel = true; }
-		// else { canCancel = false; }
-
 	}
 
 	InReturn();

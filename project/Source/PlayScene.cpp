@@ -19,7 +19,6 @@ Result PlayScene::lastResult = Result::None;
 
 PlayScene::PlayScene()
 {
-	// SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 0.0f, -1000.0f), VGet(0.0f, 0.0f, 0));
 	opponentType = SelectScene::gameType;
 	instance = this;
 
@@ -149,25 +148,6 @@ void PlayScene::Update()
 		SoundManager::Play("BattleBgm", DX_PLAYTYPE_LOOP);
 		BgmStat = true;
 	}
-
-	// === デバッグ用：強制遷移 ===
-	//if (CheckHitKey(KEY_INPUT_T)) {
-	//	SceneManager::ChangeScene("TITLE");
-	//}
-	//if (CheckHitKey(KEY_INPUT_R)) {
-	//	SceneManager::ChangeScene("SELECT");
-	//}
-	
-	//ImGui::Begin("Menu");
-	//ImGui::Text("arrowY = %d", miniwindow->arrowY);
-	//ImGui::InputInt("Type", &opponentType);
-	//ImGui::Text("alpha = %d", fade->alpha);
-	//ImGui::Text("IsBattleFinish = %d", h2->IsBattleFinish());
-	//ImGui::Checkbox("changeScene", &changeScene);
-	//ImGui::Checkbox("isWind", &isWind);
-	//ImGui::Checkbox("stickUp", &miniwindow->stickUp);
-	//ImGui::Checkbox("stickDown", &miniwindow->stickDown);
-	//ImGui::End();
 }
 
 void PlayScene::Draw()
@@ -175,14 +155,6 @@ void PlayScene::Draw()
 	SetBackgroundColor(0, 0, 0); //※背景の色変更に使用
 	
 	miniwindow->Draw();
-
-#if false
-	DrawLine3D(VGet(0, 0, 0), VGet(1000, 0, 0), GetColor(255, 0, 0)); //※ステージのx座標を確認に使用
-	DrawLine3D(VGet(0, 0, 0), VGet(0, 1000, 0), GetColor(0, 255, 0)); //※ステージのy座標を確認に使用
-	DrawLine3D(VGet(0, 0, 0), VGet(0, 0, 1000), GetColor(0, 0, 255)); //※ステージのy座標を確認に使用
-
-	DrawString(0, 0, "PLAY SCENE", GetColor(255, 255, 255));  //※Sceneの確認に使用
-#endif // false
 }
 
 void PlayScene::UpdateCamera()
@@ -203,11 +175,6 @@ void PlayScene::UpdateCamera()
 	if (zoomZ < -1200.0f) zoomZ = -1200.0f;   // 引きすぎない
 
 	SetCameraPositionAndTarget_UpVecY(VGet(posx, posy, zoomZ), VGet(posx, posy, 0));
-
-	//ImGui::Begin("Camera");
-	//ImGui::InputFloat("zoomZ", &zoomZ);
-	//ImGui::InputInt("Type", &opponentType);
-	//ImGui::End();
 }
 
 void PlayScene::UpdateBattleFont()

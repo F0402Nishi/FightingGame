@@ -106,12 +106,9 @@ protected:
 	int MaxHp; // 最大値のHP
 	int damage; // 攻撃のダメージ
 	int colIndex; // 攻撃時に判定に使うCollider
-	// int DrawValue;
-	// int TargetValue;
 	int speed; // 移動の速さ
 	int debugframe;
 
-	// float time = 0.0f;
 	float velocityY = 0.0f; // ジャンプ時のY座標
 	float attackRadius; // 攻撃時に当たったColliderの半径
 	float frame; // 今のフレーム取得
@@ -128,9 +125,7 @@ protected:
 
 	bool isJumping; //ジャンプ中かの判定
 	bool canReduceHp; // trueのときだけHPを減らせる
-	// bool isPlayer;
 	bool isMoveing; // アニメーションが再生中かの判定
-	// bool isPunching; // パンチ中かの判定
 	bool canCancel; // 攻撃キャンセル可能かの判定中
 	bool isGuarding; // ガード中かの判定
 	bool isAltIdle;

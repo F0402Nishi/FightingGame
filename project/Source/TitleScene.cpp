@@ -146,8 +146,4 @@ void TitleScene::Draw()
 			DrawExtendString(30, 680, 1.2f, 1.2f, "[Esc] 終了", GetColor(255, 255, 255));
 		}
 	}
-
-	// DrawExtendString(Screen::ToScreenX(450), Screen::ToScreenY(550), 2, 2, "Push [Enter] Key To Play", GetColor(255, 255, 255));
-	
-	// DrawString(0, 0, "TITLE SCENE", GetColor(64, 64, 64)); //※Sceneの確認に使用
 }

@@ -19,13 +19,11 @@ public:
 	void KeyMovement();
 
 	static int gameType;
-	// bool GetMiniWindow() const { return isWindowOpen; }
 
 private:
 	Fade* fade;
 	MiniWindow* miniwindow;
 
-	// int OperationImage;
 	int CommandImage;
 	int BattleImage;
 	int SelectionArrowImage;
@@ -47,5 +45,4 @@ private:
 	bool atInit;
 	bool InputPossible;
 	bool OpponentSelection;
-	// bool isWindowOpen;
 };

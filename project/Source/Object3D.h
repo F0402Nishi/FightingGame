@@ -28,8 +28,6 @@ public:
 class EllipseCollider
 {
 public:
-	// VECTOR top;
-	// VECTOR down;
 	VECTOR left;
 	VECTOR right;
 	float radius;
@@ -55,6 +53,4 @@ protected:
 	int hitModel;
 	Transform transform;
 	EllipseCollider* E_collder;
-	// SphereCollder* S_headcollider;
-	// SphereCollder* S_bodycollider;
 };

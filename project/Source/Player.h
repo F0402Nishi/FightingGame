@@ -3,7 +3,6 @@
 #include "Animator.h"
 #include <string>
 #include <vector>
-// #include "Field.h"
 
 class UI2D;
 class CPU;
@@ -26,7 +25,6 @@ private:
 	CPU* cpu;
 	UI2D* ui2d;
 
-	// VECTOR velocity;
 	VECTOR stick; // 左スティックX軸取得用
 
 	XINPUT_STATE input;
@@ -39,4 +37,5 @@ private:
 	int ly;
 	
 	bool isPlayer;
+	bool walking;
 };

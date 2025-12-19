@@ -8,8 +8,6 @@ Object3D::Object3D()
 	transform.rotation = VGet(0, 0, 0);
 	transform.scale = VGet(1, 1, 1);
 	E_collder = nullptr;
-	// S_headcollider = nullptr;
-	// S_bodycollider = nullptr;
 }
 
 Object3D::~Object3D()
@@ -22,9 +20,6 @@ void Object3D::Update()
 
 void Object3D::Draw()
 {
-	// MV1SetPosition(hModel, transform.position);
-	// MV1SetRotationXYZ(hModel, transform.rotation);
-
 	MATRIX scale = MGetScale(transform.scale);
 	MATRIX rotX = MGetRotY(transform.rotation.x);
 	MATRIX rotY = MGetRotY(transform.rotation.y);

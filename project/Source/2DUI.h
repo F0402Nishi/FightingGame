@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <vector> 
 #include "Object3D.h"
-// #include "Player.h"
 
 class Character;
 class Player;
@@ -68,7 +67,6 @@ private:
 	int fullTank;
 	int recoveryTimer; // ダメージ後の待機時間カウント
 	int recoveryHp; // まだ回復すべき残りHP（ダメージ量）
-	// int recoverySpeed = 1; // 1フレームあたりの回復量（調整用）
 	int recoveryFrame; // ダメージ後何フレーム待つか
 	int battleTime; // 表示してからの経過フレーム数 
 	int battleFrame; // 何フレーム表示するか
@@ -79,12 +77,4 @@ private:
 
 	bool isLeftPlayer;
 	bool isRightCpu;
-
-#if false
-	int HPbarCount = 4;
-	int HPbarHeight = 340 / HPbarCount;
-	int HPbarWidth = 453;
-	int maxHP = 1000;
-	int currentHP = 1000;
-#endif
 };
