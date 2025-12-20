@@ -244,13 +244,13 @@ void PlayScene::UpdateBattleFont()
 
 void PlayScene::MenuKey()
 {
-	if (isWind && !miniwindow->IsCommandNow()) {
-		if ((keyCounter[KEY_INPUT_TAB] == 1 || startHit) && !isMenu) {
+	if (!decideSoundPlayed && isWind && !miniwindow->IsCommandNow()) {
+		if (!isMenu && (keyCounter[KEY_INPUT_TAB] == 1 || startHit)) {
 			isMenu = !isMenu;
 			openwind = !openwind;
 			miniwindow->ToggleMenu();
 		}
-		if (keyCounter[KEY_INPUT_TAB] == 0 && isMenu) {
+		if (isMenu && keyCounter[KEY_INPUT_TAB] == 0) {
 			isMenu = false;
 		}
 
